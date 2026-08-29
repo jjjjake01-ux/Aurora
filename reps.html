@@ -294,55 +294,41 @@
     <div class="card teaser teaser-card">
       <div style="flex:1"><b>Сводка недели</b><p>оценка B− · готовность · тренды</p></div>
       <svg width="86" height="28" viewBox="0 0 86 28"><path d="M2 20c10 0 12-10 22-8s14 10 24 5 14-12 24-9 8 6 12 2" fill="none" stroke="var(--c-index)" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <!-- СТРАНИЦА 1.5: АКТИВНОСТЬ ДНЯ -->
+  <div id="activity-page" class="snap-section" style="--glow-color: rgba(47,191,155,.25); --page-tint: rgba(47,191,155,.03);">
+    <div class="activity-header">
+      <div>
+        <div class="page-title">Активность</div>
+        <div class="activity-subtitle">29 августа · На верном пути!</div>
+      </div>
+      <div class="activity-mascot">
+        <div class="mascot-glow" id="activity-mascot-glow"></div>
+        <svg width="56" height="62" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
+          <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
+          <ellipse cx="44" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-l"/>
+          <ellipse cx="76" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-r"/>
+          <circle cx="60" cy="62" r="38" fill="#5CC4A0" id="mascot-body"/>
+          <ellipse cx="60" cy="72" rx="22" ry="18" fill="#D4F0E4" id="mascot-belly"/>
+          <ellipse cx="26" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(-15 26 62)" id="mascot-arm-l"/>
+          <ellipse cx="94" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(15 94 62)" id="mascot-arm-r"/>
+          <ellipse cx="42" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+          <ellipse cx="78" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+          <ellipse cx="44" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+          <ellipse cx="80" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+          <circle cx="47" cy="50" r="2.5" fill="#FFFFFF"/>
+          <circle cx="83" cy="50" r="2.5" fill="#FFFFFF"/>
+          <path d="M50 72q10 10 20 0" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+          <ellipse cx="90" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+        </svg>
       </div>
     </div>
 
-    <!-- Мотивационная карточка дня (Whoop/Oura стиль) -->
-    <div class="card motivation-card" style="--aura:rgba(47,191,155,.18)">
-      <div class="motivation-header">
-        <div class="motivation-title">Твой день</div>
-        <div class="motivation-badge good">↑ Больше чем вчера</div>
-      </div>
-      <div class="motivation-content">
-        <div class="motivation-ring">
-          <svg width="120" height="120" viewBox="0 0 120 120">
-            <defs>
-              <linearGradient id="motGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#7ED4B8"/>
-                <stop offset="100%" stop-color="#2FBF9B"/>
-              </linearGradient>
-              <filter id="motGlow">
-                <feGaussianBlur stdDeviation="3" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10"/>
-            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#motGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="70" transform="rotate(-90 60 60)" filter="url(#motGlow)"/>
-          </svg>
-          <div class="motivation-ring-inner">
-            <div class="motivation-percent">78%</div>
-            <div class="motivation-label">от цели</div>
-          </div>
-        </div>
-        <div class="motivation-details">
-          <div class="motivation-highlight">
-            <span class="highlight-icon">↑</span>
-            <span class="highlight-text">На 400 шагов больше чем вчера</span>
-          </div>
-          <div class="motivation-eq">
-            <span class="eq-sep">=</span>
-            <span class="eq-text">Целый маршрут от дома до работы и обратно</span>
-          </div>
-          <div class="motivation-status">
-            <span class="status-dot"></span>
-            <span class="status-text">Ещё 1800 шагов до цели — ты справишься!</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Индекс активности (Oura/Whoop стиль) -->
+    <div class="card activity-index-card" style="--aura:rgba(47,191,155,.15)">
       <div class="activity-index-top">
         <div class="activity-index-label">Индекс активности</div>
         <div class="activity-index-date">29 августа</div>
@@ -399,33 +385,17 @@
       </div>
     </div>
 
-  <!-- СТРАНИЦА 1.5: АКТИВНОСТЬ ДНЯ -->
-  <div id="activity-page" class="snap-section" style="--glow-color: rgba(47,191,155,.25); --page-tint: rgba(47,191,155,.03);">
-    <div class="activity-header">
-      <div>
-        <div class="page-title">Активность</div>
-        <div class="activity-subtitle">29 августа · На верном пути!</div>
-      </div>
-      <div class="activity-mascot">
-        <div class="mascot-glow" id="activity-mascot-glow"></div>
-        <svg width="56" height="62" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
-          <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
-          <ellipse cx="44" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-l"/>
-          <ellipse cx="76" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-r"/>
-          <circle cx="60" cy="62" r="38" fill="#5CC4A0" id="mascot-body"/>
-          <ellipse cx="60" cy="72" rx="22" ry="18" fill="#D4F0E4" id="mascot-belly"/>
-          <ellipse cx="26" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(-15 26 62)" id="mascot-arm-l"/>
-          <ellipse cx="94" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(15 94 62)" id="mascot-arm-r"/>
-          <ellipse cx="42" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
-          <ellipse cx="78" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
-          <ellipse cx="44" cy="53" rx="6" ry="7" fill="#2D3B35"/>
-          <ellipse cx="80" cy="53" rx="6" ry="7" fill="#2D3B35"/>
-          <circle cx="47" cy="50" r="2.5" fill="#FFFFFF"/>
-          <circle cx="83" cy="50" r="2.5" fill="#FFFFFF"/>
-          <path d="M50 72q10 10 20 0" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="30" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
-          <ellipse cx="90" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
-        </svg>
+    <!-- Мотивация дня -->
+    <div class="card motivation-card" style="--aura:rgba(47,191,155,.18)">
+      <div class="motivation-content">
+        <div class="motivation-highlight">
+          <span class="highlight-icon">↑</span>
+          <span class="highlight-text">На 400 шагов больше чем вчера</span>
+        </div>
+        <div class="motivation-eq">
+          <span class="eq-sep">=</span>
+          <span class="eq-text">Целый маршрут от дома до работы и обратно</span>
+        </div>
       </div>
     </div>
 
@@ -688,6 +658,20 @@
       </div>
     </div>
 
+    <!-- Мотивация калорий -->
+    <div class="card motivation-card cal" style="--aura:rgba(232,161,60,.15)">
+      <div class="motivation-content">
+        <div class="motivation-highlight">
+          <span class="highlight-icon">↑</span>
+          <span class="highlight-text">На 50 ккал больше чем вчера</span>
+        </div>
+        <div class="motivation-eq">
+          <span class="eq-sep">=</span>
+          <span class="eq-text">2 кружки латте с сахаром</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Карусель калорий -->
     <div class="steps-carousel calories-carousel">
       <div class="carousel-track" id="caloriesTrack">
@@ -861,6 +845,20 @@
       </div>
     </div>
 
+    <!-- Мотивация дистанции -->
+    <div class="card motivation-card dist" style="--aura:rgba(49,168,201,.15)">
+      <div class="motivation-content">
+        <div class="motivation-highlight">
+          <span class="highlight-icon">↑</span>
+          <span class="highlight-text">На 0.5 км больше чем вчера</span>
+        </div>
+        <div class="motivation-eq">
+          <span class="eq-sep">=</span>
+          <span class="eq-text">3 круга вокруг центрального парка</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Карусель дистанции -->
     <div class="steps-carousel distance-carousel">
       <div class="carousel-track" id="distanceTrack">
@@ -1031,6 +1029,20 @@
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- Мотивация сидячего -->
+    <div class="card motivation-card sit" style="--aura:rgba(229,103,126,.15)">
+      <div class="motivation-content">
+        <div class="motivation-highlight">
+          <span class="highlight-icon">↓</span>
+          <span class="highlight-text">На 20 мин меньше сидения чем вчера</span>
+        </div>
+        <div class="motivation-eq">
+          <span class="eq-sep">=</span>
+          <span class="eq-text">1 фильм без перерыва</span>
+        </div>
       </div>
     </div>
 

@@ -1891,141 +1891,8 @@
   :root.dark-theme .stat-item:not(:last-child)::after{background:rgba(255,255,255,.08)}
   :root.dark-theme #activity-page::before{opacity: 0.6}
 
-  /* Motivation Card (Whoop/Oura Style) */
-  .motivation-card {
-    padding: 24px 20px;
-    margin-bottom: 14px;
-    background: linear-gradient(135deg, rgba(47,191,155,.06) 0%, rgba(47,191,155,.02) 100%);
-  }
-  .motivation-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .motivation-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--ink);
-  }
-  .motivation-badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-  }
-  .motivation-badge.good {
-    color: var(--good);
-    background: rgba(47,191,155,.15);
-  }
-  .motivation-badge.warn {
-    color: #E8A13C;
-    background: rgba(232,161,60,.15);
-  }
-  .motivation-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  .motivation-ring {
-    position: relative;
-    flex-shrink: 0;
-  }
-  .motivation-ring-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .motivation-percent {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--ink);
-    letter-spacing: -1px;
-    line-height: 1;
-  }
-  .motivation-label {
-    font-size: 10px;
-    color: var(--mut);
-    font-weight: 600;
-  }
-  .motivation-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .motivation-highlight {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: rgba(47,191,155,.1);
-    border-radius: 12px;
-  }
-  .highlight-icon {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--good);
-    color: #fff;
-    border-radius: 50%;
-    font-size: 14px;
-    font-weight: 700;
-  }
-  .highlight-text {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .motivation-eq {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 4px;
-  }
-  .eq-sep {
-    font-size: 16px;
-    color: var(--good);
-    font-weight: 700;
-  }
-  .eq-text {
-    font-size: 12px;
-    color: var(--ink2);
-    font-weight: 500;
-  }
-  .motivation-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 4px;
-  }
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #E8A13C;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-  .status-text {
-    font-size: 11px;
-    color: var(--mut);
-    font-weight: 500;
-  }
-  :root.dark-theme .motivation-card {
-    background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
-  }
-  :root.dark-theme .motivation-highlight {
-    background: rgba(47,191,155,.15);
-  }
+  /* Activity Index Card (Oura/Whoop Style) */
+  .activity-index-card {
     padding: 24px 20px 20px;
     margin-bottom: 14px;
   }
@@ -2166,6 +2033,120 @@
   }
   :root.dark-theme .aim-item:not(:last-child)::after {
     background: rgba(255,255,255,.08);
+  }
+
+  /* Motivation Card */
+  .motivation-card {
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, rgba(47,191,155,.06) 0%, rgba(47,191,155,.02) 100%);
+  }
+  .motivation-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .motivation-ring {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .motivation-ring-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .motivation-percent {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+  .motivation-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .motivation-highlight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .highlight-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--good);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .highlight-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .motivation-eq {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 28px;
+  }
+  .eq-sep {
+    font-size: 14px;
+    color: var(--good);
+    font-weight: 700;
+  }
+  .eq-text {
+    font-size: 11px;
+    color: var(--ink2);
+    font-weight: 500;
+  }
+  :root.dark-theme .motivation-card {
+    background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
+  }
+
+  /* Motivation Card Colors */
+  .motivation-card.cal {
+    background: linear-gradient(135deg, rgba(232,161,60,.06) 0%, rgba(232,161,60,.02) 100%);
+  }
+  .motivation-card.cal .highlight-icon {
+    background: #E8A13C;
+  }
+  .motivation-card.cal .eq-sep {
+    color: #E8A13C;
+  }
+  .motivation-card.dist {
+    background: linear-gradient(135deg, rgba(49,168,201,.06) 0%, rgba(49,168,201,.02) 100%);
+  }
+  .motivation-card.dist .highlight-icon {
+    background: #31A8C9;
+  }
+  .motivation-card.dist .eq-sep {
+    color: #31A8C9;
+  }
+  .motivation-card.sit {
+    background: linear-gradient(135deg, rgba(229,103,126,.06) 0%, rgba(229,103,126,.02) 100%);
+  }
+  .motivation-card.sit .highlight-icon {
+    background: #E5677E;
+  }
+  .motivation-card.sit .eq-sep {
+    color: #E5677E;
+  }
+  :root.dark-theme .motivation-card.cal {
+    background: linear-gradient(135deg, rgba(232,161,60,.08) 0%, rgba(232,161,60,.03) 100%);
+  }
+  :root.dark-theme .motivation-card.dist {
+    background: linear-gradient(135deg, rgba(49,168,201,.08) 0%, rgba(49,168,201,.03) 100%);
+  }
+  :root.dark-theme .motivation-card.sit {
+    background: linear-gradient(135deg, rgba(229,103,126,.08) 0%, rgba(229,103,126,.03) 100%);
   }
 
   /* Week Summary Card */
