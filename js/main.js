@@ -234,3 +234,195 @@ if (metricsScroll && metricsDots.length) {
     }
   }, { passive: false });
 }
+
+// Динамическое окрашивание страницы активности по прогрессу
+function updateActivityAtmosphere() {
+  const activityPage = document.getElementById('activity-page');
+  if (!activityPage) return;
+
+  // Получаем все прогресс-бары активности
+  const progressBars = activityPage.querySelectorAll('.stat-fill, .progress-fill');
+  if (progressBars.length === 0) return;
+
+  // Вычисляем средний прогресс
+  let totalProgress = 0;
+  progressBars.forEach(bar => {
+    const width = parseFloat(bar.style.width) || 0;
+    totalProgress += width;
+  });
+  const avgProgress = totalProgress / progressBars.length;
+
+  // Определяем цвет в зависимости от прогресса
+  let glowColor, pageTint, subtitleText;
+  let mascotColor, mascotBelly, mascotFeet;
+
+  if (avgProgress >= 75) {
+    // Отличная активность - бирюзовый/зелёный
+    glowColor = 'rgba(47,191,155,.28)';
+    pageTint = 'rgba(47,191,155,.04)';
+    subtitleText = 'Превосходно! Ты на 🔥';
+    mascotColor = '#2FBF9B';
+    mascotBelly = '#D4F0E4';
+    mascotFeet = '#2FBF9B';
+  } else if (avgProgress >= 50) {
+    // Хорошая активность - тёплый зелёный
+    glowColor = 'rgba(92,196,160,.25)';
+    pageTint = 'rgba(92,196,160,.03)';
+    subtitleText = 'На верном пути!';
+    mascotColor = '#5CC4A0';
+    mascotBelly = '#D4F0E4';
+    mascotFeet = '#5CC4A0';
+  } else if (avgProgress >= 30) {
+    // Средняя активность - янтарный
+    glowColor = 'rgba(232,161,60,.22)';
+    pageTint = 'rgba(232,161,60,.03)';
+    subtitleText = 'Можно лучше!';
+    mascotColor = '#E8A13C';
+    mascotBelly = '#F5E6C8';
+    mascotFeet = '#E8A13C';
+  } else {
+    // Низкая активность - тёплый коралловый
+    glowColor = 'rgba(232,110,94,.20)';
+    pageTint = 'rgba(232,110,94,.025)';
+    subtitleText = 'Время двигаться!';
+    mascotColor = '#E86E5E';
+    mascotBelly = '#F5D5D0';
+    mascotFeet = '#E86E5E';
+  }
+
+  // Применяем к странице
+  activityPage.style.setProperty('--glow-color', glowColor);
+  activityPage.style.setProperty('--page-tint', pageTint);
+
+  // Обновляем подзаголовок
+  const subtitle = activityPage.querySelector('.activity-subtitle');
+  if (subtitle && subtitleText) {
+    subtitle.textContent = subtitleText;
+  }
+
+  // Обновляем цвет маскота
+  const mascotBody = document.getElementById('mascot-body');
+  const mascotBellyEl = document.getElementById('mascot-belly');
+  const mascotFootL = document.getElementById('mascot-foot-l');
+  const mascotFootR = document.getElementById('mascot-foot-r');
+  const mascotArmL = document.getElementById('mascot-arm-l');
+  const mascotArmR = document.getElementById('mascot-arm-r');
+  const mascotGlow = document.getElementById('activity-mascot-glow');
+
+  if (mascotBody) mascotBody.setAttribute('fill', mascotColor);
+  if (mascotBellyEl) mascotBellyEl.setAttribute('fill', mascotBelly);
+  if (mascotFootL) mascotFootL.setAttribute('fill', mascotFeet);
+  if (mascotFootR) mascotFootR.setAttribute('fill', mascotFeet);
+  if (mascotArmL) mascotArmL.setAttribute('fill', mascotColor);
+  if (mascotArmR) mascotArmR.setAttribute('fill', mascotColor);
+  if (mascotGlow) mascotGlow.style.background = `radial-gradient(circle, ${glowColor.replace('.28', '.4').replace('.25', '.35').replace('.22', '.3').replace('.20', '.28')} 0%, transparent 70%)`;
+}
+
+// Запускаем после загрузки страницы
+document.addEventListener('DOMContentLoaded', updateActivityAtmosphere);
+setTimeout(updateActivityAtmosphere, 500);
+
+document.addEventListener('DOMContentLoaded', () => {
+  initStepsCarousel();
+  buildWeekChart();
+});
+
+// Инициализация всех каруселей
+function initAllCarousels() {
+  initCarouselById('stepsTrack');
+  initCarouselById('caloriesTrack');
+  initCarouselById('distanceTrack');
+  initCarouselById('sittingTrack');
+}
+
+function initCarouselById(trackId) {
+  const track = document.getElementById(trackId);
+  if (!track) return;
+  
+  const carousel = track.closest('.steps-carousel');
+  const dots = carousel.querySelectorAll('.carousel-dots .dot');
+
+  const updateDots = () => {
+    const scrollLeft = track.scrollLeft;
+    const cardWidth = track.querySelector('.card')?.offsetWidth || track.clientWidth;
+    const index = Math.round(scrollLeft / (cardWidth + 12));
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  };
+
+  track.addEventListener('scroll', updateDots);
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const cardWidth = track.querySelector('.card')?.offsetWidth || track.clientWidth;
+      track.scrollTo({
+        left: i * (cardWidth + 12),
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  setTimeout(updateDots, 100);
+}
+
+// Генерация недельных графиков для всех каруселей
+function buildAllWeekCharts() {
+  buildWeekChartById('weekChart', [6800, 7500, 8200, 6200, 6200, 8800, 5100], 7240, 'шаги');
+  buildWeekChartById('calWeekChart', [350, 420, 480, 320, 320, 520, 280], 380, 'калории');
+  buildWeekChartById('distWeekChart', [3.8, 4.5, 5.2, 3.2, 4.2, 6.1, 2.8], 4.8, 'дистанция');
+  buildWeekChartById('sitWeekChart', [190, 210, 230, 170, 135, 110, 80], 165, 'сидение');
+}
+
+function buildWeekChartById(chartId, values, avg, type) {
+  const svg = document.getElementById(chartId);
+  if (!svg) return;
+
+  const W = 300, H = 140, PT = 20, PB = 30, PL = 30, PR = 10;
+  const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const max = Math.max(...values) * 1.1;
+  const min = Math.min(...values) * 0.8;
+
+  const X = i => PL + i * (W - PL - PR) / 6;
+  const Y = v => PT + (1 - (v - min) / (max - min)) * (H - PT - PB);
+
+  const points = values.map((v, i) => ({ x: X(i), y: Y(v) }));
+
+  let linePath = `M${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i - 1], q = points[i];
+    const mx = (p.x + q.x) / 2;
+    linePath += ` C${mx} ${p.y} ${mx} ${q.y} ${q.x} ${q.y}`;
+  }
+
+  const areaPath = `${linePath} L${points[6].x} ${H - PB} L${points[0].x} ${H - PB} Z`;
+
+  const color = type === 'калории' ? '#E8A13C' : type === 'дистанция' ? '#31A8C9' : type === 'сидение' ? '#E5677E' : 'var(--c-index)';
+  const gradientId = chartId + 'Grad';
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.35"/>
+        <stop offset="50%" stop-color="${color}" stop-opacity="0.1"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <line class="grid-line" x1="${PL}" x2="${W - PR}" y1="${Y(max)}" y2="${Y(max)}"/>
+    <line class="grid-line" x1="${PL}" x2="${W - PR}" y1="${Y((max+min)/2)}" y2="${Y((max+min)/2)}"/>
+    <line class="grid-line" x1="${PL}" x2="${W - PR}" y1="${Y(min)}" y2="${Y(min)}"/>
+    <line class="avg-line" x1="${PL}" x2="${W - PR}" y1="${Y(avg)}" y2="${Y(avg)}"/>
+    <text class="avg-label" x="${W - PR + 5}" y="${Y(avg) + 3}">ср. ${Math.round(avg)}</text>
+    <path class="area-glow" d="${linePath}"/>
+    <path class="area-fill" d="${areaPath}" fill="url(#${gradientId})"/>
+    <path class="line-path" d="${linePath}" pathLength="1" style="stroke-dasharray: 1; stroke-dashoffset: 1; stroke: ${color}; animation: drawLine 1.5s ease forwards;"/>
+    ${points.map((p, i) => `<circle class="data-point${i === 4 ? ' today' : ''}" cx="${p.x}" cy="${p.y}" style="fill: ${color}; animation: popIn 0.4s ${0.8 + i * 0.1}s ease both;"/>`).join('')}
+    ${points.map((p, i) => `<text class="value-label" x="${p.x}" y="${p.y - 12}" style="animation: fadeIn 0.3s ${1 + i * 0.1}s ease both;">${values[i]}</text>`).join('')}
+    ${days.map((d, i) => `<text class="day-label" x="${X(i)}" y="${H - 8}">${d}</text>`).join('')}
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initAllCarousels();
+  buildAllWeekCharts();
+});

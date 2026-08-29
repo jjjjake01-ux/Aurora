@@ -297,6 +297,816 @@
       </div>
   </div>
 
+  <!-- СТРАНИЦА 1.5: АКТИВНОСТЬ ДНЯ -->
+  <div id="activity-page" class="snap-section" style="--glow-color: rgba(47,191,155,.25); --page-tint: rgba(47,191,155,.03);">
+    <div class="activity-header">
+      <div>
+        <div class="page-title">Активность</div>
+        <div class="activity-subtitle">29 августа · На верном пути!</div>
+      </div>
+      <div class="activity-mascot">
+        <div class="mascot-glow" id="activity-mascot-glow"></div>
+        <svg width="56" height="62" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
+          <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
+          <ellipse cx="44" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-l"/>
+          <ellipse cx="76" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-r"/>
+          <circle cx="60" cy="62" r="38" fill="#5CC4A0" id="mascot-body"/>
+          <ellipse cx="60" cy="72" rx="22" ry="18" fill="#D4F0E4" id="mascot-belly"/>
+          <ellipse cx="26" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(-15 26 62)" id="mascot-arm-l"/>
+          <ellipse cx="94" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(15 94 62)" id="mascot-arm-r"/>
+          <ellipse cx="42" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+          <ellipse cx="78" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+          <ellipse cx="44" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+          <ellipse cx="80" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+          <circle cx="47" cy="50" r="2.5" fill="#FFFFFF"/>
+          <circle cx="83" cy="50" r="2.5" fill="#FFFFFF"/>
+          <path d="M50 72q10 10 20 0" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+          <ellipse cx="90" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Карусель метрик шагов -->
+    <div class="steps-carousel">
+      <div class="carousel-track" id="stepsTrack">
+        <!-- Слайд 1: Основная карточка -->
+        <div class="card steps-card" style="--aura:rgba(47,191,155,.18)">
+          <div class="steps-main">
+            <div class="steps-score-box">
+              <div class="steps-label">Шаги</div>
+              <div class="steps-value">6200</div>
+              <div class="steps-goal">из 8000</div>
+            </div>
+            <div class="steps-arc-box">
+              <svg width="100" height="60" viewBox="0 0 100 60">
+                <defs>
+                  <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7ED4B8"/>
+                    <stop offset="100%" stop-color="#2FBF9B"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(45,40,35,.08)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#arcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="29"/>
+              </svg>
+              <div class="arc-percent">77%</div>
+            </div>
+          </div>
+          <div class="steps-progress">
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 77%"></div>
+            </div>
+          </div>
+          <div class="steps-metrics">
+            <div class="step-metric">
+              <div class="step-metric-value">108</div>
+              <div class="step-metric-label">Каденс</div>
+              <div class="step-metric-sub">шаг/мин</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">8:30</div>
+              <div class="step-metric-label">Темп</div>
+              <div class="step-metric-sub">мин/км</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">8470</div>
+              <div class="step-metric-label">Прогноз</div>
+              <div class="step-metric-sub">к 22:00</div>
+            </div>
+          </div>
+          <div class="steps-footer">
+            <span class="footer-trend up">↑ 400 к вчера</span>
+            <span class="footer-sep">·</span>
+            <span>Цель будет достигнута</span>
+          </div>
+        </div>
+        <!-- Слайд 2: Недельный график -->
+        <div class="card steps-week-card" style="--aura:rgba(47,191,155,.15)">
+          <div class="week-header">
+            <div class="week-title">Шаги за неделю</div>
+            <div class="week-avg">Ср. 7,240</div>
+          </div>
+          <div class="week-chart-container">
+            <svg class="week-chart" viewBox="0 0 300 140" id="weekChart"></svg>
+          </div>
+        </div>
+        <!-- Слайд 3: Почасовый разбор -->
+        <div class="card steps-hourly-card" style="--aura:rgba(47,191,155,.12)">
+          <div class="hourly-header">
+            <div class="hourly-title">По часам</div>
+            <div class="hourly-peak">Пик: 14:00</div>
+          </div>
+          <div class="hourly-bars">
+            <div class="h-bar"><div class="hb-fill" style="height:15%"></div><span>6</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:35%"></div><span>8</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:55%"></div><span>10</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:85%"></div><span>12</span></div>
+            <div class="h-bar"><div class="hb-fill today" style="height:100%"></div><span>14</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:70%"></div><span>16</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:45%"></div><span>18</span></div>
+            <div class="h-bar"><div class="hb-fill" style="height:25%"></div><span>20</span></div>
+          </div>
+          <div class="hourly-footer">
+            <span>1,840 шагов в час пик</span>
+          </div>
+        </div>
+        <!-- Слайд 4: Зоны ходьбы -->
+        <div class="card steps-zones-card" style="--aura:rgba(232,161,60,.12)">
+          <div class="zones-header">
+            <div class="zones-title">Зоны ходьбы</div>
+            <div class="zones-total">52 мин</div>
+          </div>
+          <div class="zones-list">
+            <div class="zone-item">
+              <div class="zone-dot" style="background:#31A8C9"></div>
+              <div class="zone-info">
+                <div class="zone-name">Медленная</div>
+                <div class="zone-desc">&lt; 90 шаг/мин</div>
+              </div>
+              <div class="zone-time">18 мин</div>
+              <div class="zone-bar"><div class="zb-fill" style="width:35%;background:#31A8C9"></div></div>
+            </div>
+            <div class="zone-item">
+              <div class="zone-dot" style="background:#2FBF9B"></div>
+              <div class="zone-info">
+                <div class="zone-name">Средняя</div>
+                <div class="zone-desc">90-110 шаг/мин</div>
+              </div>
+              <div class="zone-time">22 мин</div>
+              <div class="zone-bar"><div class="zb-fill" style="width:42%;background:#2FBF9B"></div></div>
+            </div>
+            <div class="zone-item">
+              <div class="zone-dot" style="background:#E8A13C"></div>
+              <div class="zone-info">
+                <div class="zone-name">Быстрая</div>
+                <div class="zone-desc">110-130 шаг/мин</div>
+              </div>
+              <div class="zone-time">10 мин</div>
+              <div class="zone-bar"><div class="zb-fill" style="width:19%;background:#E8A13C"></div></div>
+            </div>
+            <div class="zone-item">
+              <div class="zone-dot" style="background:#E5677E"></div>
+              <div class="zone-info">
+                <div class="zone-name">Бег</div>
+                <div class="zone-desc">&gt; 130 шаг/мин</div>
+              </div>
+              <div class="zone-time">2 мин</div>
+              <div class="zone-bar"><div class="zb-fill" style="width:4%;background:#E5677E"></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Слайд 5: Активные минуты -->
+        <div class="card steps-active-card" style="--aura:rgba(92,196,160,.12)">
+          <div class="active-header">
+            <div class="active-title">Активные минуты</div>
+            <div class="active-goal">из 60 мин</div>
+          </div>
+          <div class="active-ring-box">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="url(#activeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="78" transform="rotate(-90 60 60)"/>
+              <defs>
+                <linearGradient id="activeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#7ED4B8"/>
+                  <stop offset="100%" stop-color="#2FBF9B"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="active-ring-inner">
+              <div class="active-value">45</div>
+              <div class="active-percent">75%</div>
+            </div>
+          </div>
+          <div class="active-stats">
+            <div class="active-stat">
+              <div class="as-value">32</div>
+              <div class="as-label">Ходьба</div>
+            </div>
+            <div class="active-stat">
+              <div class="as-value">8</div>
+              <div class="as-label">Бег</div>
+            </div>
+            <div class="active-stat">
+              <div class="as-value">5</div>
+              <div class="as-label">Спорт</div>
+            </div>
+          </div>
+        </div>
+        <!-- Слайд 6: Серия достижений -->
+        <div class="card steps-streak-card" style="--aura:rgba(240,182,76,.15)">
+          <div class="streak-header">
+            <div class="streak-title">Серия достижений</div>
+            <div class="streak-best">Лучшая: 12 дней</div>
+          </div>
+          <div class="streak-main">
+            <div class="streak-days">7</div>
+            <div class="streak-label">дней подряд</div>
+          </div>
+          <div class="streak-week">
+            <div class="sw-day done"><span>Пн</span><div class="sw-check">✓</div></div>
+            <div class="sw-day done"><span>Вт</span><div class="sw-check">✓</div></div>
+            <div class="sw-day done"><span>Ср</span><div class="sw-check">✓</div></div>
+            <div class="sw-day done"><span>Чт</span><div class="sw-check">✓</div></div>
+            <div class="sw-day current"><span>Пт</span><div class="sw-check">·</div></div>
+            <div class="sw-day"><span>Сб</span><div class="sw-check"></div></div>
+            <div class="sw-day"><span>Вс</span><div class="sw-check"></div></div>
+          </div>
+        </div>
+        <!-- Слайд 7: Прогноз недели -->
+        <div class="card steps-forecast-card" style="--aura:rgba(47,191,155,.12)">
+          <div class="forecast-header">
+            <div class="forecast-title">Прогноз недели</div>
+            <div class="forecast-status good">На верном пути</div>
+          </div>
+          <div class="forecast-chart">
+            <div class="fc-bar done"><span>Пн</span><b>7800</b></div>
+            <div class="fc-bar done"><span>Вт</span><b>8200</b></div>
+            <div class="fc-bar done"><span>Ср</span><b>7400</b></div>
+            <div class="fc-bar done"><span>Чт</span><b>6800</b></div>
+            <div class="fc-bar current"><span>Пт</span><b>6200</b></div>
+            <div class="fc-bar forecast"><span>Сб</span><b>~7200</b></div>
+            <div class="fc-bar forecast"><span>Вс</span><b>~6500</b></div>
+          </div>
+          <div class="forecast-total">
+            <div class="ft-item">
+              <div class="ft-value">42,600</div>
+              <div class="ft-label">Текущая</div>
+            </div>
+            <div class="ft-arrow">→</div>
+            <div class="ft-item">
+              <div class="ft-value">52,100</div>
+              <div class="ft-label">Прогноз</div>
+            </div>
+          </div>
+          <div class="forecast-goal">Цель 56,000 · Нужно ещё 3,900</div>
+        </div>
+        <!-- Слайд 8: Личные рекорды -->
+        <div class="card steps-records-card" style="--aura:rgba(229,103,126,.12)">
+          <div class="records-header">
+            <div class="records-title">Личные рекорды</div>
+            <div class="records-count">3 рекорда</div>
+          </div>
+          <div class="records-list">
+            <div class="record-item gold">
+              <div class="record-icon">🏆</div>
+              <div class="record-info">
+                <div class="record-value">14,250</div>
+                <div class="record-label">Максимум за день</div>
+              </div>
+              <div class="record-date">15 июл</div>
+            </div>
+            <div class="record-item silver">
+              <div class="record-icon">🥈</div>
+              <div class="record-info">
+                <div class="record-value">82,400</div>
+                <div class="record-label">Максимум за неделю</div>
+              </div>
+              <div class="record-date">12-18 июл</div>
+            </div>
+            <div class="record-item bronze">
+              <div class="record-icon">🥉</div>
+              <div class="record-info">
+                <div class="record-value">12</div>
+                <div class="record-label">Лучшая серия</div>
+              </div>
+              <div class="record-date">июнь</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- Карусель калорий -->
+    <div class="steps-carousel calories-carousel">
+      <div class="carousel-track" id="caloriesTrack">
+        <div class="card steps-card" style="--aura:rgba(232,161,60,.18)">
+          <div class="steps-main">
+            <div class="steps-score-box">
+              <div class="steps-label">Калории</div>
+              <div class="steps-value">320</div>
+              <div class="steps-goal">из 500 ккал</div>
+            </div>
+            <div class="steps-arc-box">
+              <svg width="100" height="60" viewBox="0 0 100 60">
+                <defs>
+                  <linearGradient id="calArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#F0B45A"/>
+                    <stop offset="100%" stop-color="#E8A13C"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(45,40,35,.08)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#calArcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="45"/>
+              </svg>
+              <div class="arc-percent">64%</div>
+            </div>
+          </div>
+          <div class="steps-progress">
+            <div class="progress-track">
+              <div class="progress-fill cal" style="width: 64%"></div>
+            </div>
+          </div>
+          <div class="steps-metrics">
+            <div class="step-metric">
+              <div class="step-metric-value">180</div>
+              <div class="step-metric-label">Базовые</div>
+              <div class="step-metric-sub">ккал</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">140</div>
+              <div class="step-metric-label">Активные</div>
+              <div class="step-metric-sub">ккал</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">440</div>
+              <div class="step-metric-label">Прогноз</div>
+              <div class="step-metric-sub">к 22:00</div>
+            </div>
+          </div>
+          <div class="steps-footer">
+            <span class="footer-trend up">↑ 50 к вчера</span>
+            <span class="footer-sep">·</span>
+            <span>Цель будет достигнута</span>
+          </div>
+        </div>
+        <div class="card steps-hourly-card" style="--aura:rgba(232,161,60,.12)">
+          <div class="hourly-header">
+            <div class="hourly-title">По часам</div>
+            <div class="hourly-peak">Пик: 14:00</div>
+          </div>
+          <div class="hourly-bars">
+            <div class="h-bar"><div class="hb-fill cal" style="height:20%"></div><span>6</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:40%"></div><span>8</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:65%"></div><span>10</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:90%"></div><span>12</span></div>
+            <div class="h-bar"><div class="hb-fill cal today" style="height:100%"></div><span>14</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:75%"></div><span>16</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:50%"></div><span>18</span></div>
+            <div class="h-bar"><div class="hb-fill cal" style="height:30%"></div><span>20</span></div>
+          </div>
+          <div class="hourly-footer">
+            <span>45 ккал в час пик</span>
+          </div>
+        </div>
+        <div class="card steps-week-card" style="--aura:rgba(232,161,60,.15)">
+          <div class="week-header">
+            <div class="week-title">Калории за неделю</div>
+            <div class="week-avg">Ср. 380</div>
+          </div>
+          <div class="week-chart-container">
+            <svg class="week-chart" viewBox="0 0 300 140" id="calWeekChart"></svg>
+          </div>
+        </div>
+        <div class="card steps-records-card" style="--aura:rgba(232,161,60,.12)">
+          <div class="records-header">
+            <div class="records-title">Личные рекорды</div>
+            <div class="records-count">2 рекорда</div>
+          </div>
+          <div class="records-list">
+            <div class="record-item gold">
+              <div class="record-icon">🏆</div>
+              <div class="record-info">
+                <div class="record-value">680 ккал</div>
+                <div class="record-label">Максимум за день</div>
+              </div>
+              <div class="record-date">15 июл</div>
+            </div>
+            <div class="record-item silver">
+              <div class="record-icon">🥈</div>
+              <div class="record-info">
+                <div class="record-value">3,200 ккал</div>
+                <div class="record-label">Максимум за неделю</div>
+              </div>
+              <div class="record-date">12-18 июл</div>
+            </div>
+          </div>
+        </div>
+        <div class="card steps-forecast-card" style="--aura:rgba(232,161,60,.10)">
+          <div class="forecast-header">
+            <div class="forecast-title">Прогноз недели</div>
+            <div class="forecast-status good">На верном пути</div>
+          </div>
+          <div class="forecast-chart">
+            <div class="fc-bar done"><span>Пн</span><b>350</b></div>
+            <div class="fc-bar done"><span>Вт</span><b>420</b></div>
+            <div class="fc-bar done"><span>Ср</span><b>480</b></div>
+            <div class="fc-bar done"><span>Чт</span><b>320</b></div>
+            <div class="fc-bar current"><span>Пт</span><b>320</b></div>
+            <div class="fc-bar forecast"><span>Сб</span><b>~380</b></div>
+            <div class="fc-bar forecast"><span>Вс</span><b>~350</b></div>
+          </div>
+          <div class="forecast-total">
+            <div class="ft-item">
+              <div class="ft-value">2,170</div>
+              <div class="ft-label">Текущая</div>
+            </div>
+            <div class="ft-arrow">→</div>
+            <div class="ft-item">
+              <div class="ft-value">2,900</div>
+              <div class="ft-label">Прогноз</div>
+            </div>
+          </div>
+          <div class="forecast-goal">Цель 3,500 · Нужно ещё 600</div>
+        </div>
+        <div class="card steps-compare-card" style="--aura:rgba(232,161,60,.10)">
+          <div class="compare-header">
+            <div class="compare-title">Сегодня vs Вчера</div>
+          </div>
+          <div class="compare-items">
+            <div class="compare-item">
+              <div class="compare-label">Активные</div>
+              <div class="compare-values">
+                <span class="compare-now">140</span>
+                <span class="compare-arrow up">↑ 25</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill up" style="width:65%"></div></div>
+            </div>
+            <div class="compare-item">
+              <div class="compare-label">Базовые</div>
+              <div class="compare-values">
+                <span class="compare-now">180</span>
+                <span class="compare-arrow same">≈ 0</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill" style="width:50%"></div></div>
+            </div>
+            <div class="compare-item">
+              <div class="compare-label">Всего</div>
+              <div class="compare-values">
+                <span class="compare-now">320</span>
+                <span class="compare-arrow up">↑ 25</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill up" style="width:64%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- Карусель дистанции -->
+    <div class="steps-carousel distance-carousel">
+      <div class="carousel-track" id="distanceTrack">
+        <div class="card steps-card" style="--aura:rgba(49,168,201,.18)">
+          <div class="steps-main">
+            <div class="steps-score-box">
+              <div class="steps-label">Дистанция</div>
+              <div class="steps-value">4.2</div>
+              <div class="steps-goal">из 6 км</div>
+            </div>
+            <div class="steps-arc-box">
+              <svg width="100" height="60" viewBox="0 0 100 60">
+                <defs>
+                  <linearGradient id="distArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#5CC4D4"/>
+                    <stop offset="100%" stop-color="#31A8C9"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(45,40,35,.08)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#distArcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset:38"/>
+              </svg>
+              <div class="arc-percent">70%</div>
+            </div>
+          </div>
+          <div class="steps-progress">
+            <div class="progress-track">
+              <div class="progress-fill dist" style="width: 70%"></div>
+            </div>
+          </div>
+          <div class="steps-metrics">
+            <div class="step-metric">
+              <div class="step-metric-value">8:30</div>
+              <div class="step-metric-label">Средний темп</div>
+              <div class="step-metric-sub">мин/км</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">52</div>
+              <div class="step-metric-label">Время ходьбы</div>
+              <div class="step-metric-sub">мин</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">5.6</div>
+              <div class="step-metric-label">Прогноз</div>
+              <div class="step-metric-sub">к 22:00</div>
+            </div>
+          </div>
+          <div class="steps-footer">
+            <span class="footer-trend up">↑ 0.5 км к вчера</span>
+            <span class="footer-sep">·</span>
+            <span>Цель будет достигнута</span>
+          </div>
+        </div>
+        <div class="card steps-hourly-card" style="--aura:rgba(49,168,201,.12)">
+          <div class="hourly-header">
+            <div class="hourly-title">По часам</div>
+            <div class="hourly-peak">Пик: 14:00</div>
+          </div>
+          <div class="hourly-bars">
+            <div class="h-bar"><div class="hb-fill dist" style="height:10%"></div><span>6</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:30%"></div><span>8</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:55%"></div><span>10</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:80%"></div><span>12</span></div>
+            <div class="h-bar"><div class="hb-fill dist today" style="height:100%"></div><span>14</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:65%"></div><span>16</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:40%"></div><span>18</span></div>
+            <div class="h-bar"><div class="hb-fill dist" style="height:20%"></div><span>20</span></div>
+          </div>
+          <div class="hourly-footer">
+            <span>0.8 км в час пик</span>
+          </div>
+        </div>
+        <div class="card steps-week-card" style="--aura:rgba(49,168,201,.15)">
+          <div class="week-header">
+            <div class="week-title">Дистанция за неделю</div>
+            <div class="week-avg">Ср. 4.8 км</div>
+          </div>
+          <div class="week-chart-container">
+            <svg class="week-chart" viewBox="0 0 300 140" id="distWeekChart"></svg>
+          </div>
+        </div>
+        <div class="card steps-records-card" style="--aura:rgba(49,168,201,.12)">
+          <div class="records-header">
+            <div class="records-title">Личные рекорды</div>
+            <div class="records-count">2 рекорда</div>
+          </div>
+          <div class="records-list">
+            <div class="record-item gold">
+              <div class="record-icon">🏆</div>
+              <div class="record-info">
+                <div class="record-value">8.5 км</div>
+                <div class="record-label">Максимум за день</div>
+              </div>
+              <div class="record-date">15 июл</div>
+            </div>
+            <div class="record-item silver">
+              <div class="record-icon">🥈</div>
+              <div class="record-info">
+                <div class="record-value">42 км</div>
+                <div class="record-label">Максимум за неделю</div>
+              </div>
+               <div class="record-date">12-18 июл</div>
+            </div>
+          </div>
+        </div>
+        <div class="card steps-forecast-card" style="--aura:rgba(49,168,201,.10)">
+          <div class="forecast-header">
+            <div class="forecast-title">Прогноз недели</div>
+            <div class="forecast-status good">На верном пути</div>
+          </div>
+          <div class="forecast-chart">
+            <div class="fc-bar done"><span>Пн</span><b>3.8</b></div>
+            <div class="fc-bar done"><span>Вт</span><b>4.5</b></div>
+            <div class="fc-bar done"><span>Ср</span><b>5.2</b></div>
+            <div class="fc-bar done"><span>Чт</span><b>3.2</b></div>
+            <div class="fc-bar current"><span>Пт</span><b>4.2</b></div>
+            <div class="fc-bar forecast"><span>Сб</span><b>~4.8</b></div>
+            <div class="fc-bar forecast"><span>Вс</span><b>~4.2</b></div>
+          </div>
+          <div class="forecast-total">
+            <div class="ft-item">
+              <div class="ft-value">21</div>
+              <div class="ft-label">Текущая</div>
+            </div>
+            <div class="ft-arrow">→</div>
+            <div class="ft-item">
+              <div class="ft-value">29.4</div>
+              <div class="ft-label">Прогноз</div>
+            </div>
+          </div>
+          <div class="forecast-goal">Цель 42 км · Нужно ещё 12.6</div>
+        </div>
+        <div class="card steps-compare-card" style="--aura:rgba(49,168,201,.10)">
+          <div class="compare-header">
+            <div class="compare-title">Сегодня vs Вчера</div>
+          </div>
+          <div class="compare-items">
+            <div class="compare-item">
+              <div class="compare-label">Дистанция</div>
+              <div class="compare-values">
+                <span class="compare-now">4.2 км</span>
+                <span class="compare-arrow up">↑ 0.5</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill up" style="width:70%"></div></div>
+            </div>
+            <div class="compare-item">
+              <div class="compare-label">Время ходьбы</div>
+              <div class="compare-values">
+                <span class="compare-now">52 мин</span>
+                <span class="compare-arrow up">↑ 8</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill up" style="width:65%"></div></div>
+            </div>
+            <div class="compare-item">
+              <div class="compare-label">Средний темп</div>
+              <div class="compare-values">
+                <span class="compare-now">8:30</span>
+                <span class="compare-arrow down">↓ 0:15</span>
+              </div>
+              <div class="compare-bar"><div class="compare-fill down" style="width:55%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+
+    <!-- Карусель сидячего времени -->
+    <div class="steps-carousel sitting-carousel">
+      <div class="carousel-track" id="sittingTrack">
+        <div class="card steps-card" style="--aura:rgba(229,103,126,.18)">
+          <div class="steps-main">
+            <div class="steps-score-box">
+              <div class="steps-label">Сидячее время</div>
+              <div class="steps-value">2:15</div>
+              <div class="steps-goal">цель < 4ч</div>
+            </div>
+            <div class="steps-arc-box">
+              <svg width="100" height="60" viewBox="0 0 100 60">
+                <defs>
+                  <linearGradient id="sitArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#E8889A"/>
+                    <stop offset="100%" stop-color="#E5677E"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(45,40,35,.08)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#sitArcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset:25"/>
+              </svg>
+              <div class="arc-percent good">54%</div>
+            </div>
+          </div>
+          <div class="steps-progress">
+            <div class="progress-track">
+              <div class="progress-fill sit" style="width: 54%"></div>
+            </div>
+          </div>
+          <div class="steps-metrics">
+            <div class="step-metric">
+              <div class="step-metric-value">3</div>
+              <div class="step-metric-label">Перерывы</div>
+              <div class in-metric-sub">встали</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">45</div>
+              <div class="step-metric-label">Макс. сидя</div>
+              <div class="step-metric-sub">мин подряд</div>
+            </div>
+            <div class="step-metric">
+              <div class="step-metric-value">1:30</div>
+              <div class="step-metric-label">В движении</div>
+              <div class="step-metric-sub">среднее</div>
+            </div>
+          </div>
+          <div class="steps-footer">
+            <span class="footer-trend down">↓ 20 мин к вчера</span>
+            <span class="footer-sep">·</span>
+            <span>Отличный результат!</span>
+          </div>
+        </div>
+        <div class="card steps-hourly-card" style="--aura:rgba(229,103,126,.12)">
+          <div class="hourly-header">
+            <div class="hourly-title">По часам</div>
+            <div class="hourly-peak">Пик: 10:00</div>
+          </div>
+          <div class="hourly-bars">
+            <div class="h-bar"><div class="hb-fill sit" style="height:10%"></div><span>6</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:45%"></div><span>8</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:80%"></div><span>10</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:100%"></div><span>12</span></div>
+            <div class="h-bar"><div class="hb-fill sit today" style="height:60%"></div><span>14</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:75%"></div><span>16</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:40%"></div><span>18</span></div>
+            <div class="h-bar"><div class="hb-fill sit" style="height:20%"></div><span>20</span></div>
+          </div>
+          <div class="hourly-footer">
+            <span>45 мин сидя в час пик</span>
+          </div>
+        </div>
+        <div class="card steps-week-card" style="--aura:rgba(229,103,126,.15)">
+          <div class="week-header">
+            <div class="week-title">Сидячее время за неделю</div>
+            <div class="week-avg">Ср. 2:45</div>
+          </div>
+          <div class="week-chart-container">
+            <svg class="week-chart" viewBox="0 0 300 140" id="sitWeekChart"></svg>
+          </div>
+        </div>
+        <div class="card steps-records-card" style="--aura:rgba(229,103,126,.12)">
+          <div class="records-header">
+            <div class="records-title">Личные рекорды</div>
+            <div class="records-count">2 рекорда</div>
+          </div>
+          <div class="records-list">
+            <div class="record-item gold">
+              <div class="record-icon">🏆</div>
+              <div class="record-info">
+                <div class="record-value">0:45</div>
+                <div class="record-label">Минимум за день</div>
+              </div>
+              <div class="record-date">20 июл</div>
+            </div>
+            <div class="record-item silver">
+              <div class="record-icon">🥈</div>
+              <div class="record-info">
+                <div class="record-value">5</div>
+                <div class="record-label">Дней подряд < 2ч</div>
+              </div>
+               <div class="record-date">июль</div>
+            </div>
+          </div>
+        </div>
+        <div class="card steps-forecast-card" style="--aura:rgba(229,103,126,.10)">
+          <div class="forecast-header">
+            <div class="forecast-title">Прогноз недели</div>
+            <div class="forecast-status good">Отличная неделя</div>
+          </div>
+          <div class="forecast-chart">
+            <div class="fc-bar done"><span>Пн</span><b>3:10</b></div>
+            <div class="fc-bar done"><span>Вт</span><b>3:30</b></div>
+            <div class="fc-bar done"><span>Ср</span><b>3:50</b></div>
+            <div class="fc-bar done"><span>Чт</span><b>2:50</b></div>
+            <div class="fc-bar current"><span>Пт</span><b>2:15</b></div>
+            <div class="fc-bar forecast"><span>Сб</span><b>~2:00</b></div>
+            <div class="fc-bar forecast"><span>Вс</span><b>~1:45</b></div>
+          </div>
+          <div class="forecast-total">
+            <div class="ft-item">
+              <div class="ft-value">15:25</div>
+              <div class="ft-label">Текущая</div>
+            </div>
+            <div class="ft-arrow">→</div>
+            <div class="ft-item">
+              <div class="ft-value">20:20</div>
+              <div class="ft-label">Прогноз</div>
+            </div>
+          </div>
+          <div class="forecast-goal">Цель < 24ч · Запас 3:40</div>
+        </div>
+        <div class="card steps-breaks-card" style="--aura:rgba(229,103,126,.10)">
+          <div class="breaks-header">
+            <div class="breaks-title">Перерывы</div>
+            <div class="breaks-count">3 за день</div>
+          </div>
+          <div class="breaks-list">
+            <div class="break-item">
+              <div class="break-time">9:30</div>
+              <div class="break-info">
+                <div class="break-duration">12 мин</div>
+                <div class="break-label">до 10:42</div>
+              </div>
+              <div class="break-bar"><div class="break-fill" style="width:48%"></div></div>
+            </div>
+            <div class="break-item">
+              <div class="break-time">13:15</div>
+              <div class="break-info">
+                <div class="break-duration">18 мин</div>
+                <div class="break-label">до 14:00</div>
+              </div>
+              <div class="break-bar"><div class="break-fill" style="width:72%"></div></div>
+            </div>
+            <div class="break-item">
+              <div class="break-time">16:45</div>
+              <div class="break-info">
+                <div class="break-duration">15 мин</div>
+                <div class="break-label">до 17:30</div>
+              </div>
+              <div class="break-bar"><div class="break-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
   <!-- СТРАНИЦА 2: ПЛАН И МЕТРИКИ (Адаптивная версия) -->
 <div class="snap-section">
 
