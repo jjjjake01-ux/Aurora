@@ -298,34 +298,36 @@
   </div>
 
   <!-- СТРАНИЦА 1.5: АКТИВНОСТЬ ДНЯ -->
-  <div id="activity-page" class="snap-section" style="--glow-color: rgba(47,191,155,.25); --page-tint: rgba(47,191,155,.03);">
-    <div class="activity-header">
-      <div>
-        <div class="page-title">Активность</div>
-        <div class="activity-subtitle">29 августа · На верном пути!</div>
-      </div>
-      <div class="activity-mascot">
-        <div class="mascot-glow" id="activity-mascot-glow"></div>
-        <svg width="56" height="62" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
-          <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
-          <ellipse cx="44" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-l"/>
-          <ellipse cx="76" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-r"/>
-          <circle cx="60" cy="62" r="38" fill="#5CC4A0" id="mascot-body"/>
-          <ellipse cx="60" cy="72" rx="22" ry="18" fill="#D4F0E4" id="mascot-belly"/>
-          <ellipse cx="26" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(-15 26 62)" id="mascot-arm-l"/>
-          <ellipse cx="94" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(15 94 62)" id="mascot-arm-r"/>
-          <ellipse cx="42" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
-          <ellipse cx="78" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
-          <ellipse cx="44" cy="53" rx="6" ry="7" fill="#2D3B35"/>
-          <ellipse cx="80" cy="53" rx="6" ry="7" fill="#2D3B35"/>
-          <circle cx="47" cy="50" r="2.5" fill="#FFFFFF"/>
-          <circle cx="83" cy="50" r="2.5" fill="#FFFFFF"/>
-          <path d="M50 72q10 10 20 0" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <ellipse cx="30" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
-          <ellipse cx="90" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
-        </svg>
-      </div>
-    </div>
+   <div id="activity-page" class="snap-section" style="--glow-color: rgba(47,191,155,.25); --page-tint: rgba(47,191,155,.03);">
+     <div class="activity-header">
+       <div>
+         <div class="page-title">Активность</div>
+         <div class="activity-subtitle">29 августа · На верном пути!</div>
+       </div>
+       <div class="activity-mascot">
+         <div class="mascot-glow" id="activity-mascot-glow"></div>
+         <svg width="56" height="62" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
+           <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
+           <ellipse cx="44" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-l"/>
+           <ellipse cx="76" cy="112" rx="9" ry="6" fill="#5CC4A0" id="mascot-foot-r"/>
+           <circle cx="60" cy="62" r="38" fill="#5CC4A0" id="mascot-body"/>
+           <ellipse cx="60" cy="72" rx="22" ry="18" fill="#D4F0E4" id="mascot-belly"/>
+           <ellipse cx="26" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(-15 26 62)" id="mascot-arm-l"/>
+           <ellipse cx="94" cy="62" rx="8" ry="10" fill="#5CC4A0" transform="rotate(15 94 62)" id="mascot-arm-r"/>
+           <ellipse cx="42" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+           <ellipse cx="78" cy="52" rx="9" ry="11" fill="#FFFFFF"/>
+           <ellipse cx="44" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+           <ellipse cx="80" cy="53" rx="6" ry="7" fill="#2D3B35"/>
+           <circle cx="47" cy="50" r="2.5" fill="#FFFFFF"/>
+           <circle cx="83" cy="50" r="2.5" fill="#FFFFFF"/>
+           <path d="M50 72q10 10 20 0" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+           <ellipse cx="30" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+           <ellipse cx="90" cy="64" rx="7" ry="5" fill="#F4C4B0" opacity="0.6"/>
+         </svg>
+       </div>
+     </div>
+
+    <!-- Индекс активности (Oura/Whoop Score) -->
 
     <!-- Индекс активности (Oura/Whoop Score) -->
     <div class="card activity-index-card" style="--aura:rgba(47,191,155,.30)">
@@ -929,7 +931,7 @@
                   </linearGradient>
                 </defs>
                 <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="rgba(45,40,35,.08)" stroke-width="8" stroke-linecap="round"/>
-                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#distArcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset:38"/>
+                <path d="M 10 55 A 40 40 0 0 1 90 55" fill="none" stroke="url(#distArcGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="38"/>
               </svg>
               <div class="arc-percent">70%</div>
             </div>
@@ -1144,7 +1146,7 @@
             <div class="step-metric">
               <div class="step-metric-value">3</div>
               <div class="step-metric-label">Перерывы</div>
-              <div class in-metric-sub">встали</div>
+              <div class="step-metric-sub">встали</div>
             </div>
             <div class="step-metric">
               <div class="step-metric-value">45</div>
@@ -1581,12 +1583,46 @@
     </div>
   </div>
 
-  </div>
-</div>
+   </div>
+ </div>
+
+ <button class="scroll-bottom-btn" onclick="scrollToBottom()" title="В конец страницы">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+     <path d="M12 5v14M5 12l7 7 7-7"/>
+   </svg>
+ </button>
+
 
 
 
 <script src="js/main.js"></script>
+<script>
+  function scrollToBottom() {
+    const app = document.querySelector('.app');
+    const sections = document.querySelectorAll('.snap-section');
+    const scrollTop = app ? app.scrollTop : window.pageYOffset;
+    
+    let currentSection = null;
+    for (let section of sections) {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+        currentSection = section;
+        break;
+      }
+    }
+    
+    if (currentSection) {
+      const sectionBottom = currentSection.offsetTop + currentSection.offsetHeight;
+      if (app) {
+        app.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
+      }
+    } else if (app) {
+      app.scrollTo({ top: app.scrollHeight, behavior: 'smooth' });
+    }
+  }
+</script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v3d52b47920f24c319d37e2661827c42b1787588026925" integrity="sha512-d9sL6GJLXn6fInD1+TVXhTcQOsmxeHfmHAvwGDIxp5TO+uo1fiWW7mHomMj4MLRlCsJDTqXzWLHJFFlPCEIj/A==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
 </body>
 </html>

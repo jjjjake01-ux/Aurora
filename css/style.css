@@ -1,6 +1,6 @@
   :root{
     --f:'Manrope',system-ui,-apple-system,sans-serif;
-    --bg:#F2F4F6; --card:#FFFFFF; --ink:#18222B; --ink2:#5C6B76; --mut:#98A3AA;
+    --bg:#F5F2ED; --card:#FDFCFA; --ink:#2D2823; --ink2:#7A6F62; --mut:#9A8F82;
     --line:rgba(24,40,60,.05); --shadow:0 10px 30px rgba(23,43,58,.07);
     --good:#2FA36B; --warn:#C98A1F; --att:#D06552;
     --c-index:#2FBF9B; --c-sleep:#7B74D6; --c-hrv:#E5677E; --c-stress:#E8A13C;
@@ -25,9 +25,8 @@
   .pill.on{background:var(--c-index);border-color:var(--c-index);color:#fff;box-shadow:0 6px 16px rgba(47,191,155,.3)}
 
   /* ЕДИНЫЙ СТИЛЬ КАРТОЧЕК */
-  .card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(23,43,58,.06),0 0 0 1px rgba(255,255,255,.4),0 32px 80px -20px var(--aura,rgba(23,43,58,.25)),0 0 50px -12px var(--aura,rgba(23,43,58,.18)),inset 0 0 70px -30px var(--aura,rgba(23,43,58,.15));border:1px solid var(--line);position:relative;overflow:hidden;transition:opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease;opacity:1;transform:translateY(0);filter:blur(0)}
+  .card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(23,43,58,.06),0 0 0 1px rgba(255,255,255,.4),0 20px 50px -15px var(--aura,rgba(23,43,58,.15)),0 0 30px -10px var(--aura,rgba(23,43,58,.1));border:1px solid var(--line);position:relative;overflow:hidden;transition:opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease;opacity:1;transform:translateY(0);filter:blur(0)}
   .card.anim{opacity:1;transform:translateY(0);filter:blur(0)}
-  .card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(160% 100% at 50% 0%,var(--aura,transparent),transparent 50%);opacity:1}
   .card>*{position:relative}
 
   .pillst{display:inline-flex;align-items:center;gap:6px;border-radius:100px;padding:5px 11px;font:700 11px var(--f)}
@@ -207,7 +206,7 @@
   .chart svg{width:100%;height:130px;display:block;overflow:visible}
   .chart .line{fill:none;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.4s .2s ease-out forwards}
   @keyframes draw{to{stroke-dashoffset:0}}
-  .tip{position:absolute;background:#18222B;color:#fff;border-radius:10px;padding:6px 10px;font:700 11px var(--f);transform:translate(-50%,-130%);pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .2s, left .15s, top .15s;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+  .tip{position:absolute;background:#2D2823;color:#fff;border-radius:10px;padding:6px 10px;font:700 11px var(--f);transform:translate(-50%,-130%);pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .2s, left .15s, top .15s;box-shadow:0 8px 20px rgba(0,0,0,.25)}
   .tip.show{opacity:1}
   .t-foot{font:500 11px var(--f);color:var(--mut);margin-top:8px}
 
@@ -239,7 +238,7 @@
 
   /* ============ ВЕЧЕРНЯЯ ТЕМА ============ */
   :root.dark-theme{
-    --bg:#0E1E2C; --card:rgba(25,45,65,0.6); --ink:#E8F4F8; --ink2:#A4C2D0; --mut:#6E8B9E;
+    --bg:#1A1612; --card:#25201A; --ink:#E8E0D8; --ink2:#A89F92; --mut:#7A6F62;
     --line:rgba(255,255,255,0.08); --shadow:0 8px 32px rgba(0,0,0,0.55);
     --good:#4ADEDE; --warn:#F2C037; --att:#FF8A5C;
     --c-index:#4ADEDE; --c-sleep:#9F8CFF; --c-hrv:#FF9E9E; --c-stress:#F2C037;
@@ -247,15 +246,15 @@
     --bubble-bg:rgba(255,255,255,0.08); --bubble-shadow:rgba(0,0,0,0.35);
     --card-before:radial-gradient(160% 100% at 50% 0%, rgba(255,255,255,0.08), transparent 50%);
   }
-  :root.dark-theme body{background:linear-gradient(180deg,#0A1220 0%,#0E1E2C 40%,#1A2A3A 100%)}
-  :root.dark-theme .card{border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.5), 0 0 40px -10px rgba(74,222,222,0.15)}
+  :root.dark-theme body{background:linear-gradient(180deg,#0F0D0A 0%,#1A1612 40%,#25201A 100%)}
+  :root.dark-theme .card{border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.4), 0 0 20px -8px var(--aura,rgba(74,222,222,0.1))}
   :root.dark-theme .card::before{background:var(--card-before)}
   :root.dark-theme .pill{background:rgba(25,45,65,0.85); color:var(--ink2); border:1px solid var(--line)}
   :root.dark-theme .chip{background:rgba(25,45,65,0.85); border:1px solid var(--line)}
   :root.dark-theme .bubble{background:var(--bubble-bg); border:1px solid var(--line); box-shadow:var(--bubble-shadow)}
   :root.dark-theme .bnav{background:rgba(15,30,43,0.95)}
   :root.dark-theme .bn{color:rgba(255,255,255,0.5)}
-  :root.dark-theme .bn.on{background:var(--c-index); color:#0E1E2C}
+  :root.dark-theme .bn.on{background:var(--c-index); color:#1A1612}
   :root.dark-theme .hero .score{color:var(--c-index)}
   :root.dark-theme .hero .of{color:var(--mut)}
   :root.dark-theme .hero .verdict{color:var(--ink2)}
@@ -268,7 +267,7 @@
   :root.dark-theme .t-foot{color:var(--mut)}
   :root.dark-theme .metric-card{border:1px solid var(--line); box-shadow:var(--shadow)}
   :root.dark-theme .metric-card::before{background:var(--card-before)}
-  :root.dark-theme .tip{background:#0E1E2C; color:#E8F4F8; box-shadow:0 8px 20px rgba(0,0,0,0.55)}
+  :root.dark-theme .tip{background:#1A1612; color:#E8E0D8; box-shadow:0 8px 20px rgba(0,0,0,0.55)}
   :root.dark-theme #theme-toggle{background:rgba(25,45,65,0.85); border:1px solid var(--line); color:var(--ink)}
   
   :root.dark-theme .metric-ring-bg{stroke:rgba(255,255,255,.1)}
@@ -604,7 +603,7 @@
   .trend-dates {
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
+    font-size: 10px;
     color: #7FB895;
     font-weight: 600;
     margin-top: 6px;
@@ -737,21 +736,75 @@
   /* Activity page - atmospheric background */
   #activity-page {
     position: relative;
-    background: linear-gradient(180deg, var(--bg) 0%, var(--page-tint, var(--bg)) 50%, var(--bg) 100%);
+    background: var(--bg);
     transition: background 0.8s ease;
   }
   #activity-page::before {
     content: '';
     position: absolute;
-    top: -100px;
+    top: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-color, rgba(47,191,155,.06)) 0%, transparent 65%);
+    pointer-events: none;
+    transition: background 0.8s ease;
+  }
+  #activity-page::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
     width: 400px;
     height: 400px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--glow-color, rgba(47,191,155,.08)) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--glow-color, rgba(47,191,155,.03)) 0%, transparent 65%);
     pointer-events: none;
     transition: background 0.8s ease;
+  }
+  :root.dark-theme #activity-page::before {
+    opacity: 0.7;
+  }
+  :root.dark-theme #activity-page::after {
+    opacity: 0.5;
+  }
+
+  /* Scroll to bottom button */
+  .scroll-bottom-btn {
+    position: fixed;
+    bottom: 90px;
+    right: calc(50% - 175px);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 16px rgba(45,40,35,.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 80;
+    color: var(--ink2);
+    transition: all 0.3s ease;
+    opacity: 0.9;
+  }
+  .scroll-bottom-btn:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45,40,35,.15);
+    color: var(--ink);
+  }
+  .scroll-bottom-btn:active {
+    transform: translateY(0);
+  }
+  :root.dark-theme .scroll-bottom-btn {
+    background: var(--card);
+    border-color: var(--line);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
   }
   .activity-mascot {
     flex-shrink: 0;
@@ -772,7 +825,14 @@
   /* Steps Carousel */
   .steps-carousel {
     position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(45,40,35,.06);
+  }
+  .steps-carousel:last-of-type {
+    border-bottom: none;
     margin-bottom: 14px;
+    padding-bottom: 0;
   }
   .carousel-track {
     display: flex;
@@ -890,7 +950,7 @@
     margin-top: 2px;
   }
   .step-metric-sub {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--mut);
     opacity: 0.7;
   }
@@ -993,7 +1053,7 @@
     opacity: 0.5;
   }
   .week-chart .avg-label {
-    font-size: 9px;
+    font-size: 10px;
     fill: var(--mut);
     font-weight: 500;
   }
@@ -1030,7 +1090,7 @@
     font-weight: 600;
   }
   .week-bar b {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--ink);
     font-weight: 700;
   }
@@ -1387,13 +1447,13 @@
     position: relative;
   }
   .fc-bar > span {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--mut);
     font-weight: 600;
     order: 2;
   }
   .fc-bar > b {
-    font-size: 8px;
+    font-size: 10px;
     color: var(--ink);
     font-weight: 700;
     order: 3;
@@ -1840,7 +1900,7 @@
     min-height: 4px;
   }
   .hour-bar span {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--mut);
   }
@@ -1876,7 +1936,7 @@
     margin-top: 8px;
   }
   .weekly-labels span {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 600;
     color: var(--mut);
     flex: 1;
@@ -1890,6 +1950,9 @@
   :root.dark-theme .stat-progress{background:rgba(255,255,255,.08)}
   :root.dark-theme .stat-item:not(:last-child)::after{background:rgba(255,255,255,.08)}
   :root.dark-theme #activity-page::before{opacity: 0.6}
+  :root.dark-theme .steps-carousel {
+    border-bottom-color: rgba(255,255,255,.08);
+  }
 
   /* Activity Index Card (Oura/Whoop Score) */
   .activity-index-card {
@@ -2009,7 +2072,7 @@
     gap: 2px;
   }
   .ait-label {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--mut);
     font-weight: 500;
     text-transform: uppercase;
@@ -2047,80 +2110,17 @@
     padding: 16px 20px;
     margin-bottom: 14px;
     background: linear-gradient(135deg, rgba(47,191,155,.06) 0%, rgba(47,191,155,.02) 100%);
+    border-left: 3px solid var(--good);
   }
-  .motivation-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .motivation-ring {
-    position: relative;
-    flex-shrink: 0;
-  }
-  .motivation-ring-inner {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .motivation-percent {
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--ink);
-    letter-spacing: -0.5px;
-  }
-  .motivation-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .motivation-highlight {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .highlight-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .motivation-card .highlight-icon {
     background: var(--good);
-    color: #fff;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 700;
   }
-  .highlight-text {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .motivation-eq {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding-left: 28px;
-  }
-  .eq-sep {
-    font-size: 14px;
+  .motivation-card .eq-sep {
     color: var(--good);
-    font-weight: 700;
   }
-  .eq-text {
-    font-size: 11px;
-    color: var(--ink2);
-    font-weight: 500;
-  }
-  :root.dark-theme .motivation-card {
-    background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
-  }
-
-  /* Motivation Card Colors */
   .motivation-card.cal {
     background: linear-gradient(135deg, rgba(232,161,60,.06) 0%, rgba(232,161,60,.02) 100%);
+    border-left: 3px solid #E8A13C;
   }
   .motivation-card.cal .highlight-icon {
     background: #E8A13C;
@@ -2130,6 +2130,7 @@
   }
   .motivation-card.dist {
     background: linear-gradient(135deg, rgba(49,168,201,.06) 0%, rgba(49,168,201,.02) 100%);
+    border-left: 3px solid #31A8C9;
   }
   .motivation-card.dist .highlight-icon {
     background: #31A8C9;
@@ -2139,12 +2140,16 @@
   }
   .motivation-card.sit {
     background: linear-gradient(135deg, rgba(229,103,126,.06) 0%, rgba(229,103,126,.02) 100%);
+    border-left: 3px solid #E5677E;
   }
   .motivation-card.sit .highlight-icon {
     background: #E5677E;
   }
   .motivation-card.sit .eq-sep {
     color: #E5677E;
+  }
+  :root.dark-theme .motivation-card {
+    background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
   }
   :root.dark-theme .motivation-card.cal {
     background: linear-gradient(135deg, rgba(232,161,60,.08) 0%, rgba(232,161,60,.03) 100%);
@@ -2154,6 +2159,50 @@
   }
   :root.dark-theme .motivation-card.sit {
     background: linear-gradient(135deg, rgba(229,103,126,.08) 0%, rgba(229,103,126,.03) 100%);
+  }
+
+  /* Motivation Content */
+  .motivation-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .motivation-highlight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .highlight-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .highlight-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .motivation-eq {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 30px;
+  }
+  .eq-sep {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .eq-text {
+    font-size: 11px;
+    color: var(--ink2);
+    font-weight: 500;
   }
 
   /* Weekly Stats Block */
@@ -2182,7 +2231,7 @@
     background: var(--line);
   }
   .sws-label {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--mut);
     font-weight: 600;
     margin-bottom: 2px;
@@ -2296,7 +2345,7 @@
     gap: 4px;
   }
   .wsb-day {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--mut);
     font-weight: 600;
   }
@@ -2342,7 +2391,7 @@
     border-top: 2px dashed rgba(45,40,35,.25);
   }
   .wsb-value {
-    font-size: 8px;
+    font-size: 10px;
     color: var(--ink);
     font-weight: 700;
   }
