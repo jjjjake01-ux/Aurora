@@ -801,6 +801,12 @@
   .scroll-bottom-btn:active {
     transform: translateY(0);
   }
+  .scroll-bottom-btn svg {
+    transition: transform 0.3s ease;
+  }
+  .scroll-bottom-btn.scroll-up svg {
+    transform: rotate(180deg);
+  }
   :root.dark-theme .scroll-bottom-btn {
     background: var(--card);
     border-color: var(--line);

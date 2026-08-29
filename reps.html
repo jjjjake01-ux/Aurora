@@ -1597,31 +1597,81 @@
 
 <script src="js/main.js"></script>
 <script>
-  function scrollToBottom() {
-    const app = document.querySelector('.app');
+  let isScrollingUp = false;
+  
+  function getCurrentSection() {
     const sections = document.querySelectorAll('.snap-section');
+    const app = document.querySelector('.app');
     const scrollTop = app ? app.scrollTop : window.pageYOffset;
     
-    let currentSection = null;
     for (let section of sections) {
       const rect = section.getBoundingClientRect();
       if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-        currentSection = section;
-        break;
+        return section;
       }
     }
+    return null;
+  }
+  
+  function scrollToBottom() {
+    const app = document.querySelector('.app');
+    const section = getCurrentSection();
     
-    if (currentSection) {
-      const sectionBottom = currentSection.offsetTop + currentSection.offsetHeight;
-      if (app) {
-        app.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
+    if (isScrollingUp) {
+      if (section) {
+        const sectionTop = section.offsetTop;
+        if (app) {
+          app.scrollTo({ top: sectionTop, behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+        }
       }
-    } else if (app) {
-      app.scrollTo({ top: app.scrollHeight, behavior: 'smooth' });
+    } else {
+      if (section) {
+        const sectionBottom = section.offsetTop + section.offsetHeight;
+        if (app) {
+          app.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
+        }
+      } else if (app) {
+        app.scrollTo({ top: app.scrollHeight, behavior: 'smooth' });
+      }
     }
   }
+  
+  function updateButtonDirection() {
+    const app = document.querySelector('.app');
+    const btn = document.querySelector('.scroll-bottom-btn');
+    if (!btn) return;
+    
+    const section = getCurrentSection();
+    if (!section) return;
+    
+    const sectionBottom = section.offsetTop + section.offsetHeight;
+    const scrollTop = app ? app.scrollTop : window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    
+    const distanceFromBottom = sectionBottom - (scrollTop + windowHeight);
+    
+    if (distanceFromBottom < windowHeight * 0.3) {
+      isScrollingUp = true;
+      btn.classList.add('scroll-up');
+    } else {
+      isScrollingUp = false;
+      btn.classList.remove('scroll-up');
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const app = document.querySelector('.app');
+    if (app) {
+      app.addEventListener('scroll', updateButtonDirection);
+    } else {
+      window.addEventListener('scroll', updateButtonDirection);
+    }
+    updateButtonDirection();
+  });
 </script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v3d52b47920f24c319d37e2661827c42b1787588026925" integrity="sha512-d9sL6GJLXn6fInD1+TVXhTcQOsmxeHfmHAvwGDIxp5TO+uo1fiWW7mHomMj4MLRlCsJDTqXzWLHJFFlPCEIj/A==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f"}' crossorigin="anonymous"></script>
 </body>
