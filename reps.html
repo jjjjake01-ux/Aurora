@@ -327,7 +327,7 @@
       </div>
     </div>
 
-    <!-- Индекс активности (Oura/Whoop стиль) -->
+    <!-- Индекс активности (Oura/Whoop Score) -->
     <div class="card activity-index-card" style="--aura:rgba(47,191,155,.30)">
       <div class="activity-index-top">
         <div class="activity-index-label">Индекс активности</div>
@@ -335,53 +335,76 @@
       </div>
       <div class="activity-index-main">
         <div class="activity-ring-container">
-          <svg width="140" height="140" viewBox="0 0 140 140" class="activity-ring">
+          <svg width="120" height="120" viewBox="0 0 120 120" class="activity-ring">
             <defs>
               <linearGradient id="activityRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#7ED4B8"/>
                 <stop offset="100%" stop-color="#2FBF9B"/>
               </linearGradient>
             </defs>
-            <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="12"/>
-            <circle cx="70" cy="70" r="58" fill="none" stroke="url(#activityRingGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="364" stroke-dashoffset="80" transform="rotate(-90 70 70)"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#activityRingGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="69" transform="rotate(-90 60 60)"/>
           </svg>
           <div class="activity-ring-inner">
             <div class="activity-index-value">78</div>
             <div class="activity-index-status">Хорошо</div>
           </div>
         </div>
-        <div class="activity-index-details">
-          <div class="activity-index-trend">
-            <span class="trend-arrow up">↑5</span>
-            <span class="trend-label">к вчера</span>
+        <div class="activity-index-metrics">
+          <div class="aim-item">
+            <div class="aim-header">
+              <span class="aim-name">Шаги</span>
+              <span class="aim-value">85%</span>
+            </div>
+            <div class="aim-bar"><div class="aim-fill" style="width:85%; background:linear-gradient(90deg,#3DC9A4,#2FBF9B)"></div></div>
+            <span class="aim-contrib">+12</span>
           </div>
-          <div class="activity-index-streak">
-            <span class="streak-icon">🔥</span>
-            <span class="streak-text">7 дней подряд</span>
+          <div class="aim-item">
+            <div class="aim-header">
+              <span class="aim-name">Калории</span>
+              <span class="aim-value">72%</span>
+            </div>
+            <div class="aim-bar"><div class="aim-fill" style="width:72%; background:linear-gradient(90deg,#F5C868,#E8A13C)"></div></div>
+            <span class="aim-contrib">+8</span>
           </div>
-          <div class="activity-index-goal">
-            <span class="goal-label">До цели</span>
-            <span class="goal-value">22 очка</span>
+          <div class="aim-item">
+            <div class="aim-header">
+              <span class="aim-name">Дистанция</span>
+              <span class="aim-value">70%</span>
+            </div>
+            <div class="aim-bar"><div class="aim-fill" style="width:70%; background:linear-gradient(90deg,#7EC8E3,#5BA8C7)"></div></div>
+            <span class="aim-contrib">+15</span>
+          </div>
+          <div class="aim-item">
+            <div class="aim-header">
+              <span class="aim-name">Сидячее</span>
+              <span class="aim-value">65%</span>
+            </div>
+            <div class="aim-bar"><div class="aim-fill" style="width:65%; background:linear-gradient(90deg,#F08070,#E86E5E)"></div></div>
+            <span class="aim-contrib">+5</span>
           </div>
         </div>
       </div>
-      <div class="activity-index-metrics">
-        <div class="aim-item">
-          <div class="aim-value">77%</div>
-          <div class="aim-label">Шаги</div>
+      <div class="activity-index-trends">
+        <div class="ait-item">
+          <span class="ait-label">Вчера</span>
+          <span class="ait-value up">↑5</span>
         </div>
-        <div class="aim-item">
-          <div class="aim-value">64%</div>
-          <div class="aim-label">Калории</div>
+        <div class="ait-item">
+          <span class="ait-label">Ср. неделя</span>
+          <span class="ait-value">72</span>
         </div>
-        <div class="aim-item">
-          <div class="aim-value">70%</div>
-          <div class="aim-label">Дистанция</div>
+        <div class="ait-item">
+          <span class="ait-label">Мин</span>
+          <span class="ait-value">58</span>
         </div>
-        <div class="aim-item">
-          <div class="aim-value" style="color:var(--good)">54%</div>
-          <div class="aim-label">Сидячее</div>
+        <div class="ait-item">
+          <span class="ait-label">Макс</span>
+          <span class="ait-value">89</span>
         </div>
+      </div>
+      <div class="activity-index-verdict">
+        Отличная динамика! 3 дня выше нормы
       </div>
     </div>
 
@@ -1320,37 +1343,37 @@
       <div class="week-summary-bars">
         <div class="wsb-item">
           <div class="wsb-day">Пн</div>
-          <div class="wsb-bar"><div class="wsb-fill" style="width:75%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill level-mid" style="height:75%"></div></div>
           <div class="wsb-value">75</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Вт</div>
-          <div class="wsb-bar"><div class="wsb-fill" style="width:82%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill level-high" style="height:82%"></div></div>
           <div class="wsb-value">82</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Ср</div>
-          <div class="wsb-bar"><div class="wsb-fill today" style="width:92%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill today" style="height:92%"></div></div>
           <div class="wsb-value">92</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Чт</div>
-          <div class="wsb-bar"><div class="wsb-fill" style="width:68%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill level-mid" style="height:68%"></div></div>
           <div class="wsb-value">68</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Пт</div>
-          <div class="wsb-bar"><div class="wsb-fill current" style="width:78%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill current" style="height:78%"></div></div>
           <div class="wsb-value">78</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Сб</div>
-          <div class="wsb-bar"><div class="wsb-fill forecast" style="width:70%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill forecast" style="height:70%"></div></div>
           <div class="wsb-value">~70</div>
         </div>
         <div class="wsb-item">
           <div class="wsb-day">Вс</div>
-          <div class="wsb-bar"><div class="wsb-fill forecast" style="width:60%"></div></div>
+          <div class="wsb-bar"><div class="wsb-fill level-low" style="height:60%"></div></div>
           <div class="wsb-value">~60</div>
         </div>
       </div>
