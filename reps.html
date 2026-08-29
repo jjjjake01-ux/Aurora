@@ -50,11 +50,15 @@
            <div class="score-chip">
             <span class="score num">78</span><span class="of"> /100</span>
           </div>
-          <span class="trend up">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            3 к вчера
-          </span>
-        </div>
+           <span class="trend up">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+             3 к вчера
+           </span>
+         </div>
+         <div class="streak-badge">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+           7 дней подряд выше нормы
+         </div>
         <div class="norm-comparison">
           <div class="norm-bar">
             <div class="norm-fill" style="width: 75%"></div>
@@ -71,7 +75,7 @@
         </div>
          <div class="hero-deltas">
           <span class="pillst good"><i></i>HRV +12%</span>
-          <span class="pillst warn"><i></i>Сон -1.2 ч</span>
+          <span class="pillst warn"><i></i>Сон +1ч к вчера</span>
           <span class="pillst bad"><i></i>Стресс ↑</span>
         </div>
          <div class="readiness">
@@ -182,17 +186,7 @@
       <button class="chip chip-sun"><i></i><b class="num">60</b><span>Солнце</span></button>
     </div>
 
-    <div class="card insight insight-card">
-      <div class="av"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <p><b>Инсайт дня.</b> HRV на <b>12% выше</b> твоей нормы, но сон короче 6 часов три дня подряд. Сегодня интенсивность уместна, вечер оставь на восстановление.</p>
-    </div>
-
-    <div class="card alert">
-      <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17.5v.5"/></svg></div>
-      <div><b>Долг сна 9,5 ч за неделю</b><p>Это уже видно в ритме дня</p></div>
-      <button class="btn">Облегчить план</button>
-    </div>
-
+    <!-- Advice card -->
     <div class="card advice-card">
       <div style="display: flex; gap: 16px; align-items: flex-start;">
         <div style="flex: 1; min-width: 0;">
@@ -215,7 +209,7 @@
             <div class="t-name">Сон<span>часы за сутки</span></div>
             <span class="pillst k-warn"><i></i>Средне</span>
           </div>
-          <div class="t-value num">5ч 31м<span class="delta dn">−1ч к норме</span></div>
+          <div class="t-value num">5ч 31м<span class="delta up">+1ч к вчера</span></div>
           <div class="chart" data-k="sleep"></div>
           <div class="t-foot">Зона — твои обычные 6–7,5 ч</div>
         </div>

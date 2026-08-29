@@ -33,7 +33,20 @@
   .pillst i{width:6px;height:6px;border-radius:50%;background:currentColor}
   .k-good{background:rgba(47,163,107,.12);color:var(--good)}
   .k-warn{background:rgba(232,161,60,.14);color:var(--warn)}
-  .k-att{background:rgba(208,101,82,.12);color:var(--att)}
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, rgba(47,191,155,.1), rgba(47,191,155,.04));
+    border: 1px solid rgba(47,191,155,.15);
+    font-size: 11px;
+    font-weight: 700;
+    color: #2FBF9B;
+    margin-top: 12px;
+  }
+  .streak-badge svg { width: 14px; height: 14px; }
   .hero-deltas .pillst{background:rgba(45,40,35,.04);color:var(--ink2)}
   .hero-deltas .pillst.good{background:rgba(47,191,155,.1);color:#2FBF9B}
   .hero-deltas .pillst.warn{background:rgba(232,161,60,.1);color:#E8A13C}
