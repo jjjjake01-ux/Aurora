@@ -252,6 +252,19 @@ function updateActivityAtmosphere() {
   });
   const avgProgress = totalProgress / progressBars.length;
 
+  // Обновляем индекс активности
+  const indexValue = Math.round(avgProgress);
+  const indexEl = document.querySelector('.activity-index-value');
+  const statusEl = document.querySelector('.activity-index-status');
+  if (indexEl) indexEl.textContent = indexValue;
+  if (statusEl) {
+    if (indexValue >= 80) statusEl.textContent = 'Отлично';
+    else if (indexValue >= 60) statusEl.textContent = 'Хорошо';
+    else if (indexValue >= 40) statusEl.textContent = 'Средне';
+    else statusEl.textContent = 'Мало';
+    statusEl.style.color = indexValue >= 60 ? 'var(--good)' : indexValue >= 40 ? '#E8A13C' : '#E86E5E';
+  }
+
   // Определяем цвет в зависимости от прогресса
   let glowColor, pageTint, subtitleText;
   let mascotColor, mascotBelly, mascotFeet;
