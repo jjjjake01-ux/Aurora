@@ -52,26 +52,30 @@ document.querySelectorAll('.chart').forEach(build);
 function jump(k){document.getElementById('card-'+k).scrollIntoView({behavior:'smooth',block:'center'});}
 
 // Инициализация анимации для вертикальных карточек и горизонтальной карусели
-document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
 function showVisibleCards() {
   document.querySelectorAll('.card').forEach(el => {
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight && rect.bottom > 0) {
-      el.classList.remove('hidden');
       el.classList.add('anim');
     }
   });
 }
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
+    const el = entry.target;
+    const ratio = entry.intersectionRatio;
     if (entry.isIntersecting) {
-      const el = entry.target;
-      el.classList.remove('hidden');
       el.classList.add('anim');
-      observer.unobserve(el);
+      el.style.opacity = (0.3 + (ratio * 0.7)).toFixed(2);
+      if (ratio >= 0.99) {
+        el.style.opacity = '1';
+        observer.unobserve(el);
+      }
+    } else {
+      el.style.opacity = '0.3';
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+}, { threshold: [0, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99, 1], rootMargin: '0px 0px -20px 0px' });
 document.querySelectorAll('.card').forEach(el => observer.observe(el));
 setTimeout(showVisibleCards, 40);
 
@@ -158,19 +162,9 @@ function updateScrollVisuals() {
   const scrollTop = app.scrollTop;
   const pageHeight = app.clientHeight;
 
-  // Когда мы дошли до конца первой страницы (более 60%)
   if (scrollTop > pageHeight * 0.6) {
-    // Первая страница плавно "уходит"
-    firstPage.style.opacity = '0.3';
-    firstPage.style.transform = 'translateY(-50px)';
-    
-    // Вторая страница "открывается"
     secondPage.classList.add('active');
   } else {
-    // Возвращаем все в исходное состояние
-    firstPage.style.opacity = '1';
-    firstPage.style.transform = 'translateY(0)';
-    
     secondPage.classList.remove('active');
   }
 }
