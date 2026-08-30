@@ -67,22 +67,69 @@
         </div>
       </div>
       <div class="status-chart">
-        <svg width="100%" height="60" viewBox="0 0 300 60" preserveAspectRatio="none">
+        <svg width="100%" height="140" viewBox="0 0 320 140" preserveAspectRatio="none">
           <defs>
             <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2FBF9B" stop-opacity="0.25"/>
+              <stop offset="0%" stop-color="#2FBF9B" stop-opacity="0.2"/>
               <stop offset="100%" stop-color="#2FBF9B" stop-opacity="0"/>
             </linearGradient>
+            <filter id="chartGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
           </defs>
-          <path d="M0 45 Q30 35 60 40 T120 30 T180 35 T240 20 T300 25" fill="none" stroke="#2FBF9B" stroke-width="2" stroke-linecap="round"/>
-          <path d="M0 45 Q30 35 60 40 T120 30 T180 35 T240 20 T300 25 L300 60 L0 60 Z" fill="url(#energyGrad)"/>
-          <path d="M0 50 Q30 42 60 48 T120 38 T180 45 T240 32 T300 38" fill="none" stroke="#E5677E" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-          <circle cx="240" cy="20" r="3" fill="#2FBF9B"/>
-          <circle cx="240" cy="32" r="3" fill="#E5677E"/>
+          
+          <!-- Grid lines -->
+          <line x1="40" y1="20" x2="310" y2="20" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          <line x1="40" y1="50" x2="310" y2="50" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          <line x1="40" y1="80" x2="310" y2="80" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          <line x1="40" y1="110" x2="310" y2="110" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          
+          <!-- Energy area fill -->
+          <path d="M40 90 Q90 70 140 75 T240 55 T310 65 L310 120 L40 120 Z" fill="url(#energyGrad)"/>
+          
+          <!-- Energy line -->
+          <path d="M40 90 Q90 70 140 75 T240 55 T310 65" fill="none" stroke="#2FBF9B" stroke-width="2.5" stroke-linecap="round" filter="url(#chartGlow)"/>
+          
+          <!-- Stress line -->
+          <path d="M40 95 Q90 80 140 85 T240 70 T310 78" fill="none" stroke="#E5677E" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#chartGlow)"/>
+          
+          <!-- Current time marker -->
+          <line x1="240" y1="20" x2="240" y2="110" stroke="rgba(45,40,35,.1)" stroke-width="1" stroke-dasharray="3 2"/>
+          <circle cx="240" cy="55" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" filter="url(#chartGlow)"/>
+          <circle cx="240" cy="70" r="4" fill="#E5677E" stroke="#fff" stroke-width="2" filter="url(#chartGlow)"/>
+          
+          <!-- Time labels -->
+          <text x="40" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">6:00</text>
+          <text x="118" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">12:00</text>
+          <text x="196" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">18:00</text>
+          <text x="274" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">00:00</text>
         </svg>
         <div class="status-chart-legend">
           <span class="chart-legend-item"><span class="legend-dot energy"></span>Энергия</span>
           <span class="chart-legend-item"><span class="legend-dot stress"></span>Стресс</span>
+        </div>
+      </div>
+      <div class="status-breakdown">
+        <div class="sb-item">
+          <div class="sb-bar"><div class="sb-fill hrv" style="width:85%"></div></div>
+          <div class="sb-label">HRV</div>
+          <div class="sb-value up">+12</div>
+        </div>
+        <div class="sb-item">
+          <div class="sb-bar"><div class="sb-fill sleep" style="width:60%"></div></div>
+          <div class="sb-label">Сон</div>
+          <div class="sb-value down">−5</div>
+        </div>
+        <div class="sb-item">
+          <div class="sb-bar"><div class="sb-fill stress" style="width:75%"></div></div>
+          <div class="sb-label">Стресс</div>
+          <div class="sb-value up">+8</div>
+        </div>
+        <div class="sb-item">
+          <div class="sb-bar"><div class="sb-fill recovery" style="width:90%"></div></div>
+          <div class="sb-label">Восст.</div>
+          <div class="sb-value up">+6</div>
         </div>
       </div>
       <div class="status-mascot">
