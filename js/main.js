@@ -351,7 +351,10 @@ function initAllCarousels() {
 function initCarouselById(trackId) {
   const track = document.getElementById(trackId);
   if (!track) return;
-  
+
+  // Skip if track is hidden (inside inactive tab panel)
+  if (track.closest('.tab-panel') && !track.closest('.tab-panel').classList.contains('active')) return;
+
   const carousel = track.closest('.steps-carousel');
   const dots = carousel.querySelectorAll('.carousel-dots .dot');
 
