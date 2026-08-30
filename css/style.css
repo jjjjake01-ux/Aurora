@@ -1,4 +1,4 @@
-  :root{
+﻿  :root{
     --f:'Manrope',system-ui,-apple-system,sans-serif;
     --bg:#F5F2ED; --card:#FDFCFA; --ink:#2D2823; --ink2:#7A6F62; --mut:#9A8F82;
     --line:rgba(24,40,60,.05); --shadow:0 10px 30px rgba(23,43,58,.07);
@@ -9,12 +9,12 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   
-  /* МОБИЛЬНЫЙ ЭКРАН: Ограничение ширины как у телефона */
+  /* РњРћР‘РР›Р¬РќР«Р™ Р­РљР РђРќ: РћРіСЂР°РЅРёС‡РµРЅРёРµ С€РёСЂРёРЅС‹ РєР°Рє Сѓ С‚РµР»РµС„РѕРЅР° */
   body{font-family:var(--f);background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:var(--ink);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden;padding:20px 0}
   .app{width:100%;max-width:480px;height:100vh;background:linear-gradient(180deg,#EDF3F2 0%,var(--bg) 30%);border-radius:40px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;padding:30px 16px 120px;box-shadow:0 25px 80px rgba(0,0,0,0.5),0 0 0 12px #1a1a1a,0 0 0 14px #333;position:relative}
   .app::-webkit-scrollbar{display:none}
 
-  /* РЕСПОНЗИВ */
+  /* Р Р•РЎРџРћРќР—РР’ */
   @media(min-width:768px){
     .app{max-width:600px;border-radius:32px;padding:40px 24px 120px}
     .metrics-grid{grid-template-columns:repeat(3,1fr)}
@@ -39,7 +39,7 @@
     .status-value{font-size:28px}
   }
 
-  /* РЕСПОНЗИВ ДЛЯ ВНУТРЕННИХ ЭЛЕМЕНТОВ */
+  /* Р Р•РЎРџРћРќР—РР’ Р”Р›РЇ Р’РќРЈРўР Р•РќРќРРҐ Р­Р›Р•РњР•РќРўРћР’ */
   @media(min-width:768px){
     .activity-index-main{flex-direction:row;gap:32px}
     .week-summary-content{flex-direction:row;gap:32px}
@@ -55,7 +55,7 @@
   .pill{flex-shrink:0;border:1px solid rgba(24,40,60,.1);background:var(--card);border-radius:100px;padding:9px 16px;font:600 13px var(--f);color:var(--ink2);cursor:pointer}
   .pill.on{background:var(--c-index);border-color:var(--c-index);color:#fff;box-shadow:0 6px 16px rgba(47,191,155,.3)}
 
-  /* ЕДИНЫЙ СТИЛЬ КАРТОЧЕК */
+  /* Р•Р”РРќР«Р™ РЎРўРР›Р¬ РљРђР РўРћР§Р•Рљ */
   .card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(45,40,35,.04),0 8px 24px rgba(45,40,35,.06),inset 0 1px 0 rgba(255,255,255,.6);border:1px solid var(--line);position:relative;overflow:hidden;transition:opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1), filter .4s ease;opacity:1;transform:translateY(0);filter:blur(0)}
   .card.anim{opacity:1;transform:translateY(0);filter:blur(0)}
   .card>*{position:relative}
@@ -574,23 +574,23 @@
   .bn .txt{display:none}.bn.on .txt{display:inline}
   .sec-h{margin:10px 4px 2px}
 
-  /* ЭФФЕКТ ГЛУБИНЫ В КАРУСЕЛИ */
+  /* Р­Р¤Р¤Р•РљРў Р“Р›РЈР‘РРќР« Р’ РљРђР РЈРЎР•Р›Р */
   .metric-card{transition:opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease; will-change:transform, opacity, filter}
 
-  /* ПОЛНОЭКРАННЫЙ СВАЙП ДЛЯ МЕТРИК */
+  /* РџРћР›РќРћР­РљР РђРќРќР«Р™ РЎР’РђР™Рџ Р”Р›РЇ РњР•РўР РРљ */
   .full-page-carousel {display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; width:100%; height:auto; scrollbar-width:none; position:relative;}
   .full-page-carousel::-webkit-scrollbar {display:none;}
   .full-page{flex-shrink:0; width:100%; scroll-snap-align:start; height:auto; display:flex; flex-direction:column; gap:14px; padding:10px 0;}
 
-  /* Пагинация */
+  /* РџР°РіРёРЅР°С†РёСЏ */
   .carousel-dots {display:flex; justify-content:center; gap:6px; margin-top:10px;}
   .carousel-dots i {width:6px; height:6px; border-radius:50%; background:var(--mut); opacity:0.4; transition:opacity 0.3s, width 0.3s, background 0.3s;}
   .carousel-dots i.active {width:18px; border-radius:100px; opacity:1; background:var(--c-index);}
 
-  /* ДВЕ ПОЛНОЭКРАННЫЕ СТРАНИЦЫ */
+  /* Р”Р’Р• РџРћР›РќРћР­РљР РђРќРќР«Р• РЎРўР РђРќРР¦Р« */
   .snap-section {min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column; gap:14px; padding-top:50px; padding-bottom:120px;}
 
-  /* ============ ВЕЧЕРНЯЯ ТЕМА ============ */
+  /* ============ Р’Р•Р§Р•Р РќРЇРЇ РўР•РњРђ ============ */
   :root.dark-theme{
     --bg:#E8E0D8; --card:#F5F0EA; --ink:#2D2823; --ink2:#7A6F62; --mut:#8A7F72;
     --line:rgba(45,40,35,0.06); --shadow:0 12px 40px rgba(45,40,35,0.08), 0 0 0 1px rgba(45,40,35,0.03);
@@ -1411,7 +1411,7 @@
   :root.dark-theme .action-btn:hover { background: rgba(232,161,60,.3); }
   :root.dark-theme .metric-focus { background: rgba(255,255,255,.04); }
 
-  /* Connection Card (Activity → Readiness) */
+  /* Connection Card (Activity в†’ Readiness) */
   .connection-card {
     padding: 18px;
     background: linear-gradient(135deg, rgba(47,191,155,.06), rgba(47,191,155,.02));
@@ -1721,19 +1721,19 @@
     background: linear-gradient(135deg, rgba(229,103,126,.1), rgba(229,103,126,.03));
   }
 
-  /* ПРЕМИАЛЬНЫЙ ПЕРЕХОД (Ощущение перелистывания) */
+  /* РџР Р•РњРРђР›Р¬РќР«Р™ РџР•Р Р•РҐРћР” (РћС‰СѓС‰РµРЅРёРµ РїРµСЂРµР»РёСЃС‚С‹РІР°РЅРёСЏ) */
   .snap-section {
     position: relative;
     transition: opacity 0.4s ease, transform 0.4s ease;
   }
 
-  /* Первая страница плавно "уходит" */
+  /* РџРµСЂРІР°СЏ СЃС‚СЂР°РЅРёС†Р° РїР»Р°РІРЅРѕ "СѓС…РѕРґРёС‚" */
   .snap-section:first-child {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     transform-origin: top center;
   }
 
-  /* Вторая страница "всплывает" с эффектом нового экрана */
+  /* Р’С‚РѕСЂР°СЏ СЃС‚СЂР°РЅРёС†Р° "РІСЃРїР»С‹РІР°РµС‚" СЃ СЌС„С„РµРєС‚РѕРј РЅРѕРІРѕРіРѕ СЌРєСЂР°РЅР° */
   .snap-section:not(:first-child) {
     background: var(--bg);
     border-top-left-radius: 32px;
@@ -1744,12 +1744,12 @@
     transform: translateY(40px);
   }
 
-  /* Когда мы доскроллили, вторая страница полностью "открывается" */
+  /* РљРѕРіРґР° РјС‹ РґРѕСЃРєСЂРѕР»Р»РёР»Рё, РІС‚РѕСЂР°СЏ СЃС‚СЂР°РЅРёС†Р° РїРѕР»РЅРѕСЃС‚СЊСЋ "РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ" */
   .snap-section:not(:first-child).active {
     transform: translateY(0);
   }
 
-  /* Пагинация выглядит дороже */
+  /* РџР°РіРёРЅР°С†РёСЏ РІС‹РіР»СЏРґРёС‚ РґРѕСЂРѕР¶Рµ */
   .carousel-dots {
     padding-bottom: 14px;
     position: relative;
@@ -2183,7 +2183,7 @@
   #sleep-page .card:nth-child(5) { animation-delay: 0.5s; }
   #sleep-page .card:nth-child(6) { animation-delay: 0.6s; }
 
-  /* Активность дня */
+  /* РђРєС‚РёРІРЅРѕСЃС‚СЊ РґРЅСЏ */
   .activity-header {
     display: flex;
     align-items: center;
@@ -4065,7 +4065,7 @@
     border-top-color: rgba(255,255,255,.25);
   }
 
-  /* Активность дня */
+  /* РђРєС‚РёРІРЅРѕСЃС‚СЊ РґРЅСЏ */
   .activity-header {
     display: flex;
     align-items: center;
@@ -4280,115 +4280,4 @@
   :root.dark-theme .hero-mascot-glow{background:radial-gradient(circle, rgba(47, 163, 107, 0.15) 0%, transparent 70%)}
   :root.dark-theme .bar-fill{background:linear-gradient(180deg, var(--c-index), rgba(47,163,107,.15)); box-shadow:0 4px 12px rgba(47,163,107,.1)}
 
-  /* Activity page orange accent override */
-  #activity-page {
-    --c-index: #E8A13C;
-    --c-index-light: #F0B45A;
-    --c-index-dark: #C8882A;
-    --c-index-bg: rgba(232,161,60,.06);
-    --c-index-bg-light: rgba(232,161,60,.03);
-  }
-  #activity-page .activity-index-card,
-  #activity-page .connection-card,
-  #activity-page .now-card,
-  #activity-page .motivation-card,
-  #activity-page .steps-card {
-    --aura: rgba(232,161,60,.28);
-  }
-  #activity-page .activity-ring-fill {
-    stroke: #E8A13C;
-  }
-  #activity-page .aim-fill {
-    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
-  }
-  #activity-page .week-chart .line-path {
-    stroke: #E8A13C;
-    filter: drop-shadow(0 4px 8px rgba(232,161,60,.3));
-  }
-  #activity-page .week-chart .area-fill {
-    fill: rgba(232,161,60,.08);
-  }
-  #activity-page .week-chart .area-glow {
-    stroke: #E8A13C;
-  }
-  #activity-page .week-chart .data-point {
-    fill: #E8A13C;
-  }
-  #activity-page .progress-fill {
-    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
-  }
-  #activity-page .hb-fill {
-    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.4)) !important;
-  }
-  #activity-page .hb-fill.today {
-    background: linear-gradient(180deg, #F0B45A, #E8A13C) !important;
-  }
-  #activity-page .activity-tab.active {
-    color: #E8A13C;
-  }
-  #activity-page .footer-trend.up {
-    color: #E8A13C;
-    background: rgba(232,161,60,.12);
-  }
-  #activity-page .fc-bar.done,
-  #activity-page .fc-bar.current {
-    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.3));
-  }
-  #activity-page .fc-bar.done::before,
-  #activity-page .fc-bar.current::before {
-    background: #E8A13C;
-  }
-  #activity-page .record-item.gold {
-    background: linear-gradient(135deg, rgba(232,161,60,.08), rgba(232,161,60,.02));
-    border-color: rgba(232,161,60,.15);
-  }
-  #activity-page .record-item.gold .record-icon {
-    color: #E8A13C;
-  }
-  #activity-page .streak-days {
-    color: #E8A13C;
-  }
-  #activity-page .sw-day.done .sw-check {
-    color: #E8A13C;
-    background: rgba(232,161,60,.15);
-  }
-  #activity-page .sw-day.current .sw-check {
-    color: #E8A13C;
-  }
-  #activity-page .compare-fill.up {
-    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
-  }
-  #activity-page .compare-arrow.up {
-    color: #E8A13C;
-    background: rgba(232,161,60,.12);
-  }
-  #activity-page .steps-sit-warning {
-    --aura: rgba(232,161,60,.18);
-  }
-  #activity-page .steps-zone-card {
-    --aura: rgba(232,161,60,.22);
-  }
-  #activity-page .steps-active-card {
-    --aura: rgba(232,161,60,.22);
-  }
-  #activity-page .steps-streak-card {
-    --aura: rgba(232,161,60,.25);
-  }
-  #activity-page .steps-forecast-card {
-    --aura: rgba(232,161,60,.22);
-  }
-  #activity-page .steps-records-card {
-    --aura: rgba(232,161,60,.22);
-  }
-
-  /* Dark theme for activity page */
-  :root.dark-theme #activity-page .activity-tab.active {
-    color: #F0B45A;
-  }
-  :root.dark-theme #activity-page .footer-trend.up {
-    color: #F0B45A;
-    background: rgba(232,161,60,.15);
-  }
-  :root.dark-theme #activity-page .sw-day.done .sw-check {
-    background: rgba(232,161,60,.2);
   }

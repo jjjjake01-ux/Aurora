@@ -386,7 +386,7 @@ function buildWeekChartById(chartId, values, avg, type) {
 
   const areaPath = `${linePath} L${points[6].x} ${H - PB} L${points[0].x} ${H - PB} Z`;
 
-  const color = type === 'калории' ? '#E8A13C' : type === 'дистанция' ? '#E8A13C' : type === 'сидение' ? '#E8A13C' : '#E8A13C';
+  const color = type === 'калории' ? '#E8A13C' : type === 'дистанция' ? '#31A8C9' : type === 'сидение' ? '#E5677E' : 'var(--c-index)';
   const gradientId = chartId + 'Grad';
 
   svg.innerHTML = `
