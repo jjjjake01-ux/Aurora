@@ -43,9 +43,13 @@
                 <stop offset="0%" stop-color="#7ED4B8"/>
                 <stop offset="100%" stop-color="#2FBF9B"/>
               </linearGradient>
+              <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
             </defs>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(45,40,35,.05)" stroke-width="7"/>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#statusGrad)" stroke-width="7" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="49" transform="rotate(-90 44 44)"/>
+            <circle cx="44" cy="44" r="40" fill="none" stroke="rgba(45,40,35,.03)" stroke-width="8"/>
+            <circle cx="44" cy="44" r="36" fill="none" stroke="url(#statusGrad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="49" transform="rotate(-90 44 44)" filter="url(#ringGlow)"/>
           </svg>
           <div class="status-ring-inner">
             <div class="status-value">78</div>
@@ -60,6 +64,25 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             72→75→78 растёт 3 дня
           </div>
+        </div>
+      </div>
+      <div class="status-chart">
+        <svg width="100%" height="60" viewBox="0 0 300 60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2FBF9B" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#2FBF9B" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 45 Q30 35 60 40 T120 30 T180 35 T240 20 T300 25" fill="none" stroke="#2FBF9B" stroke-width="2" stroke-linecap="round"/>
+          <path d="M0 45 Q30 35 60 40 T120 30 T180 35 T240 20 T300 25 L300 60 L0 60 Z" fill="url(#energyGrad)"/>
+          <path d="M0 50 Q30 42 60 48 T120 38 T180 45 T240 32 T300 38" fill="none" stroke="#E5677E" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          <circle cx="240" cy="20" r="3" fill="#2FBF9B"/>
+          <circle cx="240" cy="32" r="3" fill="#E5677E"/>
+        </svg>
+        <div class="status-chart-legend">
+          <span class="chart-legend-item"><span class="legend-dot energy"></span>Энергия</span>
+          <span class="chart-legend-item"><span class="legend-dot stress"></span>Стресс</span>
         </div>
       </div>
       <div class="status-mascot">
@@ -91,68 +114,6 @@
         </svg>
       </div>
       <div class="status-verdict-text">HRV вырос после вчерашней тренировки — тело готово к нагрузке. Стресс в норме, можно дать полную нагрузку.</div>
-      <div class="status-breakdown">
-        <div class="sb-item">
-          <div class="sb-bar"><div class="sb-fill hrv" style="width:85%"></div></div>
-          <div class="sb-label">HRV</div>
-          <div class="sb-value up">+12</div>
-        </div>
-        <div class="sb-item">
-          <div class="sb-bar"><div class="sb-fill sleep" style="width:60%"></div></div>
-          <div class="sb-label">Сон</div>
-          <div class="sb-value down">−5</div>
-        </div>
-        <div class="sb-item">
-          <div class="sb-bar"><div class="sb-fill stress" style="width:75%"></div></div>
-          <div class="sb-label">Стресс</div>
-          <div class="sb-value up">+8</div>
-        </div>
-        <div class="sb-item">
-          <div class="sb-bar"><div class="sb-fill recovery" style="width:90%"></div></div>
-          <div class="sb-label">Восст.</div>
-          <div class="sb-value up">+6</div>
-        </div>
-      </div>
-      <div class="status-causes">
-        <div class="sc-item"><span class="sc-dot sleep"></span>Сон −5 — лёг в 00:15 при норме 23:00</div>
-      </div>
-      <div class="status-weekly">
-        <div class="sw-item">
-          <div class="sw-day">Пн</div>
-          <div class="sw-bar"><div class="sw-fill" style="height:70%"></div></div>
-          <div class="sw-value">70</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Вт</div>
-          <div class="sw-bar"><div class="sw-fill" style="height:65%"></div></div>
-          <div class="sw-value">65</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Ср</div>
-          <div class="sw-bar"><div class="sw-fill" style="height:80%"></div></div>
-          <div class="sw-value">80</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Чт</div>
-          <div class="sw-bar"><div class="sw-fill" style="height:75%"></div></div>
-          <div class="sw-value">75</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Пт</div>
-          <div class="sw-bar"><div class="sw-fill today" style="height:78%"></div></div>
-          <div class="sw-value today">78</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Сб</div>
-          <div class="sw-bar"><div class="sw-fill forecast" style="height:72%"></div></div>
-          <div class="sw-value forecast">72</div>
-        </div>
-        <div class="sw-item">
-          <div class="sw-day">Вс</div>
-          <div class="sw-bar"><div class="sw-fill forecast" style="height:68%"></div></div>
-          <div class="sw-value forecast">68</div>
-        </div>
-      </div>
     </div>
 
     <!-- ГЛАВНОЕ ДЕЙСТВИЕ ДНЯ -->
