@@ -229,6 +229,16 @@
   .health-chip.sun .health-chip-value { color: #2FBF9B; }
 
   /* Greeting */
+  .hero-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .hero-title {
+    flex: 1;
+    min-width: 0;
+  }
   .greeting-text {
     font-size: 28px;
     font-weight: 700;
@@ -243,6 +253,34 @@
     font-weight: 500;
     margin-top: 6px;
     line-height: 1.4;
+  }
+  .hero-weather {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .weather-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,183,77,.12), rgba(255,152,0,.08));
+    color: #F5A623;
+  }
+  .weather-temp {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .weather-desc {
+    font-size: 11px;
+    color: var(--ink2);
+    font-weight: 500;
+    margin-top: 2px;
   }
 
   /* Status Breakdown */
