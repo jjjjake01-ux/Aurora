@@ -3,7 +3,7 @@
     --bg:#F5F2ED; --card:#FDFCFA; --ink:#2D2823; --ink2:#7A6F62; --mut:#9A8F82;
     --line:rgba(24,40,60,.05); --shadow:0 10px 30px rgba(23,43,58,.07);
     --good:#2FA36B; --warn:#C98A1F; --att:#D06552;
-    --c-index:#2FBF9B; --c-sleep:#7B74D6; --c-hrv:#E5677E; --c-stress:#E8A13C;
+    --c-index:#2FBF9B; --c-sleep:#7B74D6; --c-hrv:#E5677E; --c-stress:#D47A5A;
     --c-load:#F0764B; --c-nutr:#66BB6A; --c-energy:#31A8C9; --c-sun:#F2C037;
     --r:24px;
   }
@@ -319,13 +319,13 @@
     flex-shrink: 0;
   }
   .sc-dot.hrv { background: #2FBF9B; }
-  .sc-dot.sleep { background: #E8A13C; }
+  .sc-dot.sleep { background: #D47A5A; }
   .sc-dot.stress { background: #D06552; }
 
   /* Action Card (Main Action of Day) */
   .action-card {
     padding: 18px;
-    background: linear-gradient(135deg, rgba(232,161,60,.08), rgba(232,161,60,.02));
+    background: linear-gradient(135deg, rgba(212,122,90,.08), rgba(232,161,60,.02));
     border-left: 3px solid var(--warn);
   }
   .action-header {
@@ -337,7 +337,7 @@
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: rgba(232,161,60,.15);
+    background: rgba(212,122,90,.15);
     color: var(--warn);
     display: flex;
     align-items: center;
@@ -369,19 +369,19 @@
     border-radius: 100px;
     padding: 12px 16px;
     font: 700 13px var(--f);
-    background: rgba(232,161,60,.15);
+    background: rgba(212,122,90,.15);
     color: var(--warn);
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .action-btn:hover {
-    background: rgba(232,161,60,.25);
+    background: rgba(212,122,90,.25);
   }
   .action-btn:active {
     transform: scale(0.98);
   }
   :root.dark-theme .action-card {
-    background: linear-gradient(135deg, rgba(232,161,60,.1), rgba(232,161,60,.03));
+    background: linear-gradient(135deg, rgba(232,161,60,.1), rgba(212,122,90,.03));
   }
   :root.dark-theme .action-btn {
     background: rgba(232,161,60,.2);
@@ -433,13 +433,13 @@
     border-radius: 100px;
     padding: 8px 14px;
     font: 700 11px var(--f);
-    background: rgba(232,161,60,.15);
+    background: rgba(212,122,90,.15);
     color: var(--warn);
     cursor: pointer;
     transition: all 0.2s ease;
   }
   .alert-btn:hover {
-    background: rgba(232,161,60,.25);
+    background: rgba(212,122,90,.25);
     transform: scale(1.02);
   }
   .alert-btn:active {
@@ -595,8 +595,8 @@
     --bg:#E8E0D8; --card:#F5F0EA; --ink:#2D2823; --ink2:#7A6F62; --mut:#8A7F72;
     --line:rgba(45,40,35,0.06); --shadow:0 12px 40px rgba(45,40,35,0.08), 0 0 0 1px rgba(45,40,35,0.03);
     --good:#2FA36B; --warn:#C98A1F; --att:#D06552;
-    --c-index:#2FA36B; --c-sleep:#7B74D6; --c-hrv:#D06580; --c-stress:#E8A13C;
-    --c-load:#E07060; --c-nutr:#5CB85C; --c-energy:#31A8C9; --c-sun:#E8A13C;
+    --c-index:#2FA36B; --c-sleep:#7B74D6; --c-hrv:#D06580; --c-stress:#D47A5A;
+    --c-load:#E07060; --c-nutr:#5CB85C; --c-energy:#31A8C9; --c-sun:#D47A5A;
     --bubble-bg:rgba(255,255,255,0.5); --bubble-shadow:rgba(45,40,35,0.08);
     --card-before:radial-gradient(160% 100% at 50% 0%, rgba(255,255,255,0.4), transparent 60%);
   }
@@ -636,7 +636,7 @@
   :root.dark-theme .health-chip.sun{background:rgba(47,163,107,.1); border-color:rgba(47,163,107,.15)}
   :root.dark-theme .health-chip.spo2{background:rgba(47,163,107,.08)}
   :root.dark-theme .health-chip.breath{background:rgba(47,163,107,.06)}
-  :root.dark-theme .health-chip.sun{background:rgba(232,161,60,.08)}
+  :root.dark-theme .health-chip.sun{background:rgba(212,122,90,.08)}
 
   /* Theme Toggle */
   .theme-toggle {
@@ -823,7 +823,7 @@
     display: flex;
     gap: 14px;
     align-items: flex-start;
-    background: linear-gradient(135deg, rgba(232,161,60,.06), rgba(232,161,60,.02));
+    background: linear-gradient(135deg, rgba(212,122,90,.06), rgba(232,161,60,.02));
   }
   .alert-icon {
     width: 36px;
@@ -1643,7 +1643,7 @@
     font-size: 11px;
     font-weight: 700;
     color: var(--warn);
-    background: rgba(232,161,60,.08);
+    background: rgba(212,122,90,.08);
     border-radius: 8px;
   }
   .zones-recommend svg {
@@ -2115,8 +2115,8 @@
   }
   .metric-title.steps { background: rgba(47,191,155,.08); }
   .metric-title.steps svg { stroke: #2FBF9B; }
-  .metric-title.battery { background: rgba(232,161,60,.08); }
-  .metric-title.battery svg { stroke: #E8A13C; }
+  .metric-title.battery { background: rgba(212,122,90,.08); }
+  .metric-title.battery svg { stroke: #D47A5A; }
   .metric-title.stress { background: rgba(208,101,82,.08); }
   .metric-title.stress svg { stroke: #D06552; }
   .metric-title.hrv { background: rgba(229,103,126,.08); }
@@ -2203,13 +2203,13 @@
     gap: 8px;
     padding: 8px 14px;
     border-radius: 16px;
-    background: rgba(232,161,60,.08);
-    border: 1px solid rgba(232,161,60,.15);
+    background: rgba(212,122,90,.08);
+    border: 1px solid rgba(212,122,90,.15);
     max-width: 260px;
   }
   .mascot-speech svg {
     flex-shrink: 0;
-    color: #E8A13C;
+    color: #D47A5A;
   }
   .speech-text {
     font-size: 12px;
@@ -2418,10 +2418,10 @@
   }
   .steps-value-chip.cal {
     background: linear-gradient(135deg, rgba(232,161,60,.1), rgba(232,161,60,.05));
-    border-color: rgba(232,161,60,.15);
+    border-color: rgba(212,122,90,.15);
   }
   .steps-value-chip.cal .steps-value {
-    background: linear-gradient(135deg, #E8A13C, #F5C868);
+    background: linear-gradient(135deg, #D47A5A, #F5C868);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -2982,7 +2982,7 @@
     color: var(--good);
   }
   .forecast-status.warn {
-    background: rgba(232,161,60,.15);
+    background: rgba(212,122,90,.15);
     color: var(--warn);
   }
   .forecast-chart {
@@ -3150,23 +3150,23 @@
 
   /* Calories Carousel */
   .calories-carousel .progress-fill.cal {
-    background: linear-gradient(90deg, #F0B45A, #E8A13C);
+    background: linear-gradient(90deg, #D47A5A, #D47A5A);
   }
   .calories-carousel .hb-fill.cal {
     background: linear-gradient(180deg, rgba(232,161,60,.4), rgba(232,161,60,.1));
   }
   .calories-carousel .hb-fill.cal.today {
-    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.5));
+    background: linear-gradient(180deg, #D47A5A, rgba(232,161,60,.5));
     box-shadow: 0 4px 12px rgba(232,161,60,.3);
   }
   .calories-carousel .wb-fill.cal {
     background: linear-gradient(180deg, rgba(232,161,60,.4), rgba(232,161,60,.1));
   }
   .calories-carousel .wb-fill.cal.today {
-    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.4));
+    background: linear-gradient(180deg, #D47A5A, rgba(232,161,60,.4));
   }
   .calories-carousel .dot.active {
-    background: #E8A13C;
+    background: #D47A5A;
   }
 
   /* Distance Carousel */
@@ -3417,7 +3417,7 @@
     background: linear-gradient(180deg, rgba(232,161,60,.5), rgba(232,161,60,.2));
   }
   .calories-carousel .fc-bar.current::before {
-    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.4));
+    background: linear-gradient(180deg, #D47A5A, rgba(232,161,60,.4));
   }
   .distance-carousel .fc-bar.done::before {
     background: linear-gradient(180deg, rgba(49,168,201,.5), rgba(49,168,201,.2));
@@ -3745,14 +3745,14 @@
     color: var(--good);
   }
   .motivation-card.cal {
-    background: linear-gradient(135deg, rgba(232,161,60,.06) 0%, rgba(232,161,60,.02) 100%);
-    border-left: 3px solid #E8A13C;
+    background: linear-gradient(135deg, rgba(212,122,90,.06) 0%, rgba(232,161,60,.02) 100%);
+    border-left: 3px solid #D47A5A;
   }
   .motivation-card.cal .highlight-icon {
-    background: #E8A13C;
+    background: #D47A5A;
   }
   .motivation-card.cal .eq-sep {
-    color: #E8A13C;
+    color: #D47A5A;
   }
   .motivation-card.dist {
     background: linear-gradient(135deg, rgba(49,168,201,.06) 0%, rgba(49,168,201,.02) 100%);
@@ -3778,7 +3778,7 @@
     background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
   }
   :root.dark-theme .motivation-card.cal {
-    background: linear-gradient(135deg, rgba(232,161,60,.08) 0%, rgba(232,161,60,.03) 100%);
+    background: linear-gradient(135deg, rgba(212,122,90,.08) 0%, rgba(212,122,90,.03) 100%);
   }
   :root.dark-theme .motivation-card.dist {
     background: linear-gradient(135deg, rgba(49,168,201,.08) 0%, rgba(49,168,201,.03) 100%);
