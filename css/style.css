@@ -228,25 +228,21 @@
   .health-chip.sun { background: rgba(47,191,155,.08); border-color: rgba(47,191,155,.15); }
   .health-chip.sun .health-chip-value { color: #2FBF9B; }
 
-  /* Greeting chip */
-  .greeting-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 100px;
-    background: linear-gradient(135deg, rgba(47,191,155,.08), rgba(49,168,201,.05));
-    border: 1px solid rgba(47,191,155,.12);
-    font-size: 14px;
-    font-weight: 600;
+  /* Greeting */
+  .greeting-text {
+    font-size: 28px;
+    font-weight: 700;
     color: var(--ink);
-    margin-bottom: 8px;
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
   }
   .greeting-subtitle {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--ink2);
     font-weight: 500;
-    margin-top: 4px;
+    margin-top: 6px;
+    line-height: 1.4;
   }
 
   /* Status Breakdown */
@@ -495,9 +491,8 @@
     height: 14px;
     stroke: #2FBF9B;
   }
-  :root.dark-theme .greeting-chip {
-    background: linear-gradient(135deg, rgba(47,163,107,.1), rgba(47,163,107,.04));
-    border-color: rgba(47,163,107,.15);
+  :root.dark-theme .greeting-text {
+    color: var(--ink);
   }
   /* Score chip */
   .score-chip {
