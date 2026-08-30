@@ -1,0 +1,86 @@
+Готовность
+            <button class="info-btn" aria-label="Что такое Готовность?" onclick="this.querySelector('.info-tooltip').classList.toggle('show')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span class="info-tooltip">Готовность —Комплексный показатель на основе HRV, сна, стресса и активности. Показывает готовность тела к нагрузкам. Считается за последние 24ч.</span>
+            </button>
+          </div>
+          <div class="status-verdict">Высокая</div>
+          <div class="status-norm">Твоя норма 72 · <span class="status-norm-diff">+6 выше обычного</span></div>
+          <div class="status-trend">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2FBF9B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <span>72→75→78 растёт 3 дня</span>
+          </div>
+          <div class="status-day-summary">
+            <div class="day-summary-title">Динамика дня</div>
+            <div class="day-summary-items">
+              <span class="day-summary-item rise">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                <span class="day-summary-label">С утра</span>
+                <span class="day-summary-value">+16</span>
+              </span>
+              <span class="day-summary-item peak">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <span class="day-summary-label">Пик</span>
+                <span class="day-summary-value">18:00</span>
+              </span>
+              <span class="day-summary-item forecast">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span class="day-summary-label">К вечеру</span>
+                <span class="day-summary-value">~55</span>
+              </span>
+            </div>
+          </div>
+          <div class="status-compare">
+            <span class="status-compare-yesterday">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2FBF9B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              +3 от вчера
+            </span>
+            <span class="status-compare-weekday">Среда обычно 75</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Мини-бары за неделю -->
+      <div class="status-week-bars" aria-label="Динамика за неделю: Пн 72, Вт 70, Ср 75, Чт 73, Пт 76, Сб 74, Вс 78">
+        <div class="week-bars-label">Неделя</div>
+        <div class="week-bars-row">
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:72%"></div></div>
+            <span class="week-bar-day">Пн</span>
+            <span class="week-bar-val">72</span>
+          </div>
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:70%"></div></div>
+            <span class="week-bar-day">Вт</span>
+            <span class="week-bar-val">70</span>
+          </div>
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:75%"></div></div>
+            <span class="week-bar-day">Ср</span>
+            <span class="week-bar-val">75</span>
+          </div>
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:73%"></div></div>
+            <span class="week-bar-day">Чт</span>
+            <span class="week-bar-val">73</span>
+          </div>
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:76%"></div></div>
+            <span class="week-bar-day">Пт</span>
+            <span class="week-bar-val">76</span>
+          </div>
+          <div class="week-bar-item">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:74%"></div></div>
+            <span class="week-bar-day">Сб</span>
+            <span class="week-bar-val">74</span>
+          </div>
+          <div class="week-bar-item today">
+            <div class="week-bar-track"><div class="week-bar-fill" style="height:78%"></div></div>
+            <span class="week-bar-day">Вс</span>
+            <span class="week-bar-val">78</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="status-updated">О

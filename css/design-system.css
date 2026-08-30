@@ -1,0 +1,314 @@
+/* ============================================
+   ATLAS HEALTH — DESIGN SYSTEM
+   Паспорт стиля приложения
+   ============================================
+   
+   КОНЦЕПЦИЯ:
+   - Единая база (типографика, отступы, радиусы, тени)
+   - Каждая страница — своя атмосфера, свой акцент
+   - Маскот — связующий элемент между страницами
+   
+   СТРАНИЦЫ:
+   1. Готовность — спокойный зелёный (#2FBF9B)
+   2. Активность — тёплый оранжевый (#D47A5A)
+   3. Сон — мягкий фиолетовый (#7B74D6)
+   4. Питание — свежий зелёный (#66BB6A)
+   5. Стресс — янтарный (#E8A13C)
+   ============================================ */
+
+/* ============================================
+   1. ОБЩИЕ ТОКЕНЫ (база для всех страниц)
+   ============================================ */
+:root {
+  /* Типографика */
+  --font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-size-xs: 9px;
+  --font-size-sm: 10px;
+  --font-size-base: 11px;
+  --font-size-md: 12px;
+  --font-size-lg: 13px;
+  --font-size-xl: 14px;
+  --font-size-2xl: 16px;
+  --font-size-3xl: 20px;
+  --font-size-4xl: 28px;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  --line-height-tight: 1;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.6;
+  
+  --letter-spacing-tight: -0.5px;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.5px;
+  --letter-spacing-wider: 0.8px;
+  
+  /* Отступы */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  
+  /* Радиусы */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 100px;
+  
+  /* Тени */
+  --shadow-sm: 0 2px 8px rgba(45,40,35,.04);
+  --shadow-md: 0 4px 16px rgba(45,40,35,.06);
+  --shadow-lg: 0 8px 32px rgba(45,40,35,.08);
+  --shadow-xl: 0 12px 48px rgba(45,40,35,.1);
+  
+  /* Анимации */
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-in-out: cubic-bezier(.4,0,.2,1);
+  --duration-fast: 0.15s;
+  --duration-normal: 0.25s;
+  --duration-slow: 0.4s;
+  
+  /* Z-index */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-modal: 50;
+  --z-tooltip: 100;
+  --z-toast: 200;
+}
+
+/* ============================================
+   2. СТРАНИЦА: ГОТОВНОСТЬ (Status)
+   Атмосфера: спокойная, уверенная, зелёная
+   ============================================ */
+:root {
+  /* Основной акцент */
+  --status-accent: #2FBF9B;
+  --status-accent-light: #5CC4A0;
+  --status-accent-dark: #1A9E7A;
+  --status-accent-glow: rgba(47,191,155,.25);
+  --status-accent-bg: rgba(47,191,155,.04);
+  --status-accent-bg-hover: rgba(47,191,155,.08);
+  
+  /* Градиенты */
+  --status-gradient: linear-gradient(135deg, #5CC4A0 0%, #2FBF9B 50%, #1A9E7A 100%);
+  --status-gradient-subtle: linear-gradient(135deg, rgba(47,191,155,.06) 0%, rgba(47,191,155,.02) 100%);
+  
+  /* Статусные цвета */
+  --status-high: #2FBF9B;
+  --status-medium: #E8A13C;
+  --status-low: #E86E5E;
+  
+  /* Кольцо готовности */
+  --ring-size: 96px;
+  --ring-stroke: 6px;
+  --ring-bg: rgba(45,40,35,.03);
+}
+
+/* ============================================
+   3. СТРАНИЦА: АКТИВНОСТЬ (Activity)
+   Атмосфера: энергичная, тёплая, оранжевая
+   ============================================ */
+:root {
+  /* Основной акцент */
+  --activity-accent: #D47A5A;
+  --activity-accent-light: #E8937A;
+  --activity-accent-dark: #B8654A;
+  --activity-accent-glow: rgba(212,122,90,.25);
+  --activity-accent-bg: rgba(212,122,90,.04);
+  --activity-accent-bg-hover: rgba(212,122,90,.08);
+  
+  /* Градиенты */
+  --activity-gradient: linear-gradient(135deg, #E8937A 0%, #D47A5A 50%, #B8654A 100%);
+  --activity-gradient-subtle: linear-gradient(135deg, rgba(212,122,90,.06) 0%, rgba(212,122,90,.02) 100%);
+  
+  /* Индекс активности */
+  --index-accent: #2FBF9B;
+  --index-accent-glow: rgba(47,191,155,.25);
+  
+  /* Энергия */
+  --energy-accent: #31A8C9;
+  --energy-accent-glow: rgba(49,168,201,.25);
+  
+  /* Движение */
+  --move-accent: #31A8C9;
+  --sit-accent: #E5677E;
+}
+
+/* ============================================
+   4. СТРАНИЦА: СОН (Sleep)
+   Атмосфера: спокойная, мягкая, фиолетовая
+   ============================================ */
+:root {
+  /* Основной акцент */
+  --sleep-accent: #7B74D6;
+  --sleep-accent-light: #9B95E0;
+  --sleep-accent-dark: #5B54B6;
+  --sleep-accent-glow: rgba(123,116,214,.25);
+  --sleep-accent-bg: rgba(123,116,214,.04);
+  --sleep-accent-bg-hover: rgba(123,116,214,.08);
+  
+  /* Градиенты */
+  --sleep-gradient: linear-gradient(135deg, #9B95E0 0%, #7B74D6 50%, #5B54B6 100%);
+  --sleep-gradient-subtle: linear-gradient(135deg, rgba(123,116,214,.06) 0%, rgba(123,116,214,.02) 100%);
+  
+  /* Фазы сна */
+  --sleep-deep: #5B54B6;
+  --sleep-light: #9B95E0;
+  --sleep-rem: #7B74D6;
+  --sleep-awake: #E8A13C;
+}
+
+/* ============================================
+   5. СТРАНИЦА: ПИТАНИЕ (Nutrition)
+   Атмосфера: свежая, натуральная, зелёная
+   ============================================ */
+:root {
+  /* Основной акцент */
+  --nutr-accent: #66BB6A;
+  --nutr-accent-light: #81C784;
+  --nutr-accent-dark: #4CAF50;
+  --nutr-accent-glow: rgba(102,187,106,.25);
+  --nutr-accent-bg: rgba(102,187,106,.04);
+  --nutr-accent-bg-hover: rgba(102,187,106,.08);
+  
+  /* Градиенты */
+  --nutr-gradient: linear-gradient(135deg, #81C784 0%, #66BB6A 50%, #4CAF50 100%);
+  --nutr-gradient-subtle: linear-gradient(135deg, rgba(102,187,106,.06) 0%, rgba(102,187,106,.02) 100%);
+  
+  /* Макронутриенты */
+  --nutr-protein: #E86E5E;
+  --nutr-carbs: #E8A13C;
+  --nutr-fat: #31A8C9;
+  --nutr-fiber: #66BB6A;
+}
+
+/* ============================================
+   6. СТРАНИЦА: СТРЕСС (Stress)
+   Атмосфера: янтарная, тёплая, предупреждающая
+   ============================================ */
+:root {
+  /* Основной акцент */
+  --stress-accent: #E8A13C;
+  --stress-accent-light: #F0B45A;
+  --stress-accent-dark: #D4952A;
+  --stress-accent-glow: rgba(232,161,60,.25);
+  --stress-accent-bg: rgba(232,161,60,.04);
+  --stress-accent-bg-hover: rgba(232,161,60,.08);
+  
+  /* Градиенты */
+  --stress-gradient: linear-gradient(135deg, #F0B45A 0%, #E8A13C 50%, #D4952A 100%);
+  --stress-gradient-subtle: linear-gradient(135deg, rgba(232,161,60,.06) 0%, rgba(232,161,60,.02) 100%);
+  
+  /* Уровни стресса */
+  --stress-low: #2FBF9B;
+  --stress-medium: #E8A13C;
+  --stress-high: #E86E5E;
+}
+
+/* ============================================
+   7. ОБЩИЕ КОМПОНЕНТЫ
+   ============================================ */
+:root {
+  /* Карточка */
+  --card-bg: #FDFCFA;
+  --card-border: rgba(45,40,35,.06);
+  --card-shadow: 0 2px 8px rgba(45,40,35,.04), 0 8px 24px rgba(45,40,35,.06);
+  --card-radius: 24px;
+  --card-padding: 20px;
+  
+  /* Кнопки */
+  --btn-radius: 100px;
+  --btn-padding: 9px 16px;
+  --btn-font-size: 13px;
+  --btn-font-weight: 600;
+  
+  /* Пills (табы) */
+  --pill-radius: 100px;
+  --pill-padding: 9px 16px;
+  --pill-font-size: 13px;
+  --pill-font-weight: 600;
+  
+  /* Графики */
+  --chart-line-width: 2.5px;
+  --chart-point-radius: 4px;
+  --chart-grid-opacity: 0.06;
+  
+  /* Тултипы */
+  --tooltip-bg: var(--card-bg);
+  --tooltip-border: rgba(45,40,35,.1);
+  --tooltip-shadow: 0 8px 24px rgba(23,43,58,.12);
+  --tooltip-radius: 14px;
+  --tooltip-padding: 12px 14px;
+  --tooltip-font-size: 12px;
+  
+  /* Иконки */
+  --icon-size-sm: 14px;
+  --icon-size-md: 18px;
+  --icon-size-lg: 24px;
+  
+  /* Аватар/Маскот */
+  --mascot-size-sm: 44px;
+  --mascot-size-md: 60px;
+  --mascot-size-lg: 80px;
+}
+
+/* ============================================
+   8. ТЁМНАЯ ТЕМА (общая база)
+   ============================================ */
+:root.dark-theme {
+  --bg: #0F1520;
+  --card-bg: rgba(255,255,255,.04);
+  --card-border: rgba(255,255,255,.06);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.3);
+  
+  --ink: #E8ECF4;
+  --ink2: rgba(255,255,255,.7);
+  --mut: rgba(255,255,255,.4);
+  
+  --line: rgba(255,255,255,.06);
+  
+  /* Акценты в тёмной теме */
+  --status-accent: #3DD4A8;
+  --activity-accent: #E8937A;
+  --sleep-accent: #9B95E0;
+  --nutr-accent: #81C784;
+  --stress-accent: #F0B45A;
+}
+
+/* ============================================
+   9. УТИЛИТЫ
+   ============================================ */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-md { font-size: var(--font-size-md); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-black { font-weight: var(--font-weight-black); }
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }

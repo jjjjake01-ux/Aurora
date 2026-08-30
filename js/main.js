@@ -51,6 +51,128 @@ function build(el){
 document.querySelectorAll('.chart').forEach(build);
 function jump(k){document.getElementById('card-'+k).scrollIntoView({behavior:'smooth',block:'center'});}
 
+// Переключение графика Стресс / Энергия в карточке статуса
+function switchDayChart(btn, metric) {
+  // Обновляем активную вкладку
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  const container = document.querySelector('.day-chart-container');
+  if (!container) return;
+  const svg = container.querySelector('.day-chart');
+  if (!svg) return;
+
+  // Данные для каждого режима (7 точек: 06:00–24:00 каждые 3 часа)
+  const charts = {
+    stress: {
+      color: '#2FBF9B',
+      path: 'M0 70 C25 65 25 58 50 55 C75 52 75 48 100 45 C125 42 125 48 150 50 C175 52 175 30 200 25 C225 20 225 28 250 30 C275 32 275 42 300 45',
+      points: [
+        { cx: 0,   cy: 70, time: '06:00', value: '62', status: 'Норма' },
+        { cx: 50,  cy: 55, time: '09:00', value: '58', status: 'Ниже нормы' },
+        { cx: 100, cy: 45, time: '12:00', value: '71', status: 'Хорошо' },
+        { cx: 150, cy: 50, time: '15:00', value: '65', status: 'Норма' },
+        { cx: 200, cy: 25, time: '18:00', value: '82', status: 'Высокая' },
+        { cx: 250, cy: 30, time: '21:00', value: '78', status: 'Высокая' },
+        { cx: 300, cy: 45, time: '24:00', value: '55', status: 'Норма' }
+      ],
+      trend: '+16 за 12 часов',
+      daySummary: { rise: '+16', peak: '18:00', forecast: '~55' },
+      gradientStops: [
+        { offset: '0%',   color: '#2FBF9B', opacity: '0.35' },
+        { offset: '50%',  color: '#2FBF9B', opacity: '0.1' },
+        { offset: '100%', color: '#2FBF9B', opacity: '0' }
+      ]
+    },
+    energy: {
+      color: '#31A8C9',
+      path: 'M0 80 C25 75 25 63 50 60 C75 57 75 43 100 40 C125 37 125 36 150 35 C175 34 175 40 200 45 C225 50 225 52 250 55 C275 58 275 68 300 72',
+      points: [
+        { cx: 0,   cy: 80, time: '06:00', value: '45', status: 'Низкая' },
+        { cx: 50,  cy: 60, time: '09:00', value: '58', status: 'Норма' },
+        { cx: 100, cy: 40, time: '12:00', value: '72', status: 'Хорошо' },
+        { cx: 150, cy: 35, time: '15:00', value: '78', status: 'Высокая' },
+        { cx: 200, cy: 45, time: '18:00', value: '64', status: 'Норма' },
+        { cx: 250, cy: 55, time: '21:00', value: '48', status: 'Ниже нормы' },
+        { cx: 300, cy: 72, time: '24:00', value: '32', status: 'Низкая' }
+      ],
+      trend: '−30 за 12 часов',
+      daySummary: { rise: '−35', peak: '15:00', forecast: '~32' },
+      gradientStops: [
+        { offset: '0%',   color: '#31A8C9', opacity: '0.35' },
+        { offset: '50%',  color: '#31A8C9', opacity: '0.1' },
+        { offset: '100%', color: '#31A8C9', opacity: '0' }
+      ]
+    }
+  };
+
+  const data = charts[metric];
+  if (!data) return;
+
+  // Обновляем градиент
+  const grad = svg.querySelector('#dayAreaGrad');
+  if (grad) {
+    grad.innerHTML = data.gradientStops.map(s =>
+      `<stop offset="${s.offset}" stop-color="${s.color}" stop-opacity="${s.opacity}"/>`
+    ).join('');
+  }
+
+  // Обновляем пути
+  const areaGlow = svg.querySelector('.area-glow');
+  if (areaGlow) {
+    areaGlow.setAttribute('d', data.path);
+    areaGlow.style.stroke = data.color;
+  }
+
+  const areaFill = svg.querySelector('.area-fill');
+  if (areaFill) areaFill.setAttribute('d', data.path + ' L300 85 L0 85 Z');
+
+  const linePath = svg.querySelector('.line-path');
+  if (linePath) {
+    linePath.setAttribute('d', data.path);
+    linePath.style.stroke = data.color;
+    // Перезапуск анимации
+    linePath.style.animation = 'none';
+    linePath.offsetHeight; // reflow
+    linePath.style.animation = 'drawLine 1.5s ease forwards';
+  }
+
+  // Обновляем точки
+  const circles = svg.querySelectorAll('.data-point');
+  circles.forEach((c, i) => {
+    if (data.points[i]) {
+      c.setAttribute('cx', data.points[i].cx);
+      c.setAttribute('cy', data.points[i].cy);
+      c.style.fill = data.color;
+      c.setAttribute('data-time', data.points[i].time);
+      c.setAttribute('data-value', data.points[i].value);
+      c.setAttribute('data-status', data.points[i].status);
+    }
+  });
+
+  // Обновляем тренд
+  const trendText = document.querySelector('.status-chart .trend-text');
+  if (trendText) trendText.textContent = data.trend;
+
+  // Обновляем сводку дня
+  const daySummary = document.querySelector('.status-day-summary');
+  if (daySummary && data.daySummary) {
+    const items = daySummary.querySelectorAll('.day-summary-item');
+    if (items[0]) {
+      items[0].querySelector('.day-summary-label').textContent = 'С утра';
+      items[0].querySelector('.day-summary-value').textContent = data.daySummary.rise;
+    }
+    if (items[1]) {
+      items[1].querySelector('.day-summary-label').textContent = 'Пик';
+      items[1].querySelector('.day-summary-value').textContent = data.daySummary.peak;
+    }
+    if (items[2]) {
+      items[2].querySelector('.day-summary-label').textContent = 'К вечеру';
+      items[2].querySelector('.day-summary-value').textContent = data.daySummary.forecast;
+    }
+  }
+}
+
 // Инициализация анимации для вертикальных карточек и горизонтальной карусели
 function showVisibleCards() {
   document.querySelectorAll('.card').forEach(el => {
@@ -271,7 +393,7 @@ function updateActivityAtmosphere() {
 
   glowColor = 'rgba(232,161,60,.30)';
   pageTint = 'rgba(232,161,60,.04)';
-  subtitleText = 'Превосходно! Ты на 🔥';
+   subtitleText = 'Ты на верном пути';
   mascotColor = '#E8A13C';
   mascotBelly = '#FFF0E0';
   mascotFeet = '#E8A13C';
@@ -416,7 +538,64 @@ document.addEventListener('DOMContentLoaded', () => {
   buildAllWeekCharts();
   updateMascotIllustration('statusMascotIllustration', 78);
   updateMascotIllustration('activityMascotIllustration', 78);
+  initDayChartTooltips();
 });
+
+function initDayChartTooltips() {
+  const container = document.querySelector('.day-chart-container');
+  const tooltip = document.getElementById('dayChartTooltip');
+  if (!container || !tooltip) return;
+
+  const points = container.querySelectorAll('.data-point');
+
+  points.forEach(point => {
+    point.addEventListener('mouseenter', (e) => showTooltip(e, point));
+    point.addEventListener('mouseleave', hideTooltip);
+    point.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      showTooltip(e, point);
+      setTimeout(hideTooltip, 2000);
+    }, { passive: false });
+  });
+
+  container.addEventListener('mouseleave', hideTooltip);
+}
+
+function showTooltip(e, point) {
+  const tooltip = document.getElementById('dayChartTooltip');
+  if (!tooltip) return;
+
+  const time = point.getAttribute('data-time');
+  const value = point.getAttribute('data-value');
+  const status = point.getAttribute('data-status');
+
+  tooltip.innerHTML = `
+    <div class="tooltip-time">${time}</div>
+    <div class="tooltip-value">${value} <span style="font-size:11px;font-weight:600;color:var(--mut)">из 100</span></div>
+    <div class="tooltip-status">${status}</div>
+  `;
+
+  const rect = point.getBoundingClientRect();
+  const containerRect = point.closest('.day-chart-container').getBoundingClientRect();
+
+  let left = rect.left - containerRect.left + rect.width / 2;
+  const top = rect.top - containerRect.top - 8;
+
+  // Не даём тултипу уйти за левый и правый край
+  const tooltipWidth = tooltip.offsetWidth || 90;
+  const halfW = tooltipWidth / 2 + 4;
+  if (left < halfW) left = halfW;
+  if (left > containerRect.width - halfW) left = containerRect.width - halfW;
+
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+  tooltip.classList.add('visible');
+}
+
+function hideTooltip() {
+  const tooltip = document.getElementById('dayChartTooltip');
+  if (tooltip) tooltip.classList.remove('visible');
+}
 
 function updateMascotIllustration(containerId, score) {
   const container = document.getElementById(containerId);
