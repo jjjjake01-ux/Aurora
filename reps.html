@@ -67,10 +67,10 @@
         </div>
       </div>
       <div class="status-chart">
-        <svg width="100%" height="140" viewBox="0 0 320 140" preserveAspectRatio="none">
+        <svg width="100%" height="160" viewBox="0 0 320 160" preserveAspectRatio="none">
           <defs>
             <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2FBF9B" stop-opacity="0.2"/>
+              <stop offset="0%" stop-color="#2FBF9B" stop-opacity="0.25"/>
               <stop offset="100%" stop-color="#2FBF9B" stop-opacity="0"/>
             </linearGradient>
             <filter id="chartGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -79,36 +79,53 @@
             </filter>
           </defs>
           
+          <!-- Zone backgrounds -->
+          <rect x="40" y="20" width="270" height="40" fill="rgba(47,191,155,.03)" rx="4"/>
+          <rect x="40" y="60" width="270" height="30" fill="rgba(232,110,94,.02)" rx="4"/>
+          <text x="45" y="38" font-size="8" fill="#9A8F82" font-family="Manrope" font-weight="600">ОПТИМАЛЬНО</text>
+          <text x="45" y="78" font-size="8" fill="#9A8F82" font-family="Manrope" font-weight="600">СТРЕСС</text>
+          
           <!-- Grid lines -->
-          <line x1="40" y1="20" x2="310" y2="20" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
-          <line x1="40" y1="50" x2="310" y2="50" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
-          <line x1="40" y1="80" x2="310" y2="80" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
-          <line x1="40" y1="110" x2="310" y2="110" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          <line x1="40" y1="60" x2="310" y2="60" stroke="rgba(45,40,35,.06)" stroke-width="1" stroke-dasharray="2 2"/>
+          <line x1="40" y1="90" x2="310" y2="90" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+          <line x1="40" y1="120" x2="310" y2="120" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
           
           <!-- Energy area fill -->
-          <path d="M40 90 Q90 70 140 75 T240 55 T310 65 L310 120 L40 120 Z" fill="url(#energyGrad)"/>
+          <path d="M40 95 Q90 75 140 80 T240 60 T310 70 L310 125 L40 125 Z" fill="url(#energyGrad)"/>
           
           <!-- Energy line -->
-          <path d="M40 90 Q90 70 140 75 T240 55 T310 65" fill="none" stroke="#2FBF9B" stroke-width="2.5" stroke-linecap="round" filter="url(#chartGlow)"/>
+          <path d="M40 95 Q90 75 140 80 T240 60 T310 70" fill="none" stroke="#2FBF9B" stroke-width="2.5" stroke-linecap="round" filter="url(#chartGlow)"/>
           
           <!-- Stress line -->
-          <path d="M40 95 Q90 80 140 85 T240 70 T310 78" fill="none" stroke="#E5677E" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#chartGlow)"/>
+          <path d="M40 100 Q90 85 140 90 T240 75 T310 85" fill="none" stroke="#E5677E" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#chartGlow)"/>
+          
+          <!-- Annotation: peak -->
+          <circle cx="240" cy="60" r="5" fill="#2FBF9B" stroke="#fff" stroke-width="2" filter="url(#chartGlow)"/>
+          <text x="240" y="52" font-size="8" fill="#2FBF9B" font-family="Manrope" font-weight="700" text-anchor="middle">ПИК</text>
+          <text x="240" y="44" font-size="7" fill="#9A8F82" font-family="Manrope" text-anchor="middle">14:00</text>
+          
+          <!-- Annotation: stress spike -->
+          <circle cx="140" cy="90" r="4" fill="#E5677E" stroke="#fff" stroke-width="1.5" filter="url(#chartGlow)"/>
+          <text x="140" y="103" font-size="7" fill="#E5677E" font-family="Manrope" font-weight="600" text-anchor="middle">Стресс ↑</text>
           
           <!-- Current time marker -->
-          <line x1="240" y1="20" x2="240" y2="110" stroke="rgba(45,40,35,.1)" stroke-width="1" stroke-dasharray="3 2"/>
-          <circle cx="240" cy="55" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" filter="url(#chartGlow)"/>
-          <circle cx="240" cy="70" r="4" fill="#E5677E" stroke="#fff" stroke-width="2" filter="url(#chartGlow)"/>
+          <line x1="240" y1="20" x2="240" y2="125" stroke="rgba(45,40,35,.12)" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="240" y="138" font-size="8" fill="#2D2823" font-family="Manrope" font-weight="700" text-anchor="middle">СЕЙЧАС</text>
           
           <!-- Time labels -->
-          <text x="40" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">6:00</text>
-          <text x="118" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">12:00</text>
-          <text x="196" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">18:00</text>
-          <text x="274" y="135" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">00:00</text>
+          <text x="40" y="150" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">6:00</text>
+          <text x="118" y="150" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">12:00</text>
+          <text x="196" y="150" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">18:00</text>
+          <text x="274" y="150" font-size="9" fill="#9A8F82" font-family="Manrope" text-anchor="middle">00:00</text>
         </svg>
         <div class="status-chart-legend">
           <span class="chart-legend-item"><span class="legend-dot energy"></span>Энергия</span>
           <span class="chart-legend-item"><span class="legend-dot stress"></span>Стресс</span>
         </div>
+        <div class="status-chart-insight">
+          Энергия падала к 16:00 → сделай перерыв сейчас, иначе вечером будет спад
+        </div>
+      </div>
       </div>
       <div class="status-breakdown">
         <div class="sb-item">
