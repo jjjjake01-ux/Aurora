@@ -416,32 +416,14 @@ document.addEventListener('DOMContentLoaded', () => {
   buildAllWeekCharts();
   updateMascotIllustration('statusMascotIllustration', 78);
   updateMascotIllustration('activityMascotIllustration', 78);
-  initStatusChartTooltip();
 });
 
-function initStatusChartTooltip() {
-  const chart = document.querySelector('.status-chart svg');
-  if (!chart) return;
-  
-  const tooltip = document.createElement('div');
-  tooltip.className = 'chart-tooltip';
-  tooltip.style.cssText = 'position:absolute;background:rgba(45,40,35,.9);color:#fff;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;font-family:Manrope;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;z-index:50;';
-  chart.style.position = 'relative';
-  chart.appendChild(tooltip);
-  
-  chart.addEventListener('mousemove', (e) => {
-    const rect = chart.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    tooltip.style.opacity = '1';
-    tooltip.style.left = (x + 10) + 'px';
-    tooltip.style.top = (y - 30) + 'px';
-    const hour = Math.round((x / rect.width) * 24);
-    const displayHour = hour === 0 ? '00:00' : hour < 10 ? '0' + hour + ':00' : hour + ':00';
-    tooltip.innerHTML = `<div style="color:#2FBF9B">Энергия: ${Math.round(60 + Math.random()*30)}%</div><div style="color:#E5677E;margin-top:2px">Стресс: ${Math.round(20 + Math.random()*25)}%</div><div style="color:#9A8F82;margin-top:2px;font-weight:500">${displayHour}</div>`;
-  });
-  
-  chart.addEventListener('mouseleave', () => {
-    tooltip.style.opacity = '0';
-  });
+function updateMascotIllustration(containerId, score) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (score < 40 || score > 80) {
+    container.classList.add('show');
+  } else {
+    container.classList.remove('show');
+  }
 }
