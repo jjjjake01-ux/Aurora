@@ -4253,3 +4253,116 @@
   :root.dark-theme .activity-ring-bg{stroke:rgba(255,255,255,.1)}
   :root.dark-theme .hero-mascot-glow{background:radial-gradient(circle, rgba(47, 163, 107, 0.15) 0%, transparent 70%)}
   :root.dark-theme .bar-fill{background:linear-gradient(180deg, var(--c-index), rgba(47,163,107,.15)); box-shadow:0 4px 12px rgba(47,163,107,.1)}
+
+  /* Activity page orange accent override */
+  #activity-page {
+    --c-index: #E8A13C;
+    --c-index-light: #F0B45A;
+    --c-index-dark: #C8882A;
+    --c-index-bg: rgba(232,161,60,.06);
+    --c-index-bg-light: rgba(232,161,60,.03);
+  }
+  #activity-page .activity-index-card,
+  #activity-page .connection-card,
+  #activity-page .now-card,
+  #activity-page .motivation-card,
+  #activity-page .steps-card {
+    --aura: rgba(232,161,60,.28);
+  }
+  #activity-page .activity-ring-fill {
+    stroke: #E8A13C;
+  }
+  #activity-page .aim-fill {
+    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
+  }
+  #activity-page .week-chart .line-path {
+    stroke: #E8A13C;
+    filter: drop-shadow(0 4px 8px rgba(232,161,60,.3));
+  }
+  #activity-page .week-chart .area-fill {
+    fill: rgba(232,161,60,.08);
+  }
+  #activity-page .week-chart .area-glow {
+    stroke: #E8A13C;
+  }
+  #activity-page .week-chart .data-point {
+    fill: #E8A13C;
+  }
+  #activity-page .progress-fill {
+    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
+  }
+  #activity-page .hb-fill {
+    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.4)) !important;
+  }
+  #activity-page .hb-fill.today {
+    background: linear-gradient(180deg, #F0B45A, #E8A13C) !important;
+  }
+  #activity-page .activity-tab.active {
+    color: #E8A13C;
+  }
+  #activity-page .footer-trend.up {
+    color: #E8A13C;
+    background: rgba(232,161,60,.12);
+  }
+  #activity-page .fc-bar.done,
+  #activity-page .fc-bar.current {
+    background: linear-gradient(180deg, #E8A13C, rgba(232,161,60,.3));
+  }
+  #activity-page .fc-bar.done::before,
+  #activity-page .fc-bar.current::before {
+    background: #E8A13C;
+  }
+  #activity-page .record-item.gold {
+    background: linear-gradient(135deg, rgba(232,161,60,.08), rgba(232,161,60,.02));
+    border-color: rgba(232,161,60,.15);
+  }
+  #activity-page .record-item.gold .record-icon {
+    color: #E8A13C;
+  }
+  #activity-page .streak-days {
+    color: #E8A13C;
+  }
+  #activity-page .sw-day.done .sw-check {
+    color: #E8A13C;
+    background: rgba(232,161,60,.15);
+  }
+  #activity-page .sw-day.current .sw-check {
+    color: #E8A13C;
+  }
+  #activity-page .compare-fill.up {
+    background: linear-gradient(90deg, #F0B45A, #E8A13C) !important;
+  }
+  #activity-page .compare-arrow.up {
+    color: #E8A13C;
+    background: rgba(232,161,60,.12);
+  }
+  #activity-page .steps-sit-warning {
+    --aura: rgba(232,161,60,.18);
+  }
+  #activity-page .steps-zone-card {
+    --aura: rgba(232,161,60,.22);
+  }
+  #activity-page .steps-active-card {
+    --aura: rgba(232,161,60,.22);
+  }
+  #activity-page .steps-streak-card {
+    --aura: rgba(232,161,60,.25);
+  }
+  #activity-page .steps-forecast-card {
+    --aura: rgba(232,161,60,.22);
+  }
+  #activity-page .steps-records-card {
+    --aura: rgba(232,161,60,.22);
+  }
+
+  /* Dark theme for activity page */
+  :root.dark-theme #activity-page .activity-tab.active {
+    color: #F0B45A;
+  }
+  :root.dark-theme #activity-page .footer-trend.up {
+    color: #F0B45A;
+    background: rgba(232,161,60,.15);
+  }
+  :root.dark-theme #activity-page .sw-day.done .sw-check {
+    background: rgba(232,161,60,.2);
+  }
