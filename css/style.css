@@ -3719,46 +3719,46 @@
     color: var(--good);
   }
   .motivation-card.cal {
-    background: linear-gradient(135deg, rgba(47,191,155,.06) 0%, rgba(47,191,155,.02) 100%);
-    border-left: 3px solid #2FBF9B;
+    background: linear-gradient(135deg, rgba(232,161,60,.06) 0%, rgba(232,161,60,.02) 100%);
+    border-left: 3px solid #E8A13C;
   }
   .motivation-card.cal .highlight-icon {
-    background: #2FBF9B;
+    background: #E8A13C;
   }
   .motivation-card.cal .eq-sep {
-    color: #2FBF9B;
+    color: #E8A13C;
   }
   .motivation-card.dist {
-    background: linear-gradient(135deg, rgba(61,201,164,.06) 0%, rgba(61,201,164,.02) 100%);
-    border-left: 3px solid #3DC9A4;
+    background: linear-gradient(135deg, rgba(49,168,201,.06) 0%, rgba(49,168,201,.02) 100%);
+    border-left: 3px solid #31A8C9;
   }
   .motivation-card.dist .highlight-icon {
-    background: #3DC9A4;
+    background: #31A8C9;
   }
   .motivation-card.dist .eq-sep {
-    color: #3DC9A4;
+    color: #31A8C9;
   }
   .motivation-card.sit {
-    background: linear-gradient(135deg, rgba(47,163,107,.06) 0%, rgba(47,163,107,.02) 100%);
-    border-left: 3px solid #2FA36B;
+    background: linear-gradient(135deg, rgba(229,103,126,.06) 0%, rgba(229,103,126,.02) 100%);
+    border-left: 3px solid #E5677E;
   }
   .motivation-card.sit .highlight-icon {
-    background: #2FA36B;
+    background: #E5677E;
   }
   .motivation-card.sit .eq-sep {
-    color: #2FA36B;
+    color: #E5677E;
   }
   :root.dark-theme .motivation-card {
     background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
   }
   :root.dark-theme .motivation-card.cal {
-    background: linear-gradient(135deg, rgba(47,191,155,.08) 0%, rgba(47,191,155,.03) 100%);
+    background: linear-gradient(135deg, rgba(232,161,60,.08) 0%, rgba(232,161,60,.03) 100%);
   }
   :root.dark-theme .motivation-card.dist {
-    background: linear-gradient(135deg, rgba(61,201,164,.08) 0%, rgba(61,201,164,.03) 100%);
+    background: linear-gradient(135deg, rgba(49,168,201,.08) 0%, rgba(49,168,201,.03) 100%);
   }
   :root.dark-theme .motivation-card.sit {
-    background: linear-gradient(135deg, rgba(47,163,107,.08) 0%, rgba(47,163,107,.03) 100%);
+    background: linear-gradient(135deg, rgba(229,103,126,.08) 0%, rgba(229,103,126,.03) 100%);
   }
 
   /* Motivation Content */
