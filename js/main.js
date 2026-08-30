@@ -269,39 +269,12 @@ function updateActivityAtmosphere() {
   let glowColor, pageTint, subtitleText;
   let mascotColor, mascotBelly, mascotFeet;
 
-  if (avgProgress >= 75) {
-    // Отличная активность - бирюзовый/зелёный
-    glowColor = 'rgba(47,191,155,.28)';
-    pageTint = 'rgba(47,191,155,.04)';
-    subtitleText = 'Превосходно! Ты на 🔥';
-    mascotColor = '#2FBF9B';
-    mascotBelly = '#D4F0E4';
-    mascotFeet = '#2FBF9B';
-  } else if (avgProgress >= 50) {
-    // Хорошая активность - тёплый зелёный
-    glowColor = 'rgba(92,196,160,.25)';
-    pageTint = 'rgba(92,196,160,.03)';
-    subtitleText = 'На верном пути!';
-    mascotColor = '#5CC4A0';
-    mascotBelly = '#D4F0E4';
-    mascotFeet = '#5CC4A0';
-  } else if (avgProgress >= 30) {
-    // Средняя активность - янтарный
-    glowColor = 'rgba(232,161,60,.22)';
-    pageTint = 'rgba(232,161,60,.03)';
-    subtitleText = 'Можно лучше!';
-    mascotColor = '#E8A13C';
-    mascotBelly = '#F5E6C8';
-    mascotFeet = '#E8A13C';
-  } else {
-    // Низкая активность - тёплый коралловый
-    glowColor = 'rgba(232,110,94,.20)';
-    pageTint = 'rgba(232,110,94,.025)';
-    subtitleText = 'Время двигаться!';
-    mascotColor = '#E86E5E';
-    mascotBelly = '#F5D5D0';
-    mascotFeet = '#E86E5E';
-  }
+  glowColor = 'rgba(232,161,60,.30)';
+  pageTint = 'rgba(232,161,60,.04)';
+  subtitleText = 'Превосходно! Ты на 🔥';
+  mascotColor = '#E8A13C';
+  mascotBelly = '#FFF0E0';
+  mascotFeet = '#E8A13C';
 
   // Применяем к странице
   activityPage.style.setProperty('--glow-color', glowColor);
