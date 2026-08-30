@@ -2191,6 +2191,32 @@
     padding: 0 4px;
     margin-bottom: 20px;
   }
+  .activity-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .mascot-speech {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 16px;
+    background: rgba(232,161,60,.08);
+    border: 1px solid rgba(232,161,60,.15);
+    max-width: 260px;
+  }
+  .mascot-speech svg {
+    flex-shrink: 0;
+    color: #E8A13C;
+  }
+  .speech-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.4;
+  }
   .activity-subtitle {
     font-size: 13px;
     font-weight: 600;
