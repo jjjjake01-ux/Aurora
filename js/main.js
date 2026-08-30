@@ -414,4 +414,16 @@ function buildWeekChartById(chartId, values, avg, type) {
 document.addEventListener('DOMContentLoaded', () => {
   initAllCarousels();
   buildAllWeekCharts();
+  updateMascotIllustration('statusMascotIllustration', 78);
+  updateMascotIllustration('activityMascotIllustration', 78);
 });
+
+function updateMascotIllustration(containerId, score) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (score < 40 || score > 80) {
+    container.classList.add('show');
+  } else {
+    container.classList.remove('show');
+  }
+}
