@@ -41,17 +41,8 @@
 
   /* РЕСПОНЗИВ ДЛЯ ВНУТРЕННИХ ЭЛЕМЕНТОВ */
   @media(min-width:768px){
-    .steps-carousel .carousel-track{display:grid;grid-template-columns:repeat(2,1fr);overflow-x:visible;scroll-snap-type:none}
-    .steps-carousel .carousel-track > .card{flex:none;scroll-snap-align:none}
-    .steps-carousel .carousel-dots{display:none}
     .activity-index-main{flex-direction:row;gap:32px}
     .week-summary-content{flex-direction:row;gap:32px}
-  }
-  @media(min-width:1024px){
-    .steps-carousel .carousel-track{grid-template-columns:repeat(2,1fr)}
-  }
-  @media(min-width:1440px){
-    .steps-carousel .carousel-track{grid-template-columns:repeat(3,1fr)}
   }
 
   .num{font-variant-numeric:tabular-nums}
