@@ -1207,8 +1207,16 @@ function renderTaskList(events, currentMinutes) {
 
     const timeStr = `${startH}:${startM.toString().padStart(2, '0')}–${endH}:${endM.toString().padStart(2, '0')}`;
 
+    // Check if task can be started (within 15 min of start time)
+    const minutesUntilStart = event.start - currentMinutes;
+    const canStart = !isDone && minutesUntilStart <= 15 && minutesUntilStart > -30;
+
     const item = document.createElement('div');
+<<<<<<< ours
     item.className = `dftask-item${isPast ? ' past' : ''}`;
+=======
+    item.className = `dftask-item${isPast && !isDone ? ' past' : ''}${isDone ? ' done' : ''}`;
+>>>>>>> theirs
 
     item.innerHTML = `
       <div class="dftask-color ${event.type}"></div>
@@ -1217,12 +1225,176 @@ function renderTaskList(events, currentMinutes) {
         <div class="dftask-time">${timeStr}</div>
       </div>
       <div class="dftask-dur">${formatHoursMinutes(duration)}</div>
+      ${canStart && event.needsPomodoro ? '<button class="dftask-start" onclick="event.stopPropagation(); openTaskPomodoro(\'' + event.id + '\')">▶</button>' : ''}
+      ${canStart && !event.needsPomodoro ? '<button class="dftask-start" onclick="event.stopPropagation(); toggleTaskDone(\'' + event.id + '\')">✓</button>' : ''}
     `;
 
     container.appendChild(item);
   });
 }
 
+<<<<<<< ours
+=======
+// ===== TASK POMODORO PANEL =====
+let currentTaskPomodoro = null; // { eventId, sessionsTotal, sessionsDone, isRunning, isBreak, timeLeft, interval }
+
+function openTaskPomodoro(eventId) {
+  const event = dayEvents.find(e => e.id === eventId);
+  if (!event) return;
+
+  currentTaskPomodoro = {
+    eventId: eventId,
+    sessionsTotal: 4,
+    sessionsDone: 0,
+    isRunning: false,
+    isBreak: false,
+    timeLeft: pomodoro.settings.work * 60,
+    interval: null
+  };
+
+  const panel = document.getElementById('taskPomodoroPanel');
+  document.getElementById('tppTaskName').textContent = event.name;
+  updateTaskPomodoroDisplay();
+  panel.style.display = 'block';
+}
+
+function closeTaskPomodoro() {
+  if (currentTaskPomodoro && currentTaskPomodoro.interval) {
+    clearInterval(currentTaskPomodoro.interval);
+  }
+  currentTaskPomodoro = null;
+  document.getElementById('taskPomodoroPanel').style.display = 'none';
+}
+
+function startTaskPomodoro() {
+  if (!currentTaskPomodoro) return;
+
+  if (currentTaskPomodoro.isRunning) {
+    // Pause
+    clearInterval(currentTaskPomodoro.interval);
+    currentTaskPomodoro.isRunning = false;
+    document.getElementById('tppStart').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg> Продолжить';
+    document.getElementById('tppStatus').textContent = 'Пауза';
+    return;
+  }
+
+  currentTaskPomodoro.isRunning = true;
+  document.getElementById('tppStart').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Пауза';
+  document.getElementById('tppStatus').textContent = currentTaskPomodoro.isBreak ? 'Перерыв' : 'Работа...';
+
+  currentTaskPomodoro.interval = setInterval(() => {
+    currentTaskPomodoro.timeLeft--;
+    updateTaskPomodoroDisplay();
+
+    if (currentTaskPomodoro.timeLeft <= 0) {
+      clearInterval(currentTaskPomodoro.interval);
+      currentTaskPomodoro.isRunning = false;
+
+      if (!currentTaskPomodoro.isBreak) {
+        currentTaskPomodoro.sessionsDone++;
+      }
+
+      currentTaskPomodoro.isBreak = !currentTaskPomodoro.isBreak;
+      currentTaskPomodoro.timeLeft = currentTaskPomodoro.isBreak
+        ? pomodoro.settings.break * 60
+        : pomodoro.settings.work * 60;
+
+      // Check if all sessions complete
+      if (currentTaskPomodoro.sessionsDone >= currentTaskPomodoro.sessionsTotal && !currentTaskPomodoro.isBreak) {
+        // Task complete!
+        const event = dayEvents.find(e => e.id === currentTaskPomodoro.eventId);
+        if (event) {
+          event.done = true;
+          saveToStorage();
+        }
+        document.getElementById('tppStatus').textContent = '✓ Задача выполнена!';
+        updateTaskPomodoroDisplay();
+        renderDayFlow();
+        return;
+      }
+
+      document.getElementById('tppStart').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg> Старт';
+      document.getElementById('tppStatus').textContent = currentTaskPomodoro.isBreak ? 'Время отдыхать!' : 'Готов к работе';
+      updateTaskPomodoroDisplay();
+    }
+  }, 1000);
+}
+
+function resetTaskPomodoro() {
+  if (!currentTaskPomodoro) return;
+  clearInterval(currentTaskPomodoro.interval);
+  currentTaskPomodoro.isRunning = false;
+  currentTaskPomodoro.isBreak = false;
+  currentTaskPomodoro.sessionsDone = 0;
+  currentTaskPomodoro.timeLeft = pomodoro.settings.work * 60;
+  document.getElementById('tppStart').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg> Старт';
+  document.getElementById('tppStatus').textContent = 'Готов к работе';
+  updateTaskPomodoroDisplay();
+}
+
+function updateTaskPomodoroDisplay() {
+  if (!currentTaskPomodoro) return;
+
+  const mins = Math.floor(currentTaskPomodoro.timeLeft / 60);
+  const secs = currentTaskPomodoro.timeLeft % 60;
+  document.getElementById('tppTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+  // Update session dots
+  const dotsHtml = Array(currentTaskPomodoro.sessionsTotal).fill(0).map((_, i) => {
+    let cls = '';
+    if (i < currentTaskPomodoro.sessionsDone) cls = 'done';
+    else if (i === currentTaskPomodoro.sessionsDone && currentTaskPomodoro.isRunning) cls = 'active';
+    return `<span class="tpp-dot ${cls}"></span>`;
+  }).join('');
+  document.getElementById('tppSessions').innerHTML = dotsHtml;
+  document.getElementById('tppSessionsText').textContent = `${currentTaskPomodoro.sessionsDone} из ${currentTaskPomodoro.sessionsTotal} сессий`;
+}
+
+// ===== PERFORMANCE INDICATORS =====
+function updatePerformanceIndicators() {
+  const today = new Date().toDateString();
+
+  // Focus: completed pomodoros vs goal (8)
+  const todaySessions = pomodoroSessions.filter(s => {
+    const d = new Date(s.id);
+    return d.toDateString() === today && !s.isBreak;
+  });
+  const focusCompleted = todaySessions.length;
+  const focusGoal = 8;
+  const focusPercent = Math.min(100, Math.round((focusCompleted / focusGoal) * 100));
+
+  // Productivity: completed tasks vs total tasks (from dayEvents)
+  const taskEvents = dayEvents.filter(e => e.type === 'task' || e.type === 'workout');
+  const totalTasks = taskEvents.length;
+  const doneTasks = taskEvents.filter(e => e.done).length;
+  const productivityPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  // Update Focus ring
+  const focusRing = document.getElementById('dfpFocusRing');
+  const focusValue = document.getElementById('dfpFocusValue');
+  const focusSub = document.getElementById('dfpFocusSub');
+  if (focusRing) {
+    const circumference = 2 * Math.PI * 15; // r=15
+    const offset = circumference - (focusPercent / 100) * circumference;
+    focusRing.style.strokeDashoffset = offset;
+  }
+  if (focusValue) focusValue.textContent = focusPercent + '%';
+  if (focusSub) focusSub.textContent = `${focusCompleted} из ${focusGoal}`;
+
+  // Update Productivity ring
+  const productivityRing = document.getElementById('dfpProductivityRing');
+  const productivityValue = document.getElementById('dfpProductivityValue');
+  const productivitySub = document.getElementById('dfpProductivitySub');
+  if (productivityRing) {
+    const circumference = 2 * Math.PI * 15;
+    const offset = circumference - (productivityPercent / 100) * circumference;
+    productivityRing.style.strokeDashoffset = offset;
+  }
+  if (productivityValue) productivityValue.textContent = productivityPercent + '%';
+  if (productivitySub) productivitySub.textContent = `${doneTasks}/${totalTasks} задач`;
+}
+
+>>>>>>> theirs
 // ===== DRAG & RESIZE =====
 let dragState = null;
 
