@@ -1221,23 +1221,56 @@ function renderTaskList(events, currentMinutes) {
 let dragState = null;
 
 function makeBlockDraggable(blockEl, event) {
-  // Touch events
-  blockEl.addEventListener('touchstart', (e) => handleDragStart(e, event, 'move'), { passive: false });
-  // Mouse events
-  blockEl.addEventListener('mousedown', (e) => handleDragStart(e, event, 'move'));
+  // Touch events for moving (only on main block area)
+  blockEl.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    if (isOnResizeHandle(touch, blockEl)) return;
+    handleDragStart(e, event, 'move');
+  }, { passive: false });
 
-  // Resize handles
+  // Mouse events for moving
+  blockEl.addEventListener('mousedown', (e) => {
+    if (isOnResizeHandle(e, blockEl)) return;
+    handleDragStart(e, event, 'move');
+  });
+
+  // Resize handles - left
   const leftHandle = document.createElement('div');
   leftHandle.className = 'dft-resize-handle left';
-  leftHandle.addEventListener('touchstart', (e) => handleDragStart(e, event, 'resize-left'), { passive: false });
-  leftHandle.addEventListener('mousedown', (e) => handleDragStart(e, event, 'resize-left'));
+  leftHandle.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleDragStart(e, event, 'resize-left');
+  }, { passive: false });
+  leftHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleDragStart(e, event, 'resize-left');
+  });
   blockEl.appendChild(leftHandle);
 
+  // Resize handles - right
   const rightHandle = document.createElement('div');
   rightHandle.className = 'dft-resize-handle right';
-  rightHandle.addEventListener('touchstart', (e) => handleDragStart(e, event, 'resize-right'), { passive: false });
-  rightHandle.addEventListener('mousedown', (e) => handleDragStart(e, event, 'resize-right'));
+  rightHandle.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleDragStart(e, event, 'resize-right');
+  }, { passive: false });
+  rightHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleDragStart(e, event, 'resize-right');
+  });
   blockEl.appendChild(rightHandle);
+}
+
+function isOnResizeHandle(clientX_or_Touch, blockEl) {
+  const rect = blockEl.getBoundingClientRect();
+  const clientX = clientX_or_Touch.clientX;
+  const relX = clientX - rect.left;
+  // If within 12px of left or right edge, it's a resize handle
+  return relX <= 12 || relX >= rect.width - 12;
 }
 
 function handleDragStart(e, event, mode) {

@@ -1747,10 +1747,11 @@
     .dft-resize-handle {
       position: absolute;
       top: 0;
-      width: 10px;
+      width: 12px;
       height: 100%;
       cursor: ew-resize;
       touch-action: none;
+      z-index: 2;
     }
 
     .dft-resize-handle.left {
@@ -1763,32 +1764,27 @@
       border-radius: 0 4px 4px 0;
     }
 
-    .dft-resize-handle:hover,
-    .dft-resize-handle:active {
-      background: rgba(255,255,255,0.3);
+    .dft-resize-handle:hover {
+      background: rgba(255,255,255,0.25);
     }
 
     .dft-resize-handle::after {
       content: '';
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       width: 2px;
       height: 10px;
-      background: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.6);
       border-radius: 1px;
+      transform: translateY(-50%);
     }
 
     .dft-resize-handle.left::after {
-      left: 3px;
-      transform: translate(0, -50%);
+      left: 4px;
     }
 
     .dft-resize-handle.right::after {
-      left: auto;
-      right: 3px;
-      transform: translate(0, -50%);
+      right: 4px;
     }
 
     .dft-freezone {
