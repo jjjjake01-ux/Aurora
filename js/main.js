@@ -1160,17 +1160,17 @@ function renderDayFlow() {
 
       if (event.type === 'pomodoro') {
         blockEl.classList.add('pomodoro-block');
-        blockEl.innerHTML = `<span class="dft-block-label">🍅 Фокус</span>`;
+        blockEl.innerHTML = `<span class="dft-block-label">${blockWidth > 3 ? '🍅 Фокус' : '🍅'}</span>`;
       } else if (event.type === 'break') {
         blockEl.classList.add('break-block');
         blockEl.innerHTML = `<span class="dft-block-label">☕</span>`;
       } else if (event.type === 'workout') {
         blockEl.classList.add('workout-block');
-        blockEl.innerHTML = `<span class="dft-block-label">Спорт</span>`;
+        blockEl.innerHTML = `<span class="dft-block-label">${blockWidth > 4 ? 'Тренировка' : '💪'}</span>`;
       } else {
         blockEl.classList.add('task-block');
-        const shortName = event.name.length > 10 ? event.name.substring(0, 10) + '…' : event.name;
-        blockEl.innerHTML = `<span class="dft-block-label">${shortName}</span>`;
+        const displayName = blockWidth > 8 ? event.name : blockWidth > 4 ? event.name.substring(0, 6) : '•';
+        blockEl.innerHTML = `<span class="dft-block-label">${displayName}</span>`;
       }
 
       track.appendChild(blockEl);
