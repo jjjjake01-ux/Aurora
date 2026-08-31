@@ -605,12 +605,6 @@ function updateMascotIllustration(containerId, score) {
   } else {
     container.classList.remove('show');
   }
-<<<<<<< Updated upstream
-=======
-<<<<<<< ours
-}
-=======
->>>>>>> Stashed changes
 }
 
 // ===== LOCAL STORAGE =====
@@ -624,6 +618,7 @@ function saveToStorage() {
       })),
       pomodoroSettings: pomodoro.settings,
       pomodoroSessions: pomodoroSessions,
+      linkedTasks: linkedTasks,
       dayEvents: dayEvents.filter(e => e.id.startsWith('manual-') || e.id.startsWith('timer-')),
       savedAt: new Date().toISOString()
     };
@@ -663,6 +658,11 @@ function loadFromStorage() {
       pomodoroSessions = data.pomodoroSessions;
     }
 
+    // Restore linked tasks
+    if (data.linkedTasks && Array.isArray(data.linkedTasks)) {
+      linkedTasks = data.linkedTasks;
+    }
+
     // Restore manual day events
     if (data.dayEvents && Array.isArray(data.dayEvents)) {
       dayEvents = data.dayEvents;
@@ -681,6 +681,12 @@ function parseTaskInput(input) {
   let taskName = '';
   let targetTime = null;
   let duration = null;
+  let needsPomodoro = false;
+
+  // Pattern: "с помидоро" / "с помидорами" / "помидор"
+  if (text.match(/с\s+помидор|помидор[а-я]*/)) {
+    needsPomodoro = true;
+  }
 
   // Pattern: "в 18:00" or "в 18.00"
   const timeAtMatch = text.match(/в\s+(\d{1,2})[:\.](\d{2})/);
@@ -716,15 +722,16 @@ function parseTaskInput(input) {
     taskName = text.replace(durationMatch[0], '').trim();
   }
 
-  // Clean up task name
+  // Clean up task name - remove pomodoro keywords
   taskName = taskName
+    .replace(/\s*с\s+помидор[а-я]*\s*/g, ' ')
     .replace(/^(приготовить|сделать|пойти|почистить|помыть|убрать|выпить|съесть|позвонить|написать)\s*/, '$1 ')
     .replace(/^[^\wа-яё]+/i, '')
     .replace(/[^\wа-яё]+$/i, '');
 
   if (!taskName) {
     // Fallback: use whole text as task name, first word as verb
-    taskName = text.replace(/^(в|через|на)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
+    taskName = text.replace(/^(в|через|на|с)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
   }
 
   // Capitalize first letter
@@ -734,6 +741,7 @@ function parseTaskInput(input) {
     name: taskName,
     targetTime: targetTime,
     duration: duration,
+    needsPomodoro: needsPomodoro,
     createdAt: now
   };
 }
@@ -747,6 +755,7 @@ function createTimer(task) {
     name: task.name,
     targetTime: task.targetTime,
     duration: task.duration,
+    needsPomodoro: task.needsPomodoro || false,
     createdAt: task.createdAt,
     active: true
   };
@@ -1027,13 +1036,17 @@ function collectDayEvents() {
     const startMin = h * 60 + m;
     const duration = timer.duration || 30;
 
+    // Preserve done state from existing events
+    const existing = dayEvents.find(e => e.id === 'timer-' + timer.id);
+
     dayEvents.push({
       id: 'timer-' + timer.id,
       name: timer.name,
       start: startMin,
       end: startMin + duration,
       type: 'task',
-      done: false
+      needsPomodoro: timer.needsPomodoro || false,
+      done: existing ? existing.done : false
     });
   });
 
@@ -1069,22 +1082,55 @@ function collectDayEvents() {
 }
 
 let pomodoroSessions = [];
+let linkedTasks = []; // { taskId, pomodoroId }
 
 function addPomodoroToDayFlow() {
   const now = new Date();
   const currentMin = now.getHours() * 60 + now.getMinutes();
   const duration = pomodoro.isBreak ? pomodoro.settings.break : pomodoro.settings.work;
+  const sessionId = Date.now();
 
   pomodoroSessions.push({
-    id: Date.now(),
+    id: sessionId,
     startMin: currentMin - duration,
     endMin: currentMin,
     isBreak: pomodoro.isBreak
   });
 
+  // Auto-complete linked tasks
+  if (!pomodoro.isBreak) {
+    linkedTasks.forEach(link => {
+      if (link.pomodoroId === sessionId) {
+        const task = dayEvents.find(e => e.id === link.taskId);
+        if (task) task.done = true;
+      }
+    });
+  }
+
   saveToStorage();
+  updatePomodoroStats();
   collectDayEvents();
   renderDayFlow();
+}
+
+function updatePomodoroStats() {
+  const today = new Date().toDateString();
+  const todaySessions = pomodoroSessions.filter(s => {
+    const d = new Date(s.id);
+    return d.toDateString() === today && !s.isBreak;
+  });
+
+  const completed = todaySessions.length;
+  const focusMinutes = todaySessions.reduce((sum, s) => sum + (s.endMin - s.startMin), 0);
+  const goal = 8; // daily goal
+
+  const pomoCompleted = document.getElementById('pomoCompleted');
+  const pomoFocusTime = document.getElementById('pomoFocusTime');
+  const pomoGoal = document.getElementById('pomoGoal');
+
+  if (pomoCompleted) pomoCompleted.textContent = completed;
+  if (pomoFocusTime) pomoFocusTime.textContent = formatHoursMinutes(focusMinutes);
+  if (pomoGoal) pomoGoal.textContent = `${completed}/${goal}`;
 }
 
 function renderDayFlow() {
@@ -1184,6 +1230,9 @@ function renderDayFlow() {
 
   // Render task list
   renderTaskList(sortedEvents, currentMinutes);
+
+  // Update performance indicators
+  updatePerformanceIndicators();
 }
 
 function renderTaskList(events, currentMinutes) {
@@ -1199,6 +1248,7 @@ function renderTaskList(events, currentMinutes) {
 
   events.forEach(event => {
     const isPast = event.end < currentMinutes;
+    const isDone = event.done;
     const startH = Math.floor(event.start / 60);
     const startM = event.start % 60;
     const endH = Math.floor(event.end / 60);
@@ -1212,16 +1262,12 @@ function renderTaskList(events, currentMinutes) {
     const canStart = !isDone && minutesUntilStart <= 15 && minutesUntilStart > -30;
 
     const item = document.createElement('div');
-<<<<<<< ours
-    item.className = `dftask-item${isPast ? ' past' : ''}`;
-=======
     item.className = `dftask-item${isPast && !isDone ? ' past' : ''}${isDone ? ' done' : ''}`;
->>>>>>> theirs
 
     item.innerHTML = `
       <div class="dftask-color ${event.type}"></div>
       <div class="dftask-info">
-        <div class="dftask-name">${event.name}</div>
+        <div class="dftask-name">${event.name}${event.needsPomodoro ? ' 🍅' : ''}</div>
         <div class="dftask-time">${timeStr}</div>
       </div>
       <div class="dftask-dur">${formatHoursMinutes(duration)}</div>
@@ -1233,8 +1279,6 @@ function renderTaskList(events, currentMinutes) {
   });
 }
 
-<<<<<<< ours
-=======
 // ===== TASK POMODORO PANEL =====
 let currentTaskPomodoro = null; // { eventId, sessionsTotal, sessionsDone, isRunning, isBreak, timeLeft, interval }
 
@@ -1394,7 +1438,6 @@ function updatePerformanceIndicators() {
   if (productivitySub) productivitySub.textContent = `${doneTasks}/${totalTasks} задач`;
 }
 
->>>>>>> theirs
 // ===== DRAG & RESIZE =====
 let dragState = null;
 
@@ -1618,16 +1661,12 @@ function handleChatSubmit(e) {
   // Add user message
   addChatMessage(text, 'user');
 
-  // Parse and create timer
+  // Parse task to check if it's valid
   const task = parseTaskInput(text);
 
-  if (task && task.targetTime) {
-    createTimer(task);
-    const targetStr = formatTimeOfDay(task.targetTime);
-    const durStr = task.duration ? ` на ${task.duration} мин` : '';
-    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}`, 'system success');
-  } else if (task) {
-    addChatMessage(`✓ «${task.name}» добавлено (без таймера)`, 'system success');
+  if (task && task.name) {
+    // Open modal for detailed settings
+    openTaskModal(text);
   } else {
     addChatMessage('Не понял задачу. Попробуй: «Почистить зубы в 18:00» или «Через 30 минут выйти»', 'system');
   }
@@ -1648,6 +1687,157 @@ function addChatMessage(text, type) {
   container.scrollTop = container.scrollHeight;
 }
 
+// ===== TASK MODAL =====
+let pendingTask = null;
+let selectedCategory = 'other';
+let selectedWeekDays = [];
+
+function openTaskModal(taskText) {
+  pendingTask = parseTaskInput(taskText);
+
+  // Pre-fill name
+  document.getElementById('tmName').value = pendingTask.name || taskText;
+
+  // Set default time to now + 1 hour
+  const now = new Date();
+  now.setHours(now.getHours() + 1);
+  const timeStr = now.toTimeString().slice(0, 5);
+  document.getElementById('tmTime').value = timeStr;
+
+  // Reset category
+  selectedCategory = 'other';
+  document.querySelectorAll('.tm-cat').forEach(c => c.classList.remove('active'));
+  document.querySelector('.tm-cat[data-cat="other"]').classList.add('active');
+
+  // Reset repeat
+  document.getElementById('tmRepeat').value = 'never';
+  document.getElementById('tmRepeatOptions').style.display = 'none';
+  document.getElementById('tmCustomDaysField').style.display = 'none';
+  document.getElementById('tmWeekDaysField').style.display = 'none';
+
+  // Reset pomodoro
+  document.getElementById('tmPomodoro').checked = false;
+  document.getElementById('tmPomoSettings').style.display = 'none';
+
+  // Reset weekdays
+  selectedWeekDays = [];
+  document.querySelectorAll('.tm-wd').forEach(w => w.classList.remove('active'));
+
+  // Show modal
+  document.getElementById('taskModalOverlay').style.display = 'flex';
+}
+
+function closeTaskModal() {
+  document.getElementById('taskModalOverlay').style.display = 'none';
+  pendingTask = null;
+}
+
+function closeTaskModalOutside(e) {
+  if (e.target === document.getElementById('taskModalOverlay')) {
+    closeTaskModal();
+  }
+}
+
+function selectCategory(btn) {
+  document.querySelectorAll('.tm-cat').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCategory = btn.dataset.cat;
+}
+
+function updateRepeatOptions() {
+  const repeat = document.getElementById('tmRepeat').value;
+  const optionsDiv = document.getElementById('tmRepeatOptions');
+  const customDaysField = document.getElementById('tmCustomDaysField');
+  const weekDaysField = document.getElementById('tmWeekDaysField');
+
+  if (repeat === 'never' || repeat === 'daily' || repeat === 'weekdays' || repeat === 'weekends' || repeat === 'weekly') {
+    optionsDiv.style.display = 'none';
+    customDaysField.style.display = 'none';
+    weekDaysField.style.display = 'none';
+  } else if (repeat === 'custom') {
+    optionsDiv.style.display = 'block';
+    customDaysField.style.display = 'block';
+    weekDaysField.style.display = 'none';
+  } else if (repeat === 'specific') {
+    optionsDiv.style.display = 'block';
+    customDaysField.style.display = 'none';
+    weekDaysField.style.display = 'block';
+  }
+}
+
+function togglePomoSettings() {
+  const checked = document.getElementById('tmPomodoro').checked;
+  document.getElementById('tmPomoSettings').style.display = checked ? 'block' : 'none';
+}
+
+function toggleWeekDay(btn) {
+  const day = parseInt(btn.dataset.day);
+  const index = selectedWeekDays.indexOf(day);
+  if (index > -1) {
+    selectedWeekDays.splice(index, 1);
+    btn.classList.remove('active');
+  } else {
+    selectedWeekDays.push(day);
+    btn.classList.add('active');
+  }
+}
+
+function createTaskFromModal() {
+  const name = document.getElementById('tmName').value.trim();
+  const time = document.getElementById('tmTime').value;
+  const duration = parseInt(document.getElementById('tmDuration').value);
+  const repeat = document.getElementById('tmRepeat').value;
+  const usePomodoro = document.getElementById('tmPomodoro').checked;
+
+  if (!name) {
+    document.getElementById('tmName').focus();
+    return;
+  }
+
+  // Calculate target time
+  const now = new Date();
+  let targetTime = new Date(now);
+
+  if (time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    targetTime.setHours(hours, minutes, 0, 0);
+    if (targetTime <= now) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+  } else {
+    targetTime.setHours(targetTime.getHours() + 1);
+  }
+
+  // Create timer/task
+  const timer = {
+    id: Date.now(),
+    name: name,
+    targetTime: targetTime,
+    duration: duration,
+    needsPomodoro: usePomodoro,
+    category: selectedCategory,
+    repeat: repeat,
+    repeatCustomDays: repeat === 'custom' ? parseInt(document.getElementById('tmCustomDays').value) : null,
+    repeatWeekDays: repeat === 'specific' ? [...selectedWeekDays] : null,
+    pomodoroSettings: usePomodoro ? {
+      work: parseInt(document.getElementById('tmPomoWork').value),
+      break: parseInt(document.getElementById('tmPomoBreak').value),
+      sessions: parseInt(document.getElementById('tmPomoSessions').value)
+    } : null,
+    createdAt: now,
+    active: true
+  };
+
+  timers.push(timer);
+  saveToStorage();
+  renderTimers();
+  renderDayFlow();
+  closeTaskModal();
+
+  // Add confirmation message
+  addChatMessage(`✓ «${name}» создано на ${formatTimeOfDay(targetTime)}${usePomodoro ? ' 🍅' : ''}`, 'system success');
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
@@ -1655,9 +1845,15 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDayFlow();
   setInterval(updateTimers, 1000);
   setInterval(renderDayFlow, 60000);
-<<<<<<< Updated upstream
+  updatePomodoroStats();
+
+  // Modal category buttons
+  document.querySelectorAll('.tm-cat').forEach(btn => {
+    btn.addEventListener('click', () => selectCategory(btn));
+  });
+
+  // Modal weekday buttons
+  document.querySelectorAll('.tm-wd').forEach(btn => {
+    btn.addEventListener('click', () => toggleWeekDay(btn));
+  });
 });
-=======
-});
->>>>>>> theirs
->>>>>>> Stashed changes
