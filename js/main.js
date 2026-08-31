@@ -1661,17 +1661,12 @@ function handleChatSubmit(e) {
   // Add user message
   addChatMessage(text, 'user');
 
-  // Parse and create timer
+  // Parse task to check if it's valid
   const task = parseTaskInput(text);
 
-  if (task && task.targetTime) {
-    createTimer(task);
-    const targetStr = formatTimeOfDay(task.targetTime);
-    const durStr = task.duration ? ` на ${task.duration} мин` : '';
-    const pomoStr = task.needsPomodoro ? ' 🍅 с Помодоро' : '';
-    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}${pomoStr}`, 'system success');
-  } else if (task) {
-    addChatMessage(`✓ «${task.name}» добавлено (без таймера)`, 'system success');
+  if (task && task.name) {
+    // Open modal for detailed settings
+    openTaskModal(text);
   } else {
     addChatMessage('Не понял задачу. Попробуй: «Почистить зубы в 18:00» или «Через 30 минут выйти»', 'system');
   }
@@ -1692,6 +1687,157 @@ function addChatMessage(text, type) {
   container.scrollTop = container.scrollHeight;
 }
 
+// ===== TASK MODAL =====
+let pendingTask = null;
+let selectedCategory = 'other';
+let selectedWeekDays = [];
+
+function openTaskModal(taskText) {
+  pendingTask = parseTaskInput(taskText);
+
+  // Pre-fill name
+  document.getElementById('tmName').value = pendingTask.name || taskText;
+
+  // Set default time to now + 1 hour
+  const now = new Date();
+  now.setHours(now.getHours() + 1);
+  const timeStr = now.toTimeString().slice(0, 5);
+  document.getElementById('tmTime').value = timeStr;
+
+  // Reset category
+  selectedCategory = 'other';
+  document.querySelectorAll('.tm-cat').forEach(c => c.classList.remove('active'));
+  document.querySelector('.tm-cat[data-cat="other"]').classList.add('active');
+
+  // Reset repeat
+  document.getElementById('tmRepeat').value = 'never';
+  document.getElementById('tmRepeatOptions').style.display = 'none';
+  document.getElementById('tmCustomDaysField').style.display = 'none';
+  document.getElementById('tmWeekDaysField').style.display = 'none';
+
+  // Reset pomodoro
+  document.getElementById('tmPomodoro').checked = false;
+  document.getElementById('tmPomoSettings').style.display = 'none';
+
+  // Reset weekdays
+  selectedWeekDays = [];
+  document.querySelectorAll('.tm-wd').forEach(w => w.classList.remove('active'));
+
+  // Show modal
+  document.getElementById('taskModalOverlay').style.display = 'flex';
+}
+
+function closeTaskModal() {
+  document.getElementById('taskModalOverlay').style.display = 'none';
+  pendingTask = null;
+}
+
+function closeTaskModalOutside(e) {
+  if (e.target === document.getElementById('taskModalOverlay')) {
+    closeTaskModal();
+  }
+}
+
+function selectCategory(btn) {
+  document.querySelectorAll('.tm-cat').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCategory = btn.dataset.cat;
+}
+
+function updateRepeatOptions() {
+  const repeat = document.getElementById('tmRepeat').value;
+  const optionsDiv = document.getElementById('tmRepeatOptions');
+  const customDaysField = document.getElementById('tmCustomDaysField');
+  const weekDaysField = document.getElementById('tmWeekDaysField');
+
+  if (repeat === 'never' || repeat === 'daily' || repeat === 'weekdays' || repeat === 'weekends' || repeat === 'weekly') {
+    optionsDiv.style.display = 'none';
+    customDaysField.style.display = 'none';
+    weekDaysField.style.display = 'none';
+  } else if (repeat === 'custom') {
+    optionsDiv.style.display = 'block';
+    customDaysField.style.display = 'block';
+    weekDaysField.style.display = 'none';
+  } else if (repeat === 'specific') {
+    optionsDiv.style.display = 'block';
+    customDaysField.style.display = 'none';
+    weekDaysField.style.display = 'block';
+  }
+}
+
+function togglePomoSettings() {
+  const checked = document.getElementById('tmPomodoro').checked;
+  document.getElementById('tmPomoSettings').style.display = checked ? 'block' : 'none';
+}
+
+function toggleWeekDay(btn) {
+  const day = parseInt(btn.dataset.day);
+  const index = selectedWeekDays.indexOf(day);
+  if (index > -1) {
+    selectedWeekDays.splice(index, 1);
+    btn.classList.remove('active');
+  } else {
+    selectedWeekDays.push(day);
+    btn.classList.add('active');
+  }
+}
+
+function createTaskFromModal() {
+  const name = document.getElementById('tmName').value.trim();
+  const time = document.getElementById('tmTime').value;
+  const duration = parseInt(document.getElementById('tmDuration').value);
+  const repeat = document.getElementById('tmRepeat').value;
+  const usePomodoro = document.getElementById('tmPomodoro').checked;
+
+  if (!name) {
+    document.getElementById('tmName').focus();
+    return;
+  }
+
+  // Calculate target time
+  const now = new Date();
+  let targetTime = new Date(now);
+
+  if (time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    targetTime.setHours(hours, minutes, 0, 0);
+    if (targetTime <= now) {
+      targetTime.setDate(targetTime.getDate() + 1);
+    }
+  } else {
+    targetTime.setHours(targetTime.getHours() + 1);
+  }
+
+  // Create timer/task
+  const timer = {
+    id: Date.now(),
+    name: name,
+    targetTime: targetTime,
+    duration: duration,
+    needsPomodoro: usePomodoro,
+    category: selectedCategory,
+    repeat: repeat,
+    repeatCustomDays: repeat === 'custom' ? parseInt(document.getElementById('tmCustomDays').value) : null,
+    repeatWeekDays: repeat === 'specific' ? [...selectedWeekDays] : null,
+    pomodoroSettings: usePomodoro ? {
+      work: parseInt(document.getElementById('tmPomoWork').value),
+      break: parseInt(document.getElementById('tmPomoBreak').value),
+      sessions: parseInt(document.getElementById('tmPomoSessions').value)
+    } : null,
+    createdAt: now,
+    active: true
+  };
+
+  timers.push(timer);
+  saveToStorage();
+  renderTimers();
+  renderDayFlow();
+  closeTaskModal();
+
+  // Add confirmation message
+  addChatMessage(`✓ «${name}» создано на ${formatTimeOfDay(targetTime)}${usePomodoro ? ' 🍅' : ''}`, 'system success');
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
@@ -1700,4 +1846,14 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateTimers, 1000);
   setInterval(renderDayFlow, 60000);
   updatePomodoroStats();
+
+  // Modal category buttons
+  document.querySelectorAll('.tm-cat').forEach(btn => {
+    btn.addEventListener('click', () => selectCategory(btn));
+  });
+
+  // Modal weekday buttons
+  document.querySelectorAll('.tm-wd').forEach(btn => {
+    btn.addEventListener('click', () => toggleWeekDay(btn));
+  });
 });
