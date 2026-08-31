@@ -607,30 +607,6 @@ function updateMascotIllustration(containerId, score) {
   }
 }
 
-// ===== PLAN TOGGLE =====
-function togglePlanItem(el) {
-  el.classList.toggle('done');
-  if (!el.classList.contains('current')) {
-    el.classList.add('current');
-  } else if (el.classList.contains('done')) {
-    el.classList.remove('current');
-  }
-  updatePlanProgress();
-  renderDayFlow();
-}
-
-function updatePlanProgress() {
-  const items = document.querySelectorAll('.plan-item');
-  const done = document.querySelectorAll('.plan-item.done');
-  const total = items.length;
-  const doneCount = done.length;
-  const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-
-  document.getElementById('planDoneCount').textContent = doneCount;
-  document.getElementById('planTotalCount').textContent = total;
-  document.getElementById('planProgressFill').style.width = percent + '%';
-}
-
 // ===== NATURAL LANGUAGE TASK PARSER =====
 function parseTaskInput(input) {
   const text = input.trim().toLowerCase();
@@ -975,44 +951,7 @@ function collectDayEvents() {
   dayEvents = [];
   const now = new Date();
 
-  // 1. Collect from plan items
-  document.querySelectorAll('.plan-item').forEach((item, index) => {
-    const text = item.querySelector('.plan-item-text')?.textContent || '';
-    const group = item.closest('.plan-group');
-    const groupLabel = group?.querySelector('.plan-group-label');
-    const isMorning = groupLabel?.classList.contains('morning');
-    const isEvening = groupLabel?.classList.contains('evening');
-    const isDay = groupLabel?.classList.contains('day');
-    const done = item.classList.contains('done');
-
-    // Check for specific time in text or plan-time
-    const timeEl = item.querySelector('.plan-time');
-    const timeMatch = (timeEl?.textContent || '').match(/(\d{1,2}):(\d{2})/);
-
-    let startMinutes;
-    if (timeMatch) {
-      startMinutes = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
-    } else if (isMorning) {
-      startMinutes = 8 * 60 + index * 30;
-    } else if (isDay) {
-      startMinutes = 13 * 60 + index * 30;
-    } else if (isEvening) {
-      startMinutes = 19 * 60 + index * 30;
-    } else {
-      startMinutes = 10 * 60 + index * 45;
-    }
-
-    dayEvents.push({
-      id: 'plan-' + index,
-      name: text,
-      start: startMinutes,
-      end: startMinutes + 30,
-      type: text.toLowerCase().includes('тренировк') ? 'workout' : 'task',
-      done: done
-    });
-  });
-
-  // 2. Collect from timers (chat tasks with target times)
+  // 1. Collect from timers (chat tasks with target times)
   timers.forEach(timer => {
     if (!timer.active || !timer.targetTime) return;
     const h = timer.targetTime.getHours();
@@ -1264,7 +1203,6 @@ function addChatMessage(text, type) {
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
-  updatePlanProgress();
   renderTimers();
   renderDayFlow();
   setInterval(updateTimers, 1000);

@@ -1082,89 +1082,6 @@
     line-height: 1.4;
   }
 
-  /* Plan Card */
-  .plan-card {
-    padding: 20px;
-  }
-  .plan-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .plan-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: rgba(49,168,201,.1);
-    color: var(--c-energy);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .plan-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--ink);
-    letter-spacing: -0.3px;
-  }
-  .plan-items {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .plan-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    font-size: 13px;
-    color: var(--ink2);
-    border-radius: 12px;
-    transition: background 0.2s ease;
-  }
-  .plan-item:hover {
-    background: rgba(45,40,35,.02);
-  }
-  .plan-item.done span {
-    text-decoration: line-through;
-    opacity: 0.5;
-  }
-  .plan-item.alert {
-    background: rgba(232,161,60,.04);
-  }
-  .plan-check {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid rgba(45,40,35,.12);
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-  }
-  .plan-item.done .plan-check {
-    background: var(--c-index);
-    border-color: var(--c-index);
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11l3 3L22 4'/%3E%3C/svg%3E");
-    background-size: 12px;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .plan-time {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--mut);
-    font-weight: 600;
-  }
-  .plan-badge {
-    margin-left: auto;
-    font-size: 10px;
-    color: var(--warn);
-    font-weight: 700;
-    padding: 3px 8px;
-    background: rgba(232,161,60,.1);
-    border-radius: 100px;
-  }
-
   /* Metrics Grid */
   .metrics-grid {
     display: grid;
@@ -1346,8 +1263,6 @@
   :root.dark-theme .sw-value.today { color: var(--c-index); }
   :root.dark-theme .sw-value.forecast { color: var(--mut); opacity: 0.5; }
   :root.dark-theme .metric-mini { background: rgba(255,255,255,.04); }
-  :root.dark-theme .plan-card { background: rgba(255,255,255,.04); }
-  :root.dark-theme .plan-check { border-color: rgba(255,255,255,.12); }
   :root.dark-theme .advice-card { background: rgba(255,255,255,.04); }
   :root.dark-theme .alert-card { background: rgba(255,255,255,.04); }
   :root.dark-theme .theme-toggle { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.1); }
@@ -1593,183 +1508,7 @@
     border-top: 1px solid rgba(45,40,35,.06);
   }
 
-  /* Plan Card */
-  .plan-card {
-    padding: 18px;
-  }
-  .plan-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .plan-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    background: rgba(49,168,201,.12);
-    color: var(--c-energy);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .plan-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--ink);
-  }
-  .plan-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .plan-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--ink2);
-  }
-  .plan-item.done span {
-    text-decoration: line-through;
-    opacity: 0.5;
-  }
-  .plan-check {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid rgba(45,40,35,.15);
-    flex-shrink: 0;
-  }
-  .plan-item.done .plan-check {
-    background: var(--c-index);
-    border-color: var(--c-index);
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 11l3 3L22 4'/%3E%3C/svg%3E");
-    background-size: 12px;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .plan-time {
-    margin-left: auto;
-    font-size: 11px;
-     color: var(--mut);
-     font-weight: 600;
-   }
-
-   /* ===== IMPROVED PLAN CARD ===== */
-   .plan-title-block {
-     flex: 1;
-   }
-
-   .plan-progress-text {
-     font-size: 11px;
-     font-weight: 600;
-     color: var(--mut);
-     margin-top: 2px;
-   }
-
-   .plan-readiness-badge {
-     display: flex;
-     align-items: center;
-     gap: 4px;
-     padding: 4px 10px;
-     background: rgba(47,191,155,.12);
-     border: 1px solid rgba(47,191,155,.25);
-     border-radius: 20px;
-     font-size: 11px;
-     font-weight: 700;
-     color: #2FBF9B;
-   }
-
-   .plan-progress-bar {
-     height: 4px;
-     background: rgba(45,40,35,.06);
-     border-radius: 4px;
-     margin-bottom: 14px;
-     overflow: hidden;
-   }
-
-   .plan-progress-fill {
-     height: 100%;
-     background: linear-gradient(90deg, #2FBF9B, #5CC4A0);
-     border-radius: 4px;
-     transition: width 0.5s ease;
-   }
-
-   .plan-group {
-     margin-bottom: 12px;
-   }
-
-   .plan-group:last-child {
-     margin-bottom: 0;
-   }
-
-   .plan-group-label {
-     display: flex;
-     align-items: center;
-     gap: 6px;
-     font-size: 10px;
-     font-weight: 700;
-     text-transform: uppercase;
-     letter-spacing: 0.8px;
-     margin-bottom: 6px;
-     opacity: 0.7;
-   }
-
-   .plan-group-label.morning { color: #E6A23C; }
-   .plan-group-label.day { color: #31A8C9; }
-   .plan-group-label.evening { color: #7B74D6; }
-
-   .plan-item {
-     display: flex;
-     align-items: flex-start;
-     gap: 10px;
-     padding: 10px 12px;
-     margin-left: -12px;
-     margin-right: -12px;
-     border-radius: 12px;
-     cursor: pointer;
-     transition: background 0.2s ease;
-   }
-
-   .plan-item:hover {
-     background: rgba(45,40,35,.03);
-   }
-
-   .plan-item.current {
-     background: rgba(47,191,155,.06);
-     border: 1px solid rgba(47,191,155,.15);
-   }
-
-   .plan-item-content {
-     flex: 1;
-     display: flex;
-     flex-direction: column;
-     gap: 2px;
-   }
-
-   .plan-item-text {
-     font-size: 13px;
-     font-weight: 600;
-     color: var(--ink);
-   }
-
-   .plan-item.done .plan-item-text {
-     text-decoration: line-through;
-     opacity: 0.5;
-   }
-
-   .plan-item-context {
-     font-size: 11px;
-     color: var(--mut);
-     font-weight: 500;
-   }
-
-   .plan-item.done .plan-item-context {
-     display: none;
-   }
-
-   /* ===== TIMERS & TASKS CARD ===== */
+  /* ===== TIMERS & TASKS CARD ===== */
    .timers-card {
      padding: 18px;
    }
@@ -2614,8 +2353,6 @@
   :root.dark-theme .status-card { background: rgba(255,255,255,.04); }
   :root.dark-theme .status-verdict-text { border-color: rgba(255,255,255,.06); }
   :root.dark-theme .metric-mini { background: rgba(255,255,255,.04); }
-  :root.dark-theme .plan-card { background: rgba(255,255,255,.04); }
-  :root.dark-theme .plan-check { border-color: rgba(255,255,255,.15); }
   :root.dark-theme .advice-card { background: rgba(255,255,255,.04); }
   :root.dark-theme .advice-btn { background: rgba(47,191,155,.18); }
   :root.dark-theme .advice-btn:hover { background: rgba(47,191,155,.28); }
@@ -3317,38 +3054,6 @@
     font-weight: 700;
     cursor: pointer;
     box-shadow: var(--shadow);
-  }
-
-  .plan-card {
-    --aura: rgba(49, 168, 201, 0.18);
-    padding: 20px;
-  }
-
-  .plan-desc {
-    margin-top: 12px;
-    background: rgba(49,168,201,.08);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 13px;
-    color: var(--ink2);
-    line-height: 1.5;
-  }
-
-  .plan-desc b {
-    color: var(--ink);
-  }
-
-  .plan-btn {
-    width: 100%;
-    margin-top: 14px;
-    border: none;
-    border-radius: 100px;
-    background: var(--c-index);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 800;
-    padding: 14px;
-    cursor: pointer;
   }
 
   .body-comp {
@@ -6411,7 +6116,6 @@
   :root.dark-theme .activity-ring-bg{stroke:rgba(255,255,255,.1)}
   :root.dark-theme .hero-mascot-glow{background:radial-gradient(circle, rgba(47, 163, 107, 0.15) 0%, transparent 70%)}
   :root.dark-theme .bar-fill{background:linear-gradient(180deg, var(--c-index), rgba(47,163,107,.15)); box-shadow:0 4px 12px rgba(47,163,107,.1)}
-  :root.dark-theme .plan-progress-bar{background:rgba(255,255,255,.06)}
   :root.dark-theme .timer-item{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .pomodoro-section{background:rgba(255,255,200,.03); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .chat-input{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1)}
