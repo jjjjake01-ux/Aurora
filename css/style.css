@@ -1891,6 +1891,30 @@
       text-decoration: line-through;
     }
 
+    .dftask-item.done .dftask-name {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    .dftask-item.done .dftask-color {
+      opacity: 0.4;
+    }
+
+    .dftask-item.done::after {
+      content: '✓';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      font-weight: 800;
+      color: #2FBF9B;
+    }
+
+    .dftask-item {
+      position: relative;
+    }
+
     .dftask-empty {
       text-align: center;
       padding: 16px;

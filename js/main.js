@@ -618,6 +618,7 @@ function saveToStorage() {
       })),
       pomodoroSettings: pomodoro.settings,
       pomodoroSessions: pomodoroSessions,
+      linkedTasks: linkedTasks,
       dayEvents: dayEvents.filter(e => e.id.startsWith('manual-') || e.id.startsWith('timer-')),
       savedAt: new Date().toISOString()
     };
@@ -657,6 +658,11 @@ function loadFromStorage() {
       pomodoroSessions = data.pomodoroSessions;
     }
 
+    // Restore linked tasks
+    if (data.linkedTasks && Array.isArray(data.linkedTasks)) {
+      linkedTasks = data.linkedTasks;
+    }
+
     // Restore manual day events
     if (data.dayEvents && Array.isArray(data.dayEvents)) {
       dayEvents = data.dayEvents;
@@ -675,6 +681,12 @@ function parseTaskInput(input) {
   let taskName = '';
   let targetTime = null;
   let duration = null;
+  let needsPomodoro = false;
+
+  // Pattern: "с помидоро" / "с помидорами" / "помидор"
+  if (text.match(/с\s+помидор|помидор[а-я]*/)) {
+    needsPomodoro = true;
+  }
 
   // Pattern: "в 18:00" or "в 18.00"
   const timeAtMatch = text.match(/в\s+(\d{1,2})[:\.](\d{2})/);
@@ -710,15 +722,16 @@ function parseTaskInput(input) {
     taskName = text.replace(durationMatch[0], '').trim();
   }
 
-  // Clean up task name
+  // Clean up task name - remove pomodoro keywords
   taskName = taskName
+    .replace(/\s*с\s+помидор[а-я]*\s*/g, ' ')
     .replace(/^(приготовить|сделать|пойти|почистить|помыть|убрать|выпить|съесть|позвонить|написать)\s*/, '$1 ')
     .replace(/^[^\wа-яё]+/i, '')
     .replace(/[^\wа-яё]+$/i, '');
 
   if (!taskName) {
     // Fallback: use whole text as task name, first word as verb
-    taskName = text.replace(/^(в|через|на)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
+    taskName = text.replace(/^(в|через|на|с)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
   }
 
   // Capitalize first letter
@@ -728,6 +741,7 @@ function parseTaskInput(input) {
     name: taskName,
     targetTime: targetTime,
     duration: duration,
+    needsPomodoro: needsPomodoro,
     createdAt: now
   };
 }
@@ -741,6 +755,7 @@ function createTimer(task) {
     name: task.name,
     targetTime: task.targetTime,
     duration: task.duration,
+    needsPomodoro: task.needsPomodoro || false,
     createdAt: task.createdAt,
     active: true
   };
@@ -1021,13 +1036,17 @@ function collectDayEvents() {
     const startMin = h * 60 + m;
     const duration = timer.duration || 30;
 
+    // Preserve done state from existing events
+    const existing = dayEvents.find(e => e.id === 'timer-' + timer.id);
+
     dayEvents.push({
       id: 'timer-' + timer.id,
       name: timer.name,
       start: startMin,
       end: startMin + duration,
       type: 'task',
-      done: false
+      needsPomodoro: timer.needsPomodoro || false,
+      done: existing ? existing.done : false
     });
   });
 
@@ -1063,18 +1082,30 @@ function collectDayEvents() {
 }
 
 let pomodoroSessions = [];
+let linkedTasks = []; // { taskId, pomodoroId }
 
 function addPomodoroToDayFlow() {
   const now = new Date();
   const currentMin = now.getHours() * 60 + now.getMinutes();
   const duration = pomodoro.isBreak ? pomodoro.settings.break : pomodoro.settings.work;
+  const sessionId = Date.now();
 
   pomodoroSessions.push({
-    id: Date.now(),
+    id: sessionId,
     startMin: currentMin - duration,
     endMin: currentMin,
     isBreak: pomodoro.isBreak
   });
+
+  // Auto-complete linked tasks
+  if (!pomodoro.isBreak) {
+    linkedTasks.forEach(link => {
+      if (link.pomodoroId === sessionId) {
+        const task = dayEvents.find(e => e.id === link.taskId);
+        if (task) task.done = true;
+      }
+    });
+  }
 
   saveToStorage();
   updatePomodoroStats();
@@ -1217,6 +1248,7 @@ function renderTaskList(events, currentMinutes) {
 
   events.forEach(event => {
     const isPast = event.end < currentMinutes;
+    const isDone = event.done;
     const startH = Math.floor(event.start / 60);
     const startM = event.start % 60;
     const endH = Math.floor(event.end / 60);
@@ -1226,12 +1258,14 @@ function renderTaskList(events, currentMinutes) {
     const timeStr = `${startH}:${startM.toString().padStart(2, '0')}–${endH}:${endM.toString().padStart(2, '0')}`;
 
     const item = document.createElement('div');
-    item.className = `dftask-item${isPast ? ' past' : ''}`;
+    item.className = `dftask-item${isPast && !isDone ? ' past' : ''}${isDone ? ' done' : ''}`;
+    item.style.cursor = 'pointer';
+    item.onclick = () => toggleTaskDone(event.id);
 
     item.innerHTML = `
       <div class="dftask-color ${event.type}"></div>
       <div class="dftask-info">
-        <div class="dftask-name">${event.name}</div>
+        <div class="dftask-name">${event.name}${event.needsPomodoro ? ' 🍅' : ''}</div>
         <div class="dftask-time">${timeStr}</div>
       </div>
       <div class="dftask-dur">${formatHoursMinutes(duration)}</div>
@@ -1239,6 +1273,15 @@ function renderTaskList(events, currentMinutes) {
 
     container.appendChild(item);
   });
+}
+
+function toggleTaskDone(eventId) {
+  const event = dayEvents.find(e => e.id === eventId);
+  if (event) {
+    event.done = !event.done;
+    saveToStorage();
+    renderDayFlow();
+  }
 }
 
 // ===== PERFORMANCE INDICATORS =====
@@ -1254,11 +1297,10 @@ function updatePerformanceIndicators() {
   const focusGoal = 8;
   const focusPercent = Math.min(100, Math.round((focusCompleted / focusGoal) * 100));
 
-  // Productivity: completed tasks vs total tasks
-  const allTasks = document.querySelectorAll('.plan-item');
-  const completedTasks = document.querySelectorAll('.plan-item.done');
-  const totalTasks = allTasks.length || 0;
-  const doneTasks = completedTasks.length;
+  // Productivity: completed tasks vs total tasks (from dayEvents)
+  const taskEvents = dayEvents.filter(e => e.type === 'task' || e.type === 'workout');
+  const totalTasks = taskEvents.length;
+  const doneTasks = taskEvents.filter(e => e.done).length;
   const productivityPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   // Update Focus ring
@@ -1516,7 +1558,8 @@ function handleChatSubmit(e) {
     createTimer(task);
     const targetStr = formatTimeOfDay(task.targetTime);
     const durStr = task.duration ? ` на ${task.duration} мин` : '';
-    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}`, 'system success');
+    const pomoStr = task.needsPomodoro ? ' 🍅 с Помодоро' : '';
+    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}${pomoStr}`, 'system success');
   } else if (task) {
     addChatMessage(`✓ «${task.name}» добавлено (без таймера)`, 'system success');
   } else {
