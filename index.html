@@ -2234,9 +2234,9 @@
           <button type="button" class="tm-rep-item" data-rep="daily">День</button>
           <button type="button" class="tm-rep-item" data-rep="weekdays">Будни</button>
           <button type="button" class="tm-rep-item" data-rep="weekly">Неделя</button>
-          <button type="button" class="tm-rep-item" data-rep="custom">Свой</button>
+          <button type="button" class="tm-rep-item" data-rep="custom">Ещё</button>
         </div>
-        <div class="tm-repeat-custom" id="tmRepeatCustom">
+        <div class="tm-repeat-custom" id="tmRepeatCustom" style="display:none">
           <div class="tm-custom-row">
             <span class="tm-custom-label">Каждые</span>
             <div class="tm-stepper" id="tmCustomDaysStepper">
@@ -2244,9 +2244,13 @@
               <span class="tm-step-value" id="tmCustomDaysValue">2</span>
               <button type="button" class="tm-step-btn" onclick="adjustCustomDays(1)">+</button>
             </div>
-            <span class="tm-custom-label">дней</span>
+            <div class="tm-unit-toggle" id="tmUnitToggle">
+              <button type="button" class="tm-unit active" data-unit="days">дней</button>
+              <button type="button" class="tm-unit" data-unit="weeks">недель</button>
+              <button type="button" class="tm-unit" data-unit="months">мес</button>
+            </div>
           </div>
-          <div class="tm-weekdays-row" id="tmWeekdaysRow" style="display:none">
+          <div class="tm-weekdays-row" id="tmWeekdaysRow">
             <button type="button" class="tm-wd-btn" data-day="1">Пн</button>
             <button type="button" class="tm-wd-btn" data-day="2">Вт</button>
             <button type="button" class="tm-wd-btn" data-day="3">Ср</button>
@@ -2255,6 +2259,7 @@
             <button type="button" class="tm-wd-btn" data-day="6">Сб</button>
             <button type="button" class="tm-wd-btn" data-day="0">Вс</button>
           </div>
+          <div class="tm-repeat-preview" id="tmRepeatPreview">Каждые 2 дня</div>
         </div>
       </div>
 

@@ -1724,11 +1724,15 @@ function openTaskModal(taskText) {
   document.querySelectorAll('.tm-rep-item').forEach(r => r.classList.remove('active'));
   document.querySelector('.tm-rep-item[data-rep="never"]').classList.add('active');
   document.getElementById('tmRepeatCustom').style.display = 'none';
-  document.getElementById('tmWeekdaysRow').style.display = 'none';
 
   // Reset custom days
   customDaysValue = 2;
   document.getElementById('tmCustomDaysValue').textContent = '2';
+
+  // Reset unit toggle
+  selectedUnit = 'days';
+  document.querySelectorAll('.tm-unit').forEach(u => u.classList.remove('active'));
+  document.querySelector('.tm-unit[data-unit="days"]').classList.add('active');
 
   // Reset weekdays
   selectedWeekDays = [];
@@ -1862,9 +1866,42 @@ function createTaskFromModal() {
   addChatMessage(`✓ «${name}» создано на ${formatTimeOfDay(targetTime)}${usePomodoro ? ' с Помодоро' : ''}`, 'system success');
 }
 
+let selectedUnit = 'days';
+
 function adjustCustomDays(delta) {
   customDaysValue = Math.max(1, Math.min(30, customDaysValue + delta));
   document.getElementById('tmCustomDaysValue').textContent = customDaysValue;
+  updateRepeatPreview();
+}
+
+function selectUnit(btn) {
+  document.querySelectorAll('.tm-unit').forEach(u => u.classList.remove('active'));
+  btn.classList.add('active');
+  selectedUnit = btn.dataset.unit;
+  updateRepeatPreview();
+}
+
+function updateRepeatPreview() {
+  const preview = document.getElementById('tmRepeatPreview');
+  if (!preview) return;
+
+  let text = '';
+  if (selectedUnit === 'days') {
+    text = customDaysValue === 1 ? 'Каждый день' : `Каждые ${customDaysValue} дней`;
+  } else if (selectedUnit === 'weeks') {
+    text = customDaysValue === 1 ? 'Каждую неделю' : `Каждые ${customDaysValue} недель`;
+  } else if (selectedUnit === 'months') {
+    text = customDaysValue === 1 ? 'Каждый месяц' : `Каждые ${customDaysValue} месяцев`;
+  }
+
+  // Add selected days info
+  if (selectedWeekDays.length > 0) {
+    const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const daysStr = selectedWeekDays.sort((a,b)=>a-b).map(d => dayNames[d]).join(', ');
+    text += ` (${daysStr})`;
+  }
+
+  preview.textContent = text;
 }
 
 function selectDuration(btn) {
@@ -1879,14 +1916,12 @@ function selectRepeat(btn) {
   selectedRepeat = btn.dataset.rep;
 
   const customDiv = document.getElementById('tmRepeatCustom');
-  const weekdaysRow = document.getElementById('tmWeekdaysRow');
 
   if (btn.dataset.rep === 'custom') {
     customDiv.style.display = 'block';
-    weekdaysRow.style.display = 'block';
+    updateRepeatPreview();
   } else {
     customDiv.style.display = 'none';
-    weekdaysRow.style.display = 'none';
   }
 }
 
@@ -1944,5 +1979,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Session dots
   document.querySelectorAll('.tm-ses-dot').forEach(btn => {
     btn.addEventListener('click', () => selectSession(btn));
+  });
+
+  // Unit toggle buttons
+  document.querySelectorAll('.tm-unit').forEach(btn => {
+    btn.addEventListener('click', () => selectUnit(btn));
   });
 });
