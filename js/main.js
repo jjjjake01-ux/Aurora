@@ -652,7 +652,7 @@ function parseTaskInput(input) {
   }
 
   // Pattern: "через X минут" or "через X мин"
-  const inMinutesMatch = text.match(/через\s+(\d+)\s*мин/);
+  const inMinutesMatch = text.match(/через\s+(\d+)\s*мин[а-я]*/);
   if (inMinutesMatch) {
     const mins = parseInt(inMinutesMatch[1]);
     targetTime = new Date(now.getTime() + mins * 60000);
@@ -660,7 +660,7 @@ function parseTaskInput(input) {
   }
 
   // Pattern: "через X час" or "через X часов"
-  const inHoursMatch = text.match(/через\s+(\d+)\s*час/);
+  const inHoursMatch = text.match(/через\s+(\d+)\s*час[а-я]*/);
   if (inHoursMatch) {
     const hrs = parseInt(inHoursMatch[1]);
     targetTime = new Date(now.getTime() + hrs * 3600000);
@@ -668,7 +668,7 @@ function parseTaskInput(input) {
   }
 
   // Pattern: "на X минут" or "на X мин" (duration)
-  const durationMatch = text.match(/на\s+(\d+)\s*мин/);
+  const durationMatch = text.match(/на\s+(\d+)\s*мин[а-я]*/);
   if (durationMatch) {
     duration = parseInt(durationMatch[1]);
     taskName = text.replace(durationMatch[0], '').trim();
@@ -733,14 +733,15 @@ function renderTimers() {
     const now = new Date();
     const diff = timer.targetTime - now;
     const isUrgent = diff > 0 && diff < 5 * 60000;
-    const timeStr = formatTimeRemaining(diff);
+    const isCountdown = diff > 0 && diff < 15 * 60000;
     const targetStr = formatTimeOfDay(timer.targetTime);
+    const timeStr = isCountdown ? formatTimeRemaining(diff) : `в ${targetStr}`;
 
     return `
-      <div class="timer-item${isUrgent ? ' urgent' : ''}" id="timer-${timer.id}">
+      <div class="timer-item${isUrgent ? ' urgent' : ''}${isCountdown ? ' counting' : ''}" id="timer-${timer.id}">
         <div class="timer-info">
           <div class="timer-name">${timer.name}</div>
-          <div class="timer-target">${timer.duration ? 'на ' + timer.duration + ' мин · ' : ''}в ${targetStr}</div>
+          <div class="timer-target">${timer.duration ? 'на ' + timer.duration + ' мин · ' : ''}${isCountdown ? 'осталось' : 'напомнит в'} ${targetStr}</div>
         </div>
         <div class="timer-value" data-target="${timer.targetTime.getTime()}">${timeStr}</div>
         <button class="timer-cancel" onclick="cancelTimer(${timer.id})" aria-label="Удалить таймер">
@@ -783,14 +784,28 @@ function updateTimers() {
   if (changed) {
     renderTimers();
     timers = timers.filter(t => t.active);
+    return;
   }
 
-  // Update displayed times
+  // Update displayed times only for countdown timers (within 15 min)
   document.querySelectorAll('.timer-value[data-target]').forEach(el => {
     const target = parseInt(el.dataset.target);
     const diff = target - now.getTime();
-    el.textContent = formatTimeRemaining(diff);
+    const isCountdown = diff > 0 && diff < 15 * 60000;
+    if (isCountdown) {
+      el.textContent = formatTimeRemaining(diff);
+    }
   });
+
+  // Check if any timer entered countdown window — re-render if needed
+  const hasNewCountdown = timers.some(t => {
+    const diff = t.targetTime - now;
+    return diff > 0 && diff < 15 * 60000;
+  });
+  if (hasNewCountdown) {
+    const countingEls = document.querySelectorAll('.timer-item.counting');
+    if (countingEls.length === 0) renderTimers();
+  }
 }
 
 function triggerNotification(taskName) {

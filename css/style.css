@@ -1816,6 +1816,12 @@
      animation: fadeInUp 0.3s ease;
    }
 
+   .timer-item.counting {
+     border-color: rgba(232,161,60,.35);
+     background: rgba(232,161,60,.1);
+     box-shadow: 0 0 20px rgba(232,161,60,.1);
+   }
+
    @keyframes fadeInUp {
      from { opacity: 0; transform: translateY(8px); }
      to { opacity: 1; transform: translateY(0); }
