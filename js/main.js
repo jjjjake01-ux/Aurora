@@ -1106,21 +1106,12 @@ function renderDayFlow() {
   if (dfsSpent) dfsSpent.textContent = formatHoursMinutes(occupiedMinutes);
   if (dfsFree) dfsFree.textContent = formatHoursMinutes(freeMinutes);
 
-  // Update details
-  const dfdFocus = document.getElementById('dfdFocus');
-  const dfdTasks = document.getElementById('dfdTasks');
-  const dfdFree = document.getElementById('dfdFree');
-  if (dfdFocus) dfdFocus.textContent = formatHoursMinutes(focusMinutes);
-  if (dfdTasks) dfdTasks.textContent = formatHoursMinutes(taskMinutes);
-  if (dfdFree) dfdFree.textContent = formatHoursMinutes(freeMinutes);
-
-  // Render timeline blocks
-  const track = document.querySelector('.dft-track');
+  // Render timeline blocks (clean, no text)
+  const track = document.getElementById('dftTrack');
   if (!track) return;
 
   track.querySelectorAll('.dft-block, .dft-freezone').forEach(el => el.remove());
 
-  // Find free zones (gaps between events)
   const sortedEvents = [...dayEvents].filter(e => e.end > DAY_START && e.start < DAY_END);
   let lastEnd = DAY_START;
 
@@ -1133,18 +1124,11 @@ function renderDayFlow() {
       const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
       const freeWidth = (freeDuration / DAY_TOTAL) * 100;
 
-      if (freeWidth > 0.5) {
+      if (freeWidth > 0.3) {
         const freeEl = document.createElement('div');
         freeEl.className = 'dft-freezone';
         freeEl.style.left = freeLeft + '%';
         freeEl.style.width = freeWidth + '%';
-
-        if (freeDuration >= 10) {
-          const timeOfDay = lastEnd < 12 * 60 ? 'morning-free' : lastEnd < 18 * 60 ? 'day-free' : 'evening-free';
-          freeEl.classList.add(timeOfDay);
-          freeEl.innerHTML = `<span class="dft-free-label">${formatHoursMinutes(freeDuration)}</span>`;
-        }
-
         track.appendChild(freeEl);
       }
     }
@@ -1152,26 +1136,16 @@ function renderDayFlow() {
     const blockLeft = ((eventStart - DAY_START) / DAY_TOTAL) * 100;
     const blockWidth = ((eventEnd - eventStart) / DAY_TOTAL) * 100;
 
-    if (blockWidth > 0.3) {
+    if (blockWidth > 0.2) {
       const blockEl = document.createElement('div');
       blockEl.className = 'dft-block';
       blockEl.style.left = blockLeft + '%';
-      blockEl.style.width = Math.max(blockWidth, 1.5) + '%';
+      blockEl.style.width = Math.max(blockWidth, 1) + '%';
 
-      if (event.type === 'pomodoro') {
-        blockEl.classList.add('pomodoro-block');
-        blockEl.innerHTML = `<span class="dft-block-label">${blockWidth > 3 ? '🍅 Фокус' : '🍅'}</span>`;
-      } else if (event.type === 'break') {
-        blockEl.classList.add('break-block');
-        blockEl.innerHTML = `<span class="dft-block-label">☕</span>`;
-      } else if (event.type === 'workout') {
-        blockEl.classList.add('workout-block');
-        blockEl.innerHTML = `<span class="dft-block-label">${blockWidth > 4 ? 'Тренировка' : '💪'}</span>`;
-      } else {
-        blockEl.classList.add('task-block');
-        const displayName = blockWidth > 8 ? event.name : blockWidth > 4 ? event.name.substring(0, 6) : '•';
-        blockEl.innerHTML = `<span class="dft-block-label">${displayName}</span>`;
-      }
+      if (event.type === 'pomodoro') blockEl.classList.add('pomodoro-block');
+      else if (event.type === 'break') blockEl.classList.add('break-block');
+      else if (event.type === 'workout') blockEl.classList.add('workout-block');
+      else blockEl.classList.add('task-block');
 
       track.appendChild(blockEl);
     }
@@ -1179,17 +1153,13 @@ function renderDayFlow() {
     lastEnd = Math.max(lastEnd, eventEnd);
   });
 
-  // Final free zone
   if (lastEnd < DAY_END) {
     const freeDuration = DAY_END - lastEnd;
     const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
     const freeEl = document.createElement('div');
-    freeEl.className = 'dft-freezone evening-free';
+    freeEl.className = 'dft-freezone';
     freeEl.style.left = freeLeft + '%';
     freeEl.style.width = (freeDuration / DAY_TOTAL) * 100 + '%';
-    if (freeDuration >= 10) {
-      freeEl.innerHTML = `<span class="dft-free-label">${formatHoursMinutes(freeDuration)}</span>`;
-    }
     track.appendChild(freeEl);
   }
 
@@ -1199,6 +1169,46 @@ function renderDayFlow() {
     const nowPercent = ((clampedMinutes - DAY_START) / DAY_TOTAL) * 100;
     nowEl.style.left = nowPercent + '%';
   }
+
+  // Render task list
+  renderTaskList(sortedEvents, currentMinutes);
+}
+
+function renderTaskList(events, currentMinutes) {
+  const container = document.getElementById('dayflowTasks');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (events.length === 0) {
+    container.innerHTML = '<div class="dftask-empty">Нет задач на сегодня</div>';
+    return;
+  }
+
+  events.forEach(event => {
+    const isPast = event.end < currentMinutes;
+    const startH = Math.floor(event.start / 60);
+    const startM = event.start % 60;
+    const endH = Math.floor(event.end / 60);
+    const endM = event.end % 60;
+    const duration = event.end - event.start;
+
+    const timeStr = `${startH}:${startM.toString().padStart(2, '0')}–${endH}:${endM.toString().padStart(2, '0')}`;
+
+    const item = document.createElement('div');
+    item.className = `dftask-item${isPast ? ' past' : ''}`;
+
+    item.innerHTML = `
+      <div class="dftask-color ${event.type}"></div>
+      <div class="dftask-info">
+        <div class="dftask-name">${event.name}</div>
+        <div class="dftask-time">${timeStr}</div>
+      </div>
+      <div class="dftask-dur">${formatHoursMinutes(duration)}</div>
+    `;
+
+    container.appendChild(item);
+  });
 }
 
 function formatHoursMinutes(minutes) {
