@@ -1199,6 +1199,9 @@ function renderDayFlow() {
 
   // Render task list
   renderTaskList(sortedEvents, currentMinutes);
+
+  // Update performance indicators
+  updatePerformanceIndicators();
 }
 
 function renderTaskList(events, currentMinutes) {
@@ -1236,6 +1239,51 @@ function renderTaskList(events, currentMinutes) {
 
     container.appendChild(item);
   });
+}
+
+// ===== PERFORMANCE INDICATORS =====
+function updatePerformanceIndicators() {
+  const today = new Date().toDateString();
+
+  // Focus: completed pomodoros vs goal (8)
+  const todaySessions = pomodoroSessions.filter(s => {
+    const d = new Date(s.id);
+    return d.toDateString() === today && !s.isBreak;
+  });
+  const focusCompleted = todaySessions.length;
+  const focusGoal = 8;
+  const focusPercent = Math.min(100, Math.round((focusCompleted / focusGoal) * 100));
+
+  // Productivity: completed tasks vs total tasks
+  const allTasks = document.querySelectorAll('.plan-item');
+  const completedTasks = document.querySelectorAll('.plan-item.done');
+  const totalTasks = allTasks.length || 0;
+  const doneTasks = completedTasks.length;
+  const productivityPercent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  // Update Focus ring
+  const focusRing = document.getElementById('dfpFocusRing');
+  const focusValue = document.getElementById('dfpFocusValue');
+  const focusSub = document.getElementById('dfpFocusSub');
+  if (focusRing) {
+    const circumference = 2 * Math.PI * 15; // r=15
+    const offset = circumference - (focusPercent / 100) * circumference;
+    focusRing.style.strokeDashoffset = offset;
+  }
+  if (focusValue) focusValue.textContent = focusPercent + '%';
+  if (focusSub) focusSub.textContent = `${focusCompleted} из ${focusGoal}`;
+
+  // Update Productivity ring
+  const productivityRing = document.getElementById('dfpProductivityRing');
+  const productivityValue = document.getElementById('dfpProductivityValue');
+  const productivitySub = document.getElementById('dfpProductivitySub');
+  if (productivityRing) {
+    const circumference = 2 * Math.PI * 15;
+    const offset = circumference - (productivityPercent / 100) * circumference;
+    productivityRing.style.strokeDashoffset = offset;
+  }
+  if (productivityValue) productivityValue.textContent = productivityPercent + '%';
+  if (productivitySub) productivitySub.textContent = `${doneTasks}/${totalTasks} задач`;
 }
 
 // ===== DRAG & RESIZE =====

@@ -1907,6 +1907,90 @@
       border-top: 1px solid rgba(45,40,35,0.05);
     }
 
+    .dayflow-performance {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 14px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(45,40,35,0.05);
+    }
+
+    .dfp-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dfp-ring-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+    }
+
+    .dfp-ring {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .dfp-ring-bg {
+      fill: none;
+      stroke: rgba(45,40,35,0.06);
+      stroke-width: 3;
+    }
+
+    .dfp-ring-fill {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 94.2;
+      stroke-dashoffset: 94.2;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .focus-ring {
+      stroke: url(#focusGradient);
+    }
+
+    .productivity-ring {
+      stroke: url(#productivityGradient);
+    }
+
+    .dfp-ring-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .dfp-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dfp-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .dfp-sub {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--mut);
+    }
+
+    .dfp-divider {
+      width: 1px;
+      height: 32px;
+      background: rgba(45,40,35,0.08);
+    }
+
     .dfl-item {
       display: flex;
       align-items: center;
@@ -6214,7 +6298,8 @@
   :root.dark-theme .dayflow-card{background:linear-gradient(145deg, rgba(45,40,35,0.9) 0%, rgba(35,32,28,0.95) 100%); border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dft-track{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dftask-item{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
-  :root.dark-theme .dft-block.dragging{box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+  :root.dark-theme .dfp-ring-bg{stroke:rgba(255,255,255,.08)}
+  :root.dark-theme .dayflow-performance{border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dft-freezone{border-color:rgba(255,255,255,.06); background:rgba(255,255,255,.02)}
   :root.dark-theme .dayflow-summary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08)}
 

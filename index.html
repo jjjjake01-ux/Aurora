@@ -9,6 +9,18 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E88060"/>
+      <stop offset="100%" stop-color="#E86E5E"/>
+    </linearGradient>
+    <linearGradient id="productivityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5CC4A0"/>
+      <stop offset="100%" stop-color="#2FBF9B"/>
+    </linearGradient>
+  </defs>
+</svg>
 <div class="app">
 
   <!-- СТРАНИЦА 1: ГЛАВНАЯ -->
@@ -452,6 +464,37 @@
         </div>
         <div class="dft-track" id="dftTrack">
           <div class="dft-now" id="dftNow"></div>
+        </div>
+      </div>
+
+      <!-- Фокус и Продуктивность -->
+      <div class="dayflow-performance">
+        <div class="dfp-item">
+          <div class="dfp-ring-wrap">
+            <svg class="dfp-ring" viewBox="0 0 36 36">
+              <circle class="dfp-ring-bg" cx="18" cy="18" r="15"/>
+              <circle class="dfp-ring-fill focus-ring" cx="18" cy="18" r="15" id="dfpFocusRing"/>
+            </svg>
+            <div class="dfp-ring-value" id="dfpFocusValue">0%</div>
+          </div>
+          <div class="dfp-info">
+            <span class="dfp-label">Фокус</span>
+            <span class="dfp-sub" id="dfpFocusSub">0 из 8</span>
+          </div>
+        </div>
+        <div class="dfp-divider"></div>
+        <div class="dfp-item">
+          <div class="dfp-ring-wrap">
+            <svg class="dfp-ring" viewBox="0 0 36 36">
+              <circle class="dfp-ring-bg" cx="18" cy="18" r="15"/>
+              <circle class="dfp-ring-fill productivity-ring" cx="18" cy="18" r="15" id="dfpProductivityRing"/>
+            </svg>
+            <div class="dfp-ring-value" id="dfpProductivityValue">0%</div>
+          </div>
+          <div class="dfp-info">
+            <span class="dfp-label">Продуктивность</span>
+            <span class="dfp-sub" id="dfpProductivitySub">0/0 задач</span>
+          </div>
         </div>
       </div>
 
