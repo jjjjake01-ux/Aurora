@@ -607,6 +607,65 @@ function updateMascotIllustration(containerId, score) {
   }
 }
 
+// ===== LOCAL STORAGE =====
+function saveToStorage() {
+  try {
+    const data = {
+      timers: timers.map(t => ({
+        ...t,
+        targetTime: t.targetTime ? t.targetTime.toISOString() : null,
+        createdAt: t.createdAt ? t.createdAt.toISOString() : null
+      })),
+      pomodoroSettings: pomodoro.settings,
+      pomodoroSessions: pomodoroSessions,
+      dayEvents: dayEvents.filter(e => e.id.startsWith('manual-') || e.id.startsWith('timer-')),
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('atlasHealth', JSON.stringify(data));
+  } catch (e) {
+    // storage full or unavailable
+  }
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem('atlasHealth');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    // Restore timers
+    if (data.timers && Array.isArray(data.timers)) {
+      timers = data.timers.map(t => ({
+        ...t,
+        targetTime: t.targetTime ? new Date(t.targetTime) : null,
+        createdAt: t.createdAt ? new Date(t.createdAt) : null,
+        active: t.targetTime ? new Date(t.targetTime) > new Date() : false
+      })).filter(t => t.active || !t.targetTime);
+    }
+
+    // Restore pomodoro settings
+    if (data.pomodoroSettings) {
+      pomodoro.settings = { ...pomodoro.settings, ...data.pomodoroSettings };
+      document.getElementById('psWork').value = pomodoro.settings.work;
+      document.getElementById('psBreak').value = pomodoro.settings.break;
+      document.getElementById('psLongBreak').value = pomodoro.settings.longBreak;
+      document.getElementById('psCyclesBeforeLong').value = pomodoro.settings.cyclesBeforeLong;
+    }
+
+    // Restore pomodoro sessions
+    if (data.pomodoroSessions && Array.isArray(data.pomodoroSessions)) {
+      pomodoroSessions = data.pomodoroSessions;
+    }
+
+    // Restore manual day events
+    if (data.dayEvents && Array.isArray(data.dayEvents)) {
+      dayEvents = data.dayEvents;
+    }
+  } catch (e) {
+    // corrupted data
+  }
+}
+
 // ===== NATURAL LANGUAGE TASK PARSER =====
 function parseTaskInput(input) {
   const text = input.trim().toLowerCase();
@@ -688,6 +747,7 @@ function createTimer(task) {
   timers.push(timer);
   renderTimers();
   renderDayFlow();
+  saveToStorage();
   return timer;
 }
 
@@ -695,6 +755,7 @@ function cancelTimer(id) {
   timers = timers.filter(t => t.id !== id);
   renderTimers();
   renderDayFlow();
+  saveToStorage();
 }
 
 function renderTimers() {
@@ -838,6 +899,7 @@ function adjustPomodoroSetting(key, delta) {
 function updatePomodoroSetting(key, value) {
   const val = Math.max(1, Math.min(60, parseInt(value) || 1));
   pomodoro.settings[key] = val;
+  saveToStorage();
   // If timer is not running, update display
   if (!pomodoro.isRunning) {
     if (pomodoro.isBreak) {
@@ -1014,6 +1076,7 @@ function addPomodoroToDayFlow() {
     isBreak: pomodoro.isBreak
   });
 
+  saveToStorage();
   collectDayEvents();
   renderDayFlow();
 }
@@ -1080,11 +1143,15 @@ function renderDayFlow() {
       blockEl.className = 'dft-block';
       blockEl.style.left = blockLeft + '%';
       blockEl.style.width = Math.max(blockWidth, 1) + '%';
+      blockEl.dataset.eventId = event.id;
 
       if (event.type === 'pomodoro') blockEl.classList.add('pomodoro-block');
       else if (event.type === 'break') blockEl.classList.add('break-block');
       else if (event.type === 'workout') blockEl.classList.add('workout-block');
       else blockEl.classList.add('task-block');
+
+      // Make draggable
+      makeBlockDraggable(blockEl, event);
 
       track.appendChild(blockEl);
     }
@@ -1150,6 +1217,175 @@ function renderTaskList(events, currentMinutes) {
   });
 }
 
+// ===== DRAG & RESIZE =====
+let dragState = null;
+
+function makeBlockDraggable(blockEl, event) {
+  // Touch events
+  blockEl.addEventListener('touchstart', (e) => handleDragStart(e, event, 'move'), { passive: false });
+  // Mouse events
+  blockEl.addEventListener('mousedown', (e) => handleDragStart(e, event, 'move'));
+
+  // Resize handles
+  const leftHandle = document.createElement('div');
+  leftHandle.className = 'dft-resize-handle left';
+  leftHandle.addEventListener('touchstart', (e) => handleDragStart(e, event, 'resize-left'), { passive: false });
+  leftHandle.addEventListener('mousedown', (e) => handleDragStart(e, event, 'resize-left'));
+  blockEl.appendChild(leftHandle);
+
+  const rightHandle = document.createElement('div');
+  rightHandle.className = 'dft-resize-handle right';
+  rightHandle.addEventListener('touchstart', (e) => handleDragStart(e, event, 'resize-right'), { passive: false });
+  rightHandle.addEventListener('mousedown', (e) => handleDragStart(e, event, 'resize-right'));
+  blockEl.appendChild(rightHandle);
+}
+
+function handleDragStart(e, event, mode) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const track = document.getElementById('dftTrack');
+  if (!track) return;
+  const rect = track.getBoundingClientRect();
+
+  let clientX;
+  if (e.touches && e.touches.length > 0) {
+    clientX = e.touches[0].clientX;
+  } else {
+    clientX = e.clientX;
+  }
+
+  dragState = {
+    event: event,
+    mode: mode,
+    rect: rect,
+    startX: clientX,
+    originalStart: event.start,
+    originalEnd: event.end
+  };
+
+  // Visual feedback
+  const blockEl = e.currentTarget.closest('.dft-block');
+  if (blockEl) blockEl.classList.add('dragging');
+
+  // Bind move/end events
+  document.addEventListener('touchmove', handleDragMove, { passive: false });
+  document.addEventListener('touchend', handleDragEnd);
+  document.addEventListener('mousemove', handleDragMove);
+  document.addEventListener('mouseup', handleDragEnd);
+}
+
+function handleDragMove(e) {
+  if (!dragState) return;
+  e.preventDefault();
+
+  let clientX;
+  if (e.touches && e.touches.length > 0) {
+    clientX = e.touches[0].clientX;
+  } else {
+    clientX = e.clientX;
+  }
+
+  const { rect, mode, originalStart, originalEnd } = dragState;
+  const deltaX = clientX - dragState.startX;
+  const deltaPercent = (deltaX / rect.width) * 100;
+  const deltaMinutes = (deltaPercent / 100) * DAY_TOTAL;
+
+  const snap = 5; // snap to 5 minutes
+  let newStart = originalStart;
+  let newEnd = originalEnd;
+
+  if (mode === 'move') {
+    newStart = Math.round((originalStart + deltaMinutes) / snap) * snap;
+    newEnd = newStart + (originalEnd - originalStart);
+  } else if (mode === 'resize-left') {
+    newStart = Math.round((originalStart + deltaMinutes) / snap) * snap;
+    if (newStart > newEnd - 10) newStart = newEnd - 10;
+  } else if (mode === 'resize-right') {
+    newEnd = Math.round((originalEnd + deltaMinutes) / snap) * snap;
+    if (newEnd < newStart + 10) newEnd = newStart + 10;
+  }
+
+  // Clamp to day bounds
+  newStart = Math.max(DAY_START, Math.min(DAY_END - 10, newStart));
+  newEnd = Math.max(DAY_START + 10, Math.min(DAY_END, newEnd));
+
+  // Update event data
+  dragState.event.start = newStart;
+  dragState.event.end = newEnd;
+
+  // Update visual
+  updateBlockPosition(dragState.event);
+  updateTaskListTime(dragState.event);
+}
+
+function handleDragEnd(e) {
+  if (!dragState) return;
+
+  // Remove visual feedback
+  document.querySelectorAll('.dft-block.dragging').forEach(el => el.classList.remove('dragging'));
+
+  // Update timer if this event came from a timer
+  const event = dragState.event;
+  if (event.id.startsWith('timer-')) {
+    const timerId = parseInt(event.id.replace('timer-', ''));
+    const timer = timers.find(t => t.id === timerId);
+    if (timer && timer.targetTime) {
+      const newDate = new Date(timer.targetTime);
+      newDate.setHours(Math.floor(event.start / 60), event.start % 60, 0, 0);
+      timer.targetTime = newDate;
+    }
+    if (timer && event.end - event.start !== timer.duration) {
+      timer.duration = event.end - event.start;
+    }
+  }
+
+  // Save and re-render
+  saveToStorage();
+  renderTimers();
+  renderDayFlow();
+
+  // Cleanup
+  dragState = null;
+  document.removeEventListener('touchmove', handleDragMove);
+  document.removeEventListener('touchend', handleDragEnd);
+  document.removeEventListener('mousemove', handleDragMove);
+  document.removeEventListener('mouseup', handleDragEnd);
+}
+
+function updateBlockPosition(event) {
+  const track = document.getElementById('dftTrack');
+  if (!track) return;
+  const block = track.querySelector(`[data-event-id="${event.id}"]`);
+  if (!block) return;
+
+  const left = ((event.start - DAY_START) / DAY_TOTAL) * 100;
+  const width = ((event.end - event.start) / DAY_TOTAL) * 100;
+  block.style.left = left + '%';
+  block.style.width = Math.max(width, 1) + '%';
+}
+
+function updateTaskListTime(event) {
+  const container = document.getElementById('dayflowTasks');
+  if (!container) return;
+  const items = container.querySelectorAll('.dftask-item');
+  // Find corresponding item by matching event id (stored in block data)
+  // For simplicity, we'll just update the first matching name
+  const nameEl = Array.from(container.querySelectorAll('.dftask-name')).find(
+    el => el.textContent === event.name
+  );
+  if (nameEl) {
+    const timeEl = nameEl.parentElement.querySelector('.dftask-time');
+    const durEl = nameEl.parentElement.parentElement.querySelector('.dftask-dur');
+    const startH = Math.floor(event.start / 60);
+    const startM = event.start % 60;
+    const endH = Math.floor(event.end / 60);
+    const endM = event.end % 60;
+    if (timeEl) timeEl.textContent = `${startH}:${startM.toString().padStart(2, '0')}–${endH}:${endM.toString().padStart(2, '0')}`;
+    if (durEl) durEl.textContent = formatHoursMinutes(event.end - event.start);
+  }
+}
+
 function formatHoursMinutes(minutes) {
   if (minutes <= 0) return '0м';
   const hrs = Math.floor(minutes / 60);
@@ -1203,6 +1439,7 @@ function addChatMessage(text, type) {
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
   renderTimers();
   renderDayFlow();
   setInterval(updateTimers, 1000);

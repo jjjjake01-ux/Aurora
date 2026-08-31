@@ -1731,6 +1731,64 @@
       height: 24px;
       border-radius: 4px;
       transition: all 0.3s ease;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .dft-block:active,
+    .dft-block.dragging {
+      cursor: grabbing;
+      transform: scaleY(1.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 3;
+    }
+
+    .dft-resize-handle {
+      position: absolute;
+      top: 0;
+      width: 10px;
+      height: 100%;
+      cursor: ew-resize;
+      touch-action: none;
+    }
+
+    .dft-resize-handle.left {
+      left: 0;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .dft-resize-handle.right {
+      right: 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .dft-resize-handle:hover,
+    .dft-resize-handle:active {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .dft-resize-handle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 1px;
+    }
+
+    .dft-resize-handle.left::after {
+      left: 3px;
+      transform: translate(0, -50%);
+    }
+
+    .dft-resize-handle.right::after {
+      left: auto;
+      right: 3px;
+      transform: translate(0, -50%);
     }
 
     .dft-freezone {
@@ -6127,6 +6185,7 @@
   :root.dark-theme .dayflow-card{background:linear-gradient(145deg, rgba(45,40,35,0.9) 0%, rgba(35,32,28,0.95) 100%); border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dft-track{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dftask-item{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
+  :root.dark-theme .dft-block.dragging{box-shadow:0 4px 12px rgba(0,0,0,0.4)}
   :root.dark-theme .dft-freezone{border-color:rgba(255,255,255,.06); background:rgba(255,255,255,.02)}
   :root.dark-theme .dayflow-summary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08)}
 
