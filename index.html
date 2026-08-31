@@ -2259,6 +2259,42 @@
             <button type="button" class="tm-wd-btn" data-day="6">Сб</button>
             <button type="button" class="tm-wd-btn" data-day="0">Вс</button>
           </div>
+          <div class="tm-month-options" id="tmMonthOptions" style="display:none">
+            <div class="tm-month-row">
+              <span class="tm-custom-label">Число</span>
+              <div class="tm-day-picker" id="tmDayPicker">
+                <button type="button" class="tm-day-btn active" data-day="1">1</button>
+                <button type="button" class="tm-day-btn" data-day="5">5</button>
+                <button type="button" class="tm-day-btn" data-day="10">10</button>
+                <button type="button" class="tm-day-btn" data-day="15">15</button>
+                <button type="button" class="tm-day-btn" data-day="20">20</button>
+                <button type="button" class="tm-day-btn" data-day="25">25</button>
+                <button type="button" class="tm-day-btn" data-day="30">30</button>
+                <button type="button" class="tm-day-btn" data-day="last">посл</button>
+              </div>
+            </div>
+            <div class="tm-month-row">
+              <span class="tm-custom-label">Или</span>
+              <div class="tm-month-weekday">
+                <select id="tmMonthWeekdayPos" class="tm-select-sm">
+                  <option value="1">Первый</option>
+                  <option value="2">Второй</option>
+                  <option value="3">Третий</option>
+                  <option value="4">Четвёртый</option>
+                  <option value="last">Последний</option>
+                </select>
+                <select id="tmMonthWeekdayDay" class="tm-select-sm">
+                  <option value="1">Понедельник</option>
+                  <option value="2">Вторник</option>
+                  <option value="3">Среда</option>
+                  <option value="4">Четверг</option>
+                  <option value="5">Пятница</option>
+                  <option value="6">Суббота</option>
+                  <option value="0">Воскресенье</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <div class="tm-repeat-preview" id="tmRepeatPreview">Каждые 2 дня</div>
         </div>
       </div>

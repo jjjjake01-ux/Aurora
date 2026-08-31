@@ -3120,6 +3120,69 @@
       text-align: center;
     }
 
+    .tm-month-options {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(45,40,35,.06);
+      animation: fadeInUp 0.2s ease;
+    }
+
+    .tm-month-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .tm-month-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .tm-day-picker {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tm-day-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(45,40,35,.1);
+      border-radius: 10px;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      color: #7A6F62;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tm-day-btn.active {
+      background: rgba(123,116,214,.12);
+      border-color: rgba(123,116,214,.3);
+      color: #7B74D6;
+    }
+
+    .tm-month-weekday {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .tm-select-sm {
+      padding: 8px 10px;
+      border: 1px solid rgba(45,40,35,.1);
+      border-radius: 10px;
+      font-size: 12px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 600;
+      color: #2D2823;
+      background: rgba(45,40,35,.02);
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+
     .tm-footer {
       display: flex;
       gap: 10px;

@@ -1734,6 +1734,13 @@ function openTaskModal(taskText) {
   document.querySelectorAll('.tm-unit').forEach(u => u.classList.remove('active'));
   document.querySelector('.tm-unit[data-unit="days"]').classList.add('active');
 
+  // Reset month options
+  selectedMonthDay = 1;
+  selectedMonthWeekday = null;
+  document.querySelectorAll('.tm-day-btn').forEach(d => d.classList.remove('active'));
+  document.querySelector('.tm-day-btn[data-day="1"]').classList.add('active');
+  document.getElementById('tmMonthOptions').style.display = 'none';
+
   // Reset weekdays
   selectedWeekDays = [];
   document.querySelectorAll('.tm-wd-btn').forEach(w => w.classList.remove('active'));
@@ -1846,7 +1853,10 @@ function createTaskFromModal() {
     category: selectedCategory,
     repeat: selectedRepeat,
     repeatCustomDays: selectedRepeat === 'custom' ? customDaysValue : null,
-    repeatWeekDays: selectedRepeat === 'custom' && selectedWeekDays.length > 0 ? [...selectedWeekDays] : null,
+    repeatUnit: selectedRepeat === 'custom' ? selectedUnit : null,
+    repeatMonthDay: selectedRepeat === 'custom' && selectedUnit === 'months' ? selectedMonthDay : null,
+    repeatMonthWeekday: selectedRepeat === 'custom' && selectedUnit === 'months' ? selectedMonthWeekday : null,
+    repeatWeekDays: selectedRepeat === 'custom' && (selectedUnit === 'days' || selectedUnit === 'weeks') && selectedWeekDays.length > 0 ? [...selectedWeekDays] : null,
     pomodoroSettings: usePomodoro ? {
       work: parseInt(document.getElementById('tmPomoWork').value),
       break: parseInt(document.getElementById('tmPomoBreak').value),
@@ -1874,10 +1884,40 @@ function adjustCustomDays(delta) {
   updateRepeatPreview();
 }
 
+let selectedMonthDay = 1;
+let selectedMonthWeekday = null;
+
 function selectUnit(btn) {
   document.querySelectorAll('.tm-unit').forEach(u => u.classList.remove('active'));
   btn.classList.add('active');
   selectedUnit = btn.dataset.unit;
+
+  // Show/hide month options
+  const monthOptions = document.getElementById('tmMonthOptions');
+  if (btn.dataset.unit === 'months') {
+    monthOptions.style.display = 'block';
+  } else {
+    monthOptions.style.display = 'none';
+  }
+
+  updateRepeatPreview();
+}
+
+function selectMonthDay(btn) {
+  document.querySelectorAll('.tm-day-btn').forEach(d => d.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMonthDay = btn.dataset.day === 'last' ? 'last' : parseInt(btn.dataset.day);
+  selectedMonthWeekday = null;
+  updateRepeatPreview();
+}
+
+function selectMonthWeekday() {
+  const pos = document.getElementById('tmMonthWeekdayPos').value;
+  const day = document.getElementById('tmMonthWeekdayDay').value;
+  selectedMonthWeekday = { pos: pos, day: parseInt(day) };
+  selectedMonthDay = null;
+  // Clear day picker
+  document.querySelectorAll('.tm-day-btn').forEach(d => d.classList.remove('active'));
   updateRepeatPreview();
 }
 
@@ -1886,16 +1926,25 @@ function updateRepeatPreview() {
   if (!preview) return;
 
   let text = '';
+
   if (selectedUnit === 'days') {
-    text = customDaysValue === 1 ? 'Каждый день' : `Каждые ${customDaysValue} дней`;
+    text = customDaysValue === 1 ? 'Каждый день' : `Каждые ${customDaysValue} дня`;
   } else if (selectedUnit === 'weeks') {
-    text = customDaysValue === 1 ? 'Каждую неделю' : `Каждые ${customDaysValue} недель`;
+    text = customDaysValue === 1 ? 'Каждую неделю' : `Каждые ${customDaysValue} недели`;
   } else if (selectedUnit === 'months') {
-    text = customDaysValue === 1 ? 'Каждый месяц' : `Каждые ${customDaysValue} месяцев`;
+    if (selectedMonthWeekday) {
+      const posNames = { '1': 'Первый', '2': 'Второй', '3': 'Третий', '4': 'Четвёртый', 'last': 'Последний' };
+      const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+      text = `${posNames[selectedMonthWeekday.pos]} ${dayNames[selectedMonthWeekday.day].toLowerCase()}`;
+    } else {
+      text = customDaysValue === 1
+        ? (selectedMonthDay === 'last' ? 'Последний день месяца' : `${selectedMonthDay}-е число`)
+        : `Каждые ${customDaysValue} мес. — ${selectedMonthDay === 'last' ? 'последний день' : selectedMonthDay + '-е число'}`;
+    }
   }
 
-  // Add selected days info
-  if (selectedWeekDays.length > 0) {
+  // Add selected days info for days/weeks
+  if ((selectedUnit === 'days' || selectedUnit === 'weeks') && selectedWeekDays.length > 0) {
     const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
     const daysStr = selectedWeekDays.sort((a,b)=>a-b).map(d => dayNames[d]).join(', ');
     text += ` (${daysStr})`;
@@ -1985,4 +2034,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tm-unit').forEach(btn => {
     btn.addEventListener('click', () => selectUnit(btn));
   });
+
+  // Month day picker
+  document.querySelectorAll('.tm-day-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectMonthDay(btn));
+  });
+
+  // Month weekday selectors
+  document.getElementById('tmMonthWeekdayPos').addEventListener('change', selectMonthWeekday);
+  document.getElementById('tmMonthWeekdayDay').addEventListener('change', selectMonthWeekday);
 });
