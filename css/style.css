@@ -1878,13 +1878,254 @@
      color: #E86E5E;
    }
 
-   .no-timers {
-     text-align: center;
-     padding: 12px;
-     font-size: 11px;
-     color: var(--mut);
-     font-weight: 500;
-   }
+    .no-timers {
+      text-align: center;
+      padding: 12px;
+      font-size: 11px;
+      color: var(--mut);
+      font-weight: 500;
+    }
+
+    /* ===== DAY FLOW ===== */
+    .dayflow-card {
+      padding: 18px;
+      background: linear-gradient(145deg, rgba(255,251,245,0.9) 0%, rgba(245,240,232,0.95) 100%);
+      border: 1px solid rgba(232,161,60,0.12);
+    }
+
+    .dayflow-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .dayflow-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dayflow-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(232,161,60,0.15) 0%, rgba(232,128,96,0.1) 100%);
+      color: #E8A13C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dayflow-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .dayflow-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 12px;
+      background: rgba(232,161,60,0.06);
+      border-radius: 12px;
+      border: 1px solid rgba(232,161,60,0.1);
+    }
+
+    .dfs-spent, .dfs-free {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .dfs-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--mut);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dfs-value {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .dfs-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(232,161,60,0.2);
+    }
+
+    /* Timeline */
+    .dayflow-timeline {
+      margin-bottom: 14px;
+    }
+
+    .dft-hours {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      padding: 0 2px;
+    }
+
+    .dft-hours span {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--mut);
+      opacity: 0.6;
+    }
+
+    .dft-track {
+      position: relative;
+      height: 52px;
+      background: rgba(245,242,237,0.6);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(45,40,35,0.04);
+    }
+
+    .dft-block {
+      position: absolute;
+      top: 4px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .dft-block-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    .dft-pomo-dots {
+      display: flex;
+      gap: 3px;
+      margin-top: 3px;
+    }
+
+    .dft-pomo-dots i {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+    }
+
+    .dft-pomo-dots i.active {
+      background: #fff;
+      box-shadow: 0 0 4px rgba(255,255,255,0.5);
+    }
+
+    .task-block {
+      background: linear-gradient(135deg, #5CC4A0 0%, #2FBF9B 100%);
+      box-shadow: 0 2px 8px rgba(47,191,155,0.3);
+    }
+
+    .break-block {
+      background: linear-gradient(135deg, #7B74D6 0%, #6B64C6 100%);
+      box-shadow: 0 2px 8px rgba(123,116,214,0.3);
+      opacity: 0.7;
+    }
+
+    .pomodoro-block {
+      background: linear-gradient(135deg, #E88060 0%, #E86E5E 100%);
+      box-shadow: 0 2px 8px rgba(232,110,94,0.3);
+    }
+
+    .workout-block {
+      background: linear-gradient(135deg, #7B74D6 0%, #6B64C6 100%);
+      box-shadow: 0 2px 8px rgba(123,116,214,0.3);
+    }
+
+    .dft-freezone {
+      position: absolute;
+      top: 4px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1.5px dashed rgba(45,40,35,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(245,242,237,0.4);
+    }
+
+    .dft-free-label {
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--mut);
+      opacity: 0.5;
+    }
+
+    .dft-now {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: #E8A13C;
+      box-shadow: 0 0 8px rgba(232,161,60,0.4);
+      z-index: 2;
+      transition: left 1s ease;
+    }
+
+    .dft-now::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #E8A13C;
+      box-shadow: 0 0 6px rgba(232,161,60,0.5);
+    }
+
+    /* Details */
+    .dayflow-details {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 4px;
+      border-top: 1px solid rgba(45,40,35,0.05);
+    }
+
+    .dfd-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dfd-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dfd-dot.work { background: linear-gradient(135deg, #E88060, #E86E5E); }
+    .dfd-dot.personal { background: linear-gradient(135deg, #5CC4A0, #2FBF9B); }
+    .dfd-dot.free { background: rgba(45,40,35,0.1); border: 1.5px dashed rgba(45,40,35,0.15); }
+
+    .dfd-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink2);
+    }
+
+    .dfd-time {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--ink);
+    }
 
    /* ===== POMODORO ===== */
    .pomodoro-section {
@@ -6169,5 +6410,9 @@
   :root.dark-theme .pomodoro-settings{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .ps-btn{background:rgba(255,255,255,.06)}
   :root.dark-theme .ps-input{border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.02)}
+  :root.dark-theme .dayflow-card{background:linear-gradient(145deg, rgba(45,40,35,0.9) 0%, rgba(35,32,28,0.95) 100%); border-color:rgba(255,255,255,.06)}
+  :root.dark-theme .dft-track{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
+  :root.dark-theme .dft-freezone{border-color:rgba(255,255,255,.06); background:rgba(255,255,255,.02)}
+  :root.dark-theme .dayflow-summary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08)}
 
   }

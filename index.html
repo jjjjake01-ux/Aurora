@@ -359,6 +359,83 @@
             </div>
           </div>
         </div>
+       </div>
+    </div>
+
+    <!-- ПОТОК ДНЯ -->
+    <div class="card dayflow-card" style="--aura:rgba(232,161,60,.15)">
+      <div class="dayflow-header">
+        <div class="dayflow-title-group">
+          <div class="dayflow-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="dayflow-title">Поток дня</div>
+        </div>
+        <div class="dayflow-summary">
+          <div class="dfs-spent">
+            <span class="dfs-label">Занято</span>
+            <span class="dfs-value" id="dfsSpent">2ч 15м</span>
+          </div>
+          <div class="dfs-divider"></div>
+          <div class="dfs-free">
+            <span class="dfs-label">Свободно</span>
+            <span class="dfs-value" id="dfsFree">5ч 30м</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Таймлайн -->
+      <div class="dayflow-timeline" id="dayflowTimeline">
+        <div class="dft-hours">
+          <span>6:00</span>
+          <span>9:00</span>
+          <span>12:00</span>
+          <span>15:00</span>
+          <span>18:00</span>
+          <span>21:00</span>
+          <span>24:00</span>
+        </div>
+        <div class="dft-track">
+          <div class="dft-freezone morning-free" id="dfMorningFree" style="left:0%;width:25%">
+            <span class="dft-free-label">1ч 30м свободно</span>
+          </div>
+          <div class="dft-block task-block" style="left:25%;width:12.5%">
+            <span class="dft-block-label">Чек-ин</span>
+          </div>
+          <div class="dft-freezone day-free" id="dfDayFree" style="left:37.5%;width:20.8%">
+            <span class="dft-free-label">1ч 20м</span>
+          </div>
+          <div class="dft-block pomodoro-block" style="left:58.3%;width:20.8%">
+            <span class="dft-block-label">🍅 Фокус</span>
+            <div class="dft-pomo-dots"><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div class="dft-freezone evening-free" id="dfEveningFree" style="left:79.2%;width:8.3%">
+            <span class="dft-free-label">30м</span>
+          </div>
+          <div class="dft-block workout-block" style="left:87.5%;width:12.5%">
+            <span class="dft-block-label">Тренировка</span>
+          </div>
+          <div class="dft-now" id="dftNow" style="left:35%"></div>
+        </div>
+      </div>
+
+      <!-- Детали времени -->
+      <div class="dayflow-details">
+        <div class="dfd-item">
+          <div class="dfd-dot work"></div>
+          <span class="dfd-label">Фокус</span>
+          <span class="dfd-time" id="dfdFocus">1ч 40м</span>
+        </div>
+        <div class="dfd-item">
+          <div class="dfd-dot personal"></div>
+          <span class="dfd-label">Задачи</span>
+          <span class="dfd-time" id="dfdTasks">35м</span>
+        </div>
+        <div class="dfd-item">
+          <div class="dfd-dot free"></div>
+          <span class="dfd-label">Свободно</span>
+          <span class="dfd-time" id="dfdFree">5ч 30м</span>
+        </div>
       </div>
     </div>
 

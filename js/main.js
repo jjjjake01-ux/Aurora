@@ -914,6 +914,9 @@ function startPomodoro() {
       }
       pomodoro.totalTime = pomodoro.timeLeft;
 
+      // Auto-add completed session to day flow
+      addPomodoroToDayFlow();
+
       document.getElementById('pomodoroStart').innerHTML = `
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
         Старт
@@ -953,6 +956,173 @@ function updatePomodoroDisplay() {
   const secs = pomodoro.timeLeft % 60;
   document.getElementById('pomodoroTime').textContent =
     `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ===== DAY FLOW =====
+let dayEvents = [
+  { id: 1, name: 'Утренний чек-ин', start: 8 * 60, end: 8 * 60 + 15, type: 'task', done: true },
+  { id: 2, name: 'Позавтракать', start: 8 * 60 + 20, end: 8 * 60 + 50, type: 'task', done: true },
+  { id: 3, name: '🍅 Фокус-сессия', start: 10 * 60, end: 10 * 60 + 25, type: 'pomodoro', done: true },
+  { id: 4, name: '🍅 Фокус-сессия', start: 10 * 60 + 30, end: 10 * 60 + 55, type: 'pomodoro', done: true },
+  { id: 5, name: '🍅 Фокус-сессия', start: 11 * 60 + 5, end: 11 * 60 + 30, type: 'pomodoro', done: true },
+  { id: 6, name: '🍅 Фокус-сессия', start: 11 * 60 + 35, end: 12 * 60, type: 'pomodoro', done: true },
+  { id: 7, name: 'Обед', start: 13 * 60, end: 13 * 60 + 45, type: 'task', done: false },
+  { id: 8, name: 'Тренировка', start: 17 * 60, end: 18 * 60, type: 'workout', done: false },
+  { id: 9, name: 'Ужин', start: 19 * 60, end: 19 * 60 + 45, type: 'task', done: false }
+];
+
+const DAY_START = 6 * 60;  // 6:00
+const DAY_END = 24 * 60;   // 24:00
+const DAY_TOTAL = DAY_END - DAY_START;
+
+function addPomodoroToDayFlow() {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const duration = pomodoro.settings.work;
+
+  const newEvent = {
+    id: Date.now(),
+    name: pomodoro.isBreak ? '☕ Перерыв' : '🍅 Фокус-сессия',
+    start: currentMinutes,
+    end: currentMinutes + duration,
+    type: pomodoro.isBreak ? 'break' : 'pomodoro',
+    done: false
+  };
+
+  dayEvents.push(newEvent);
+  dayEvents.sort((a, b) => a.start - b.start);
+  renderDayFlow();
+}
+
+function renderDayFlow() {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const clampedMinutes = Math.max(DAY_START, Math.min(DAY_END, currentMinutes));
+
+  // Calculate time stats
+  let focusMinutes = 0;
+  let taskMinutes = 0;
+  let freeMinutes = 0;
+
+  dayEvents.forEach(e => {
+    const dur = e.end - e.start;
+    if (e.type === 'pomodoro') focusMinutes += dur;
+    else if (e.type === 'workout') taskMinutes += dur;
+    else if (e.type === 'task') taskMinutes += dur;
+  });
+
+  const occupiedMinutes = focusMinutes + taskMinutes;
+  freeMinutes = DAY_TOTAL - occupiedMinutes;
+
+  // Update summary
+  const dfsSpent = document.getElementById('dfsSpent');
+  const dfsFree = document.getElementById('dfsFree');
+  if (dfsSpent) dfsSpent.textContent = formatHoursMinutes(occupiedMinutes);
+  if (dfsFree) dfsFree.textContent = formatHoursMinutes(freeMinutes);
+
+  // Update details
+  const dfdFocus = document.getElementById('dfdFocus');
+  const dfdTasks = document.getElementById('dfdTasks');
+  const dfdFree = document.getElementById('dfdFree');
+  if (dfdFocus) dfdFocus.textContent = formatHoursMinutes(focusMinutes);
+  if (dfdTasks) dfdTasks.textContent = formatHoursMinutes(taskMinutes);
+  if (dfdFree) dfdFree.textContent = formatHoursMinutes(freeMinutes);
+
+  // Render timeline blocks
+  const track = document.querySelector('.dft-track');
+  if (!track) return;
+
+  // Clear existing blocks (except now indicator)
+  track.querySelectorAll('.dft-block, .dft-freezone').forEach(el => el.remove());
+
+  // Find free zones (gaps between events)
+  const sortedEvents = [...dayEvents].sort((a, b) => a.start - b.start);
+  let lastEnd = DAY_START;
+
+  sortedEvents.forEach(event => {
+    if (event.start > lastEnd) {
+      // Free zone
+      const freeDuration = event.start - lastEnd;
+      const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
+      const freeWidth = (freeDuration / DAY_TOTAL) * 100;
+
+      const freeEl = document.createElement('div');
+      freeEl.className = 'dft-freezone';
+      freeEl.style.left = freeLeft + '%';
+      freeEl.style.width = freeWidth + '%';
+
+      if (freeDuration >= 15) {
+        const timeOfDay = lastEnd < 12 * 60 ? 'morning-free' : lastEnd < 18 * 60 ? 'day-free' : 'evening-free';
+        freeEl.classList.add(timeOfDay);
+        freeEl.innerHTML = `<span class="dft-free-label">${formatHoursMinutes(freeDuration)} свободно</span>`;
+      }
+
+      track.appendChild(freeEl);
+    }
+
+    // Event block
+    const blockLeft = ((event.start - DAY_START) / DAY_TOTAL) * 100;
+    const blockWidth = ((event.end - event.start) / DAY_TOTAL) * 100;
+
+    const blockEl = document.createElement('div');
+    blockEl.className = 'dft-block';
+    blockEl.style.left = blockLeft + '%';
+    blockEl.style.width = Math.max(blockWidth, 2) + '%';
+
+    if (event.type === 'pomodoro') {
+      blockEl.classList.add('pomodoro-block');
+      const pomoCount = Math.floor(focusMinutes / pomodoro.settings.work);
+      blockEl.innerHTML = `<span class="dft-block-label">🍅 Фокус</span>`;
+      if (pomoCount > 0) {
+        const dotsHtml = Array(4).fill(0).map((_, i) =>
+          `<i class="${i < pomoCount % 4 ? 'active' : ''}"></i>`
+        ).join('');
+        blockEl.innerHTML += `<div class="dft-pomo-dots">${dotsHtml}</div>`;
+      }
+    } else if (event.type === 'workout') {
+      blockEl.classList.add('workout-block');
+      blockEl.innerHTML = `<span class="dft-block-label">Тренировка</span>`;
+    } else if (event.type === 'break') {
+      blockEl.classList.add('break-block');
+      blockEl.innerHTML = `<span class="dft-block-label">☕ Отдых</span>`;
+    } else {
+      blockEl.classList.add('task-block');
+      blockEl.innerHTML = `<span class="dft-block-label">${event.name}</span>`;
+    }
+
+    track.appendChild(blockEl);
+    lastEnd = Math.max(lastEnd, event.end);
+  });
+
+  // Final free zone
+  if (lastEnd < DAY_END) {
+    const freeDuration = DAY_END - lastEnd;
+    const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
+    const freeEl = document.createElement('div');
+    freeEl.className = 'dft-freezone evening-free';
+    freeEl.style.left = freeLeft + '%';
+    freeEl.style.width = (freeDuration / DAY_TOTAL) * 100 + '%';
+    if (freeDuration >= 15) {
+      freeEl.innerHTML = `<span class="dft-free-label">${formatHoursMinutes(freeDuration)} свободно</span>`;
+    }
+    track.appendChild(freeEl);
+  }
+
+  // Update now indicator
+  const nowEl = document.getElementById('dftNow');
+  if (nowEl) {
+    const nowPercent = ((clampedMinutes - DAY_START) / DAY_TOTAL) * 100;
+    nowEl.style.left = nowPercent + '%';
+  }
+}
+
+function formatHoursMinutes(minutes) {
+  if (minutes <= 0) return '0м';
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hrs === 0) return `${mins}м`;
+  if (mins === 0) return `${hrs}ч`;
+  return `${hrs}ч ${mins}м`;
 }
 
 // ===== CHAT HANDLER =====
@@ -1001,5 +1171,7 @@ function addChatMessage(text, type) {
 document.addEventListener('DOMContentLoaded', () => {
   updatePlanProgress();
   renderTimers();
+  renderDayFlow();
   setInterval(updateTimers, 1000);
+  setInterval(renderDayFlow, 60000);
 });
