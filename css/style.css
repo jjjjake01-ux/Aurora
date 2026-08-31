@@ -1901,14 +1901,170 @@
     }
 
     .dftask-item.done::after {
-      content: '✓';
+      display: none;
+    }
+
+    .dftask-start {
       position: absolute;
-      right: 12px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #E88060, #E86E5E);
+      color: #fff;
       font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(232,110,94,0.3);
+      transition: transform 0.2s ease;
+      z-index: 2;
+    }
+
+    .dftask-start:active {
+      transform: translateY(-50%) scale(0.9);
+    }
+
+    .task-pomodoro-panel {
+      background: rgba(232,110,94,.06);
+      border: 1px solid rgba(232,110,94,.15);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .tpp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .tpp-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .tpp-icon {
+      font-size: 16px;
+    }
+
+    .tpp-close {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: rgba(45,40,35,.06);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--mut);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tpp-display {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .tpp-time {
+      font-size: 36px;
       font-weight: 800;
-      color: #2FBF9B;
+      color: #E86E5E;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -1px;
+    }
+
+    .tpp-status {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mut);
+      margin-top: 2px;
+    }
+
+    .tpp-progress {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .tpp-sessions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .tpp-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(45,40,35,.08);
+      transition: all 0.3s ease;
+    }
+
+    .tpp-dot.done {
+      background: linear-gradient(135deg, #E88060, #E86E5E);
+    }
+
+    .tpp-dot.active {
+      background: linear-gradient(135deg, #E88060, #E86E5E);
+      box-shadow: 0 0 8px rgba(232,110,94,0.4);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .tpp-sessions-text {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--mut);
+    }
+
+    .tpp-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .tpp-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tpp-btn:not(.reset) {
+      background: linear-gradient(135deg, #E88060, #E86E5E);
+      color: #fff;
+    }
+
+    .tpp-btn:not(.reset):hover {
+      box-shadow: 0 4px 12px rgba(232,110,94,0.3);
+    }
+
+    .tpp-btn.reset {
+      background: rgba(45,40,35,.06);
+      color: var(--mut);
     }
 
     .dftask-item {
@@ -6324,6 +6480,8 @@
   :root.dark-theme .dftask-item{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.06)}
   :root.dark-theme .dfp-ring-bg{stroke:rgba(255,255,255,.08)}
   :root.dark-theme .dayflow-performance{border-color:rgba(255,255,255,.06)}
+  :root.dark-theme .task-pomodoro-panel{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.1)}
+  :root.dark-theme .tpp-dot{background:rgba(255,255,255,.1)}
   :root.dark-theme .dft-freezone{border-color:rgba(255,255,255,.06); background:rgba(255,255,255,.02)}
   :root.dark-theme .dayflow-summary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08)}
 

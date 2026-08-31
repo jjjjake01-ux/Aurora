@@ -501,6 +501,37 @@
       <!-- Список задач -->
       <div class="dayflow-tasks" id="dayflowTasks"></div>
 
+      <!-- Панель Помодоро для задачи (скрыта по умолчанию) -->
+      <div class="task-pomodoro-panel" id="taskPomodoroPanel" style="display:none">
+        <div class="tpp-header">
+          <div class="tpp-title">
+            <span class="tpp-icon">🍅</span>
+            <span id="tppTaskName">Задача</span>
+          </div>
+          <button class="tpp-close" onclick="closeTaskPomodoro()">✕</button>
+        </div>
+        <div class="tpp-display">
+          <div class="tpp-time" id="tppTime">25:00</div>
+          <div class="tpp-status" id="tppStatus">Готов к работе</div>
+        </div>
+        <div class="tpp-progress">
+          <div class="tpp-sessions" id="tppSessions">
+            <span class="tpp-dot done"></span>
+            <span class="tpp-dot done"></span>
+            <span class="tpp-dot active"></span>
+            <span class="tpp-dot"></span>
+          </div>
+          <div class="tpp-sessions-text" id="tppSessionsText">2 из 4 сессий</div>
+        </div>
+        <div class="tpp-controls">
+          <button class="tpp-btn" id="tppStart" onclick="startTaskPomodoro()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+            Старт
+          </button>
+          <button class="tpp-btn reset" onclick="resetTaskPomodoro()">Сброс</button>
+        </div>
+      </div>
+
       <!-- Легенда -->
       <div class="dayflow-legend">
         <div class="dfl-item"><div class="dfl-dot pomodoro"></div><span>Фокус</span></div>
