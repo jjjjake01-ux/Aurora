@@ -605,12 +605,6 @@ function updateMascotIllustration(containerId, score) {
   } else {
     container.classList.remove('show');
   }
-<<<<<<< Updated upstream
-=======
-<<<<<<< ours
-}
-=======
->>>>>>> Stashed changes
 }
 
 // ===== LOCAL STORAGE =====
@@ -1083,8 +1077,29 @@ function addPomodoroToDayFlow() {
   });
 
   saveToStorage();
+  updatePomodoroStats();
   collectDayEvents();
   renderDayFlow();
+}
+
+function updatePomodoroStats() {
+  const today = new Date().toDateString();
+  const todaySessions = pomodoroSessions.filter(s => {
+    const d = new Date(s.id);
+    return d.toDateString() === today && !s.isBreak;
+  });
+
+  const completed = todaySessions.length;
+  const focusMinutes = todaySessions.reduce((sum, s) => sum + (s.endMin - s.startMin), 0);
+  const goal = 8; // daily goal
+
+  const pomoCompleted = document.getElementById('pomoCompleted');
+  const pomoFocusTime = document.getElementById('pomoFocusTime');
+  const pomoGoal = document.getElementById('pomoGoal');
+
+  if (pomoCompleted) pomoCompleted.textContent = completed;
+  if (pomoFocusTime) pomoFocusTime.textContent = formatHoursMinutes(focusMinutes);
+  if (pomoGoal) pomoGoal.textContent = `${completed}/${goal}`;
 }
 
 function renderDayFlow() {
@@ -1483,9 +1498,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDayFlow();
   setInterval(updateTimers, 1000);
   setInterval(renderDayFlow, 60000);
-<<<<<<< Updated upstream
+  updatePomodoroStats();
 });
-=======
-});
->>>>>>> theirs
->>>>>>> Stashed changes

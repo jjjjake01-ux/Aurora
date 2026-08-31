@@ -1988,9 +1988,41 @@
      font-weight: 600;
      color: var(--mut);
      margin-top: 2px;
-   }
+    }
 
-   .pomodoro-controls {
+    .pomodoro-stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 8px;
+      margin-bottom: 12px;
+      background: rgba(232,110,94,.04);
+      border-radius: 10px;
+      border: 1px solid rgba(232,110,94,.08);
+    }
+
+    .pomo-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .pomo-stat-value {
+      font-size: 14px;
+      font-weight: 800;
+      color: #E86E5E;
+      letter-spacing: -0.3px;
+    }
+
+    .pomo-stat-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--mut);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .pomodoro-controls {
      display: flex;
      gap: 8px;
      justify-content: center;
@@ -6172,6 +6204,7 @@
   :root.dark-theme .bar-fill{background:linear-gradient(180deg, var(--c-index), rgba(47,163,107,.15)); box-shadow:0 4px 12px rgba(47,163,107,.1)}
   :root.dark-theme .timer-item{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .pomodoro-section{background:rgba(255,255,200,.03); border-color:rgba(255,255,255,.1)}
+  :root.dark-theme .pomodoro-stats{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.08)}
   :root.dark-theme .chat-input{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .chat-input:focus{border-color:rgba(232,161,60,.4)}
   :root.dark-theme .pomodoro-settings-btn{background:rgba(255,255,255,.06)}
