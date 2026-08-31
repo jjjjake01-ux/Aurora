@@ -1737,6 +1737,18 @@ function openTaskModal(taskText) {
   // Reset pomodoro
   document.getElementById('tmPomodoro').checked = false;
   document.getElementById('tmPomoConfig').style.display = 'none';
+
+  // Reset custom days
+  customDaysValue = 2;
+  document.getElementById('tmCustomDaysValue').textContent = '2';
+
+  // Reset weekdays
+  selectedWeekDays = [];
+  document.querySelectorAll('.tm-wd-btn').forEach(w => w.classList.remove('active'));
+
+  // Reset pomodoro
+  document.getElementById('tmPomodoro').checked = false;
+  document.getElementById('tmPomoConfig').style.display = 'none';
   document.getElementById('tmPomoWork').value = 25;
   document.getElementById('tmPomoWorkVal').textContent = '25м';
   document.getElementById('tmPomoBreak').value = 5;
@@ -1794,18 +1806,6 @@ function updateRepeatOptions() {
 function togglePomoSettings() {
   const checked = document.getElementById('tmPomodoro').checked;
   document.getElementById('tmPomoConfig').style.display = checked ? 'block' : 'none';
-}
-
-function toggleWeekDay(btn) {
-  const day = parseInt(btn.dataset.day);
-  const index = selectedWeekDays.indexOf(day);
-  if (index > -1) {
-    selectedWeekDays.splice(index, 1);
-    btn.classList.remove('active');
-  } else {
-    selectedWeekDays.push(day);
-    btn.classList.add('active');
-  }
 }
 
 function createTaskFromModal() {
