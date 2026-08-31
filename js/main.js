@@ -606,3 +606,339 @@ function updateMascotIllustration(containerId, score) {
     container.classList.remove('show');
   }
 }
+
+// ===== PLAN TOGGLE =====
+function togglePlanItem(el) {
+  el.classList.toggle('done');
+  if (!el.classList.contains('current')) {
+    el.classList.add('current');
+  } else if (el.classList.contains('done')) {
+    el.classList.remove('current');
+  }
+  updatePlanProgress();
+}
+
+function updatePlanProgress() {
+  const items = document.querySelectorAll('.plan-item');
+  const done = document.querySelectorAll('.plan-item.done');
+  const total = items.length;
+  const doneCount = done.length;
+  const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+
+  document.getElementById('planDoneCount').textContent = doneCount;
+  document.getElementById('planTotalCount').textContent = total;
+  document.getElementById('planProgressFill').style.width = percent + '%';
+}
+
+// ===== NATURAL LANGUAGE TASK PARSER =====
+function parseTaskInput(input) {
+  const text = input.trim().toLowerCase();
+  if (!text) return null;
+
+  const now = new Date();
+  let taskName = '';
+  let targetTime = null;
+  let duration = null;
+
+  // Pattern: "в 18:00" or "в 18.00"
+  const timeAtMatch = text.match(/в\s+(\d{1,2})[:\.](\d{2})/);
+  if (timeAtMatch) {
+    const hours = parseInt(timeAtMatch[1]);
+    const minutes = parseInt(timeAtMatch[2]);
+    targetTime = new Date(now);
+    targetTime.setHours(hours, minutes, 0, 0);
+    if (targetTime <= now) targetTime.setDate(targetTime.getDate() + 1);
+    taskName = text.replace(timeAtMatch[0], '').trim();
+  }
+
+  // Pattern: "через X минут" or "через X мин"
+  const inMinutesMatch = text.match(/через\s+(\d+)\s*мин/);
+  if (inMinutesMatch) {
+    const mins = parseInt(inMinutesMatch[1]);
+    targetTime = new Date(now.getTime() + mins * 60000);
+    taskName = text.replace(inMinutesMatch[0], '').trim();
+  }
+
+  // Pattern: "через X час" or "через X часов"
+  const inHoursMatch = text.match(/через\s+(\d+)\s*час/);
+  if (inHoursMatch) {
+    const hrs = parseInt(inHoursMatch[1]);
+    targetTime = new Date(now.getTime() + hrs * 3600000);
+    taskName = text.replace(inHoursMatch[0], '').trim();
+  }
+
+  // Pattern: "на X минут" or "на X мин" (duration)
+  const durationMatch = text.match(/на\s+(\d+)\s*мин/);
+  if (durationMatch) {
+    duration = parseInt(durationMatch[1]);
+    taskName = text.replace(durationMatch[0], '').trim();
+  }
+
+  // Clean up task name
+  taskName = taskName
+    .replace(/^(приготовить|сделать|пойти|почистить|помыть|убрать|выпить|съесть|позвонить|написать)\s*/, '$1 ')
+    .replace(/^[^\wа-яё]+/i, '')
+    .replace(/[^\wа-яё]+$/i, '');
+
+  if (!taskName) {
+    // Fallback: use whole text as task name, first word as verb
+    taskName = text.replace(/^(в|через|на)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
+  }
+
+  // Capitalize first letter
+  taskName = taskName.charAt(0).toUpperCase() + taskName.slice(1);
+
+  return {
+    name: taskName,
+    targetTime: targetTime,
+    duration: duration,
+    createdAt: now
+  };
+}
+
+// ===== TIMER SYSTEM =====
+let timers = [];
+
+function createTimer(task) {
+  const timer = {
+    id: Date.now(),
+    name: task.name,
+    targetTime: task.targetTime,
+    duration: task.duration,
+    createdAt: task.createdAt,
+    active: true
+  };
+  timers.push(timer);
+  renderTimers();
+  return timer;
+}
+
+function cancelTimer(id) {
+  timers = timers.filter(t => t.id !== id);
+  renderTimers();
+}
+
+function renderTimers() {
+  const container = document.getElementById('activeTimers');
+  if (!container) return;
+
+  const activeTimers = timers.filter(t => t.active);
+
+  if (activeTimers.length === 0) {
+    container.innerHTML = '<div class="no-timers">Нет активных таймеров</div>';
+    return;
+  }
+
+  container.innerHTML = activeTimers.map(timer => {
+    const now = new Date();
+    const diff = timer.targetTime - now;
+    const isUrgent = diff > 0 && diff < 5 * 60000;
+    const timeStr = formatTimeRemaining(diff);
+    const targetStr = formatTimeOfDay(timer.targetTime);
+
+    return `
+      <div class="timer-item${isUrgent ? ' urgent' : ''}" id="timer-${timer.id}">
+        <div class="timer-info">
+          <div class="timer-name">${timer.name}</div>
+          <div class="timer-target">${timer.duration ? 'на ' + timer.duration + ' мин · ' : ''}в ${targetStr}</div>
+        </div>
+        <div class="timer-value" data-target="${timer.targetTime.getTime()}">${timeStr}</div>
+        <button class="timer-cancel" onclick="cancelTimer(${timer.id})" aria-label="Удалить таймер">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatTimeRemaining(diff) {
+  if (diff <= 0) return 'Сейчас!';
+  const mins = Math.floor(diff / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  if (mins >= 60) {
+    const hrs = Math.floor(mins / 60);
+    return `${hrs}ч ${mins % 60}м`;
+  }
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatTimeOfDay(date) {
+  return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+
+function updateTimers() {
+  const now = new Date();
+  let changed = false;
+
+  timers.forEach(timer => {
+    if (!timer.active) return;
+    const diff = timer.targetTime - now;
+    if (diff <= 0) {
+      timer.active = false;
+      triggerNotification(timer.name);
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    renderTimers();
+    timers = timers.filter(t => t.active);
+  }
+
+  // Update displayed times
+  document.querySelectorAll('.timer-value[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const diff = target - now.getTime();
+    el.textContent = formatTimeRemaining(diff);
+  });
+}
+
+function triggerNotification(taskName) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Atlas Health', {
+      body: `Время: ${taskName}`,
+      icon: '🍅'
+    });
+  }
+}
+
+// Request notification permission on load
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+// ===== POMODORO =====
+let pomodoro = {
+  timeLeft: 25 * 60,
+  totalTime: 25 * 60,
+  isRunning: false,
+  isBreak: false,
+  cycles: 0,
+  interval: null
+};
+
+function startPomodoro() {
+  if (pomodoro.isRunning) {
+    // Pause
+    clearInterval(pomodoro.interval);
+    pomodoro.isRunning = false;
+    document.getElementById('pomodoroStart').innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+      Продолжить
+    `;
+    document.getElementById('pomodoroStatus').textContent = 'Пауза';
+    return;
+  }
+
+  pomodoro.isRunning = true;
+  document.getElementById('pomodoroStart').innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    Пауза
+  `;
+  document.getElementById('pomodoroStatus').textContent = pomodoro.isBreak ? 'Перерыв' : 'Работа...';
+
+  pomodoro.interval = setInterval(() => {
+    pomodoro.timeLeft--;
+    updatePomodoroDisplay();
+
+    if (pomodoro.timeLeft <= 0) {
+      clearInterval(pomodoro.interval);
+      pomodoro.isRunning = false;
+
+      if (!pomodoro.isBreak) {
+        pomodoro.cycles++;
+        document.getElementById('pomodoroCount').textContent = pomodoro.cycles;
+      }
+
+      pomodoro.isBreak = !pomodoro.isBreak;
+      pomodoro.timeLeft = pomodoro.isBreak ? 5 * 60 : 25 * 60;
+      pomodoro.totalTime = pomodoro.timeLeft;
+
+      document.getElementById('pomodoroStart').innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+        Старт
+      `;
+      document.getElementById('pomodoroStatus').textContent = pomodoro.isBreak
+        ? 'Время отдыхать!'
+        : 'Готов к работе';
+
+      updatePomodoroDisplay();
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Помодоро', {
+          body: pomodoro.isBreak ? 'Время отдыхать!' : 'Время работать!'
+        });
+      }
+    }
+  }, 1000);
+}
+
+function resetPomodoro() {
+  clearInterval(pomodoro.interval);
+  pomodoro.isRunning = false;
+  pomodoro.isBreak = false;
+  pomodoro.timeLeft = 25 * 60;
+  pomodoro.totalTime = 25 * 60;
+  document.getElementById('pomodoroStart').innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+    Старт
+  `;
+  document.getElementById('pomodoroStatus').textContent = 'Готов к работе';
+  updatePomodoroDisplay();
+}
+
+function updatePomodoroDisplay() {
+  const mins = Math.floor(pomodoro.timeLeft / 60);
+  const secs = pomodoro.timeLeft % 60;
+  document.getElementById('pomodoroTime').textContent =
+    `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ===== CHAT HANDLER =====
+function handleChatSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+
+  // Add user message
+  addChatMessage(text, 'user');
+
+  // Parse and create timer
+  const task = parseTaskInput(text);
+
+  if (task && task.targetTime) {
+    createTimer(task);
+    const targetStr = formatTimeOfDay(task.targetTime);
+    const durStr = task.duration ? ` на ${task.duration} мин` : '';
+    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}`, 'system success');
+  } else if (task) {
+    addChatMessage(`✓ «${task.name}» добавлено (без таймера)`, 'system success');
+  } else {
+    addChatMessage('Не понял задачу. Попробуй: «Почистить зубы в 18:00» или «Через 30 минут выйти»', 'system');
+  }
+}
+
+function addChatMessage(text, type) {
+  const container = document.getElementById('chatMessages');
+  if (!container) return;
+
+  // Remove hint if present
+  const hint = container.querySelector('.chat-hint');
+  if (hint) hint.remove();
+
+  const msg = document.createElement('div');
+  msg.className = `chat-msg ${type}`;
+  msg.textContent = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  updatePlanProgress();
+  renderTimers();
+  setInterval(updateTimers, 1000);
+});
