@@ -605,12 +605,6 @@ function updateMascotIllustration(containerId, score) {
   } else {
     container.classList.remove('show');
   }
-<<<<<<< Updated upstream
-=======
-<<<<<<< ours
-}
-=======
->>>>>>> Stashed changes
 }
 
 // ===== LOCAL STORAGE =====
@@ -1033,6 +1027,7 @@ function collectDayEvents() {
       start: startMin,
       end: startMin + duration,
       type: 'task',
+      needsPomodoro: timer.needsPomodoro || false,
       done: false
     });
   });
@@ -1212,11 +1207,7 @@ function renderTaskList(events, currentMinutes) {
     const canStart = !isDone && minutesUntilStart <= 15 && minutesUntilStart > -30;
 
     const item = document.createElement('div');
-<<<<<<< ours
-    item.className = `dftask-item${isPast ? ' past' : ''}`;
-=======
     item.className = `dftask-item${isPast && !isDone ? ' past' : ''}${isDone ? ' done' : ''}`;
->>>>>>> theirs
 
     item.innerHTML = `
       <div class="dftask-color ${event.type}"></div>
@@ -1233,8 +1224,6 @@ function renderTaskList(events, currentMinutes) {
   });
 }
 
-<<<<<<< ours
-=======
 // ===== TASK POMODORO PANEL =====
 let currentTaskPomodoro = null; // { eventId, sessionsTotal, sessionsDone, isRunning, isBreak, timeLeft, interval }
 
@@ -1394,7 +1383,6 @@ function updatePerformanceIndicators() {
   if (productivitySub) productivitySub.textContent = `${doneTasks}/${totalTasks} задач`;
 }
 
->>>>>>> theirs
 // ===== DRAG & RESIZE =====
 let dragState = null;
 
@@ -1655,9 +1643,5 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDayFlow();
   setInterval(updateTimers, 1000);
   setInterval(renderDayFlow, 60000);
-<<<<<<< Updated upstream
+  updatePomodoroStats();
 });
-=======
-});
->>>>>>> theirs
->>>>>>> Stashed changes
