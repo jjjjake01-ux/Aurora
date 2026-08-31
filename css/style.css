@@ -1979,9 +1979,127 @@
      color: var(--mut);
    }
 
-   .pomodoro-btn.reset:hover {
-     background: rgba(45,40,35,.1);
-   }
+    .pomodoro-btn.reset:hover {
+      background: rgba(45,40,35,.1);
+    }
+
+    .pomodoro-settings-btn {
+      margin-left: 4px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: rgba(45,40,35,.06);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mut);
+      transition: all 0.2s ease;
+    }
+
+    .pomodoro-settings-btn:hover {
+      background: rgba(232,110,94,.15);
+      color: #E86E5E;
+    }
+
+    .pomodoro-settings {
+      background: rgba(232,110,94,.04);
+      border: 1px solid rgba(232,110,94,.12);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      animation: fadeInUp 0.2s ease;
+    }
+
+    .ps-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .ps-row:last-of-type {
+      margin-bottom: 10px;
+    }
+
+    .ps-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink2);
+    }
+
+    .ps-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ps-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: rgba(45,40,35,.06);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .ps-btn:hover {
+      background: rgba(232,110,94,.15);
+      color: #E86E5E;
+    }
+
+    .ps-input {
+      width: 36px;
+      text-align: center;
+      border: 1px solid rgba(45,40,35,.1);
+      border-radius: 6px;
+      padding: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      color: var(--ink);
+      background: transparent;
+      -moz-appearance: textfield;
+    }
+
+    .ps-input::-webkit-outer-spin-button,
+    .ps-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .ps-unit {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--mut);
+      min-width: 24px;
+    }
+
+    .ps-save-btn {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(232,110,94,.1);
+      color: #E86E5E;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ps-save-btn:hover {
+      background: rgba(232,110,94,.2);
+    }
 
    /* ===== CHAT ===== */
    .task-chat {
@@ -6047,5 +6165,9 @@
   :root.dark-theme .pomodoro-section{background:rgba(255,255,200,.03); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .chat-input{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.1)}
   :root.dark-theme .chat-input:focus{border-color:rgba(232,161,60,.4)}
+  :root.dark-theme .pomodoro-settings-btn{background:rgba(255,255,255,.06)}
+  :root.dark-theme .pomodoro-settings{background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.1)}
+  :root.dark-theme .ps-btn{background:rgba(255,255,255,.06)}
+  :root.dark-theme .ps-input{border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.02)}
 
   }

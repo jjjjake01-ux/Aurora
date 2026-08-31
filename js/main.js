@@ -829,8 +829,47 @@ let pomodoro = {
   isRunning: false,
   isBreak: false,
   cycles: 0,
-  interval: null
+  sessionsCompleted: 0,
+  interval: null,
+  settings: {
+    work: 25,
+    break: 5,
+    longBreak: 15,
+    cyclesBeforeLong: 4
+  }
 };
+
+function togglePomodoroSettings() {
+  const panel = document.getElementById('pomodoroSettings');
+  if (!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function adjustPomodoroSetting(key, delta) {
+  const input = document.getElementById('ps' + key.charAt(0).toUpperCase() + key.slice(1));
+  if (!input) return;
+  let val = parseInt(input.value) + delta;
+  const min = parseInt(input.min);
+  const max = parseInt(input.max);
+  val = Math.max(min, Math.min(max, val));
+  input.value = val;
+  updatePomodoroSetting(key, val);
+}
+
+function updatePomodoroSetting(key, value) {
+  const val = Math.max(1, Math.min(60, parseInt(value) || 1));
+  pomodoro.settings[key] = val;
+  // If timer is not running, update display
+  if (!pomodoro.isRunning) {
+    if (pomodoro.isBreak) {
+      pomodoro.timeLeft = (pomodoro.sessionsCompleted % pomodoro.settings.cyclesBeforeLong === 0 ? pomodoro.settings.longBreak : pomodoro.settings.break) * 60;
+    } else {
+      pomodoro.timeLeft = pomodoro.settings.work * 60;
+    }
+    pomodoro.totalTime = pomodoro.timeLeft;
+    updatePomodoroDisplay();
+  }
+}
 
 function startPomodoro() {
   if (pomodoro.isRunning) {
@@ -866,7 +905,13 @@ function startPomodoro() {
       }
 
       pomodoro.isBreak = !pomodoro.isBreak;
-      pomodoro.timeLeft = pomodoro.isBreak ? 5 * 60 : 25 * 60;
+      if (pomodoro.isBreak) {
+        pomodoro.sessionsCompleted++;
+        const isLongBreak = pomodoro.sessionsCompleted % pomodoro.settings.cyclesBeforeLong === 0;
+        pomodoro.timeLeft = (isLongBreak ? pomodoro.settings.longBreak : pomodoro.settings.break) * 60;
+      } else {
+        pomodoro.timeLeft = pomodoro.settings.work * 60;
+      }
       pomodoro.totalTime = pomodoro.timeLeft;
 
       document.getElementById('pomodoroStart').innerHTML = `
@@ -892,8 +937,9 @@ function resetPomodoro() {
   clearInterval(pomodoro.interval);
   pomodoro.isRunning = false;
   pomodoro.isBreak = false;
-  pomodoro.timeLeft = 25 * 60;
-  pomodoro.totalTime = 25 * 60;
+  pomodoro.timeLeft = pomodoro.settings.work * 60;
+  pomodoro.totalTime = pomodoro.settings.work * 60;
+  pomodoro.sessionsCompleted = 0;
   document.getElementById('pomodoroStart').innerHTML = `
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
     Старт

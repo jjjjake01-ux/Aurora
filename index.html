@@ -382,7 +382,52 @@
           </div>
           <div class="pomodoro-label">Помодоро</div>
           <div class="pomodoro-cycles"><span id="pomodoroCount">0</span> циклов</div>
+          <button class="pomodoro-settings-btn" onclick="togglePomodoroSettings()" aria-label="Настройки">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
         </div>
+
+        <!-- Панель настроек -->
+        <div class="pomodoro-settings" id="pomodoroSettings" style="display:none">
+          <div class="ps-row">
+            <label class="ps-label">Работа</label>
+            <div class="ps-input-wrap">
+              <button class="ps-btn" onclick="adjustPomodoroSetting('work', -1)">−</button>
+              <input type="number" id="psWork" value="25" min="1" max="60" class="ps-input" onchange="updatePomodoroSetting('work', this.value)">
+              <span class="ps-unit">мин</span>
+              <button class="ps-btn" onclick="adjustPomodoroSetting('work', 1)">+</button>
+            </div>
+          </div>
+          <div class="ps-row">
+            <label class="ps-label">Отдых</label>
+            <div class="ps-input-wrap">
+              <button class="ps-btn" onclick="adjustPomodoroSetting('break', -1)">−</button>
+              <input type="number" id="psBreak" value="5" min="1" max="30" class="ps-input" onchange="updatePomodoroSetting('break', this.value)">
+              <span class="ps-unit">мин</span>
+              <button class="ps-btn" onclick="adjustPomodoroSetting('break', 1)">+</button>
+            </div>
+          </div>
+          <div class="ps-row">
+            <label class="ps-label">Длинный отдых</label>
+            <div class="ps-input-wrap">
+              <button class="ps-btn" onclick="adjustPomodoroSetting('longBreak', -1)">−</button>
+              <input type="number" id="psLongBreak" value="15" min="1" max="60" class="ps-input" onchange="updatePomodoroSetting('longBreak', this.value)">
+              <span class="ps-unit">мин</span>
+              <button class="ps-btn" onclick="adjustPomodoroSetting('longBreak', 1)">+</button>
+            </div>
+          </div>
+          <div class="ps-row">
+            <label class="ps-label">Циклов до отдыха</label>
+            <div class="ps-input-wrap">
+              <button class="ps-btn" onclick="adjustPomodoroSetting('cyclesBeforeLong', -1)">−</button>
+              <input type="number" id="psCyclesBeforeLong" value="4" min="1" max="10" class="ps-input" onchange="updatePomodoroSetting('cyclesBeforeLong', this.value)">
+              <span class="ps-unit">цикл</span>
+              <button class="ps-btn" onclick="adjustPomodoroSetting('cyclesBeforeLong', 1)">+</button>
+            </div>
+          </div>
+          <button class="ps-save-btn" onclick="togglePomodoroSettings()">Сохранить</button>
+        </div>
+
         <div class="pomodoro-display">
           <div class="pomodoro-time" id="pomodoroTime">25:00</div>
           <div class="pomodoro-status" id="pomodoroStatus">Готов к работе</div>
