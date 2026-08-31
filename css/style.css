@@ -3140,21 +3140,26 @@
 
     .tm-day-picker {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
     .tm-day-btn {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border: 1px solid rgba(45,40,35,.1);
-      border-radius: 10px;
+      border-radius: 8px;
       background: transparent;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: #7A6F62;
       cursor: pointer;
       transition: all 0.15s ease;
+    }
+
+    .tm-day-btn:last-child {
+      width: 40px;
+      font-size: 10px;
     }
 
     .tm-day-btn.active {
