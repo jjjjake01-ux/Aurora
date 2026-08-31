@@ -300,55 +300,6 @@
        </button>
      </div>
 
-    <!-- ПОТОК ДНЯ -->
-    <div class="card dayflow-card" style="--aura:rgba(232,161,60,.15)">
-      <div class="dayflow-header">
-        <div class="dayflow-title-group">
-          <div class="dayflow-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <div class="dayflow-title">Поток дня</div>
-        </div>
-        <div class="dayflow-summary">
-          <div class="dfs-spent">
-            <span class="dfs-label">Занято</span>
-            <span class="dfs-value" id="dfsSpent">—</span>
-          </div>
-          <div class="dfs-divider"></div>
-          <div class="dfs-free">
-            <span class="dfs-label">Свободно</span>
-            <span class="dfs-value" id="dfsFree">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Таймлайн -->
-      <div class="dayflow-timeline">
-        <div class="dft-hours">
-          <span>6</span>
-          <span>9</span>
-          <span>12</span>
-          <span>15</span>
-          <span>18</span>
-          <span>21</span>
-          <span>24</span>
-        </div>
-        <div class="dft-track" id="dftTrack">
-          <div class="dft-now" id="dftNow"></div>
-        </div>
-      </div>
-
-      <!-- Список задач -->
-      <div class="dayflow-tasks" id="dayflowTasks"></div>
-
-      <!-- Легенда -->
-      <div class="dayflow-legend">
-        <div class="dfl-item"><div class="dfl-dot pomodoro"></div><span>Фокус</span></div>
-        <div class="dfl-item"><div class="dfl-dot task"></div><span>Задачи</span></div>
-        <div class="dfl-item"><div class="dfl-dot workout"></div><span>Спорт</span></div>
-        <div class="dfl-item"><div class="dfl-dot free"></div><span>Свободно</span></div>
-      </div>
-    </div>
 
     <!-- ТАЙМЕРЫ И ЗАДАЧИ -->
     <div class="card timers-card" style="--aura:rgba(232,161,60,.18)">
@@ -420,6 +371,23 @@
           <div class="pomodoro-time" id="pomodoroTime">25:00</div>
           <div class="pomodoro-status" id="pomodoroStatus">Готов к работе</div>
         </div>
+
+        <!-- Статистика за сегодня -->
+        <div class="pomodoro-stats" id="pomodoroStats">
+          <div class="pomo-stat">
+            <div class="pomo-stat-value" id="pomoCompleted">0</div>
+            <div class="pomo-stat-label">сессий</div>
+          </div>
+          <div class="pomo-stat">
+            <div class="pomo-stat-value" id="pomoFocusTime">0ч 0м</div>
+            <div class="pomo-stat-label">фокус</div>
+          </div>
+          <div class="pomo-stat">
+            <div class="pomo-stat-value" id="pomoGoal">0/8</div>
+            <div class="pomo-stat-label">цель</div>
+          </div>
+        </div>
+
         <div class="pomodoro-controls">
           <button class="pomodoro-btn" id="pomodoroStart" onclick="startPomodoro()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
@@ -446,6 +414,81 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
           </button>
         </form>
+      </div>
+    </div>
+
+    <!-- ПОТОК ДНЯ -->
+    <div class="card dayflow-card" style="--aura:rgba(232,161,60,.15)">
+      <div class="dayflow-header">
+        <div class="dayflow-title-group">
+          <div class="dayflow-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="dayflow-title">Поток дня</div>
+        </div>
+        <div class="dayflow-summary">
+          <div class="dfs-spent">
+            <span class="dfs-label">Занято</span>
+            <span class="dfs-value" id="dfsSpent">—</span>
+          </div>
+          <div class="dfs-divider"></div>
+          <div class="dfs-free">
+            <span class="dfs-label">Свободно</span>
+            <span class="dfs-value" id="dfsFree">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Таймлайн -->
+      <div class="dayflow-timeline">
+        <div class="dft-hours">
+          <span>6</span>
+          <span>9</span>
+          <span>12</span>
+          <span>15</span>
+          <span>18</span>
+          <span>21</span>
+          <span>24</span>
+        </div>
+        <div class="dft-track" id="dftTrack">
+          <div class="dft-now" id="dftNow"></div>
+
+          <button class="pomodoro-btn" id="pomodoroStart" onclick="startPomodoro()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+            Старт
+          </button>
+          <button class="pomodoro-btn reset" onclick="resetPomodoro()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Сброс
+          </button>
+        </div>
+      </div>
+
+      <!-- Чат для создания задач -->
+      <div class="task-chat">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Напиши задачу — например: «Почистить зубы в 18:00»</span>
+          </div>
+        </div>
+        <form class="chat-input-row" onsubmit="handleChatSubmit(event)">
+          <input type="text" id="chatInput" class="chat-input" placeholder="Приготовить ужин через 50 минут..." autocomplete="off">
+          <button type="submit" class="chat-send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Список задач -->
+      <div class="dayflow-tasks" id="dayflowTasks"></div>
+
+      <!-- Легенда -->
+      <div class="dayflow-legend">
+        <div class="dfl-item"><div class="dfl-dot pomodoro"></div><span>Фокус</span></div>
+        <div class="dfl-item"><div class="dfl-dot task"></div><span>Задачи</span></div>
+        <div class="dfl-item"><div class="dfl-dot workout"></div><span>Спорт</span></div>
+        <div class="dfl-item"><div class="dfl-dot free"></div><span>Свободно</span></div>
       </div>
     </div>
 

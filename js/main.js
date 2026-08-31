@@ -605,6 +605,12 @@ function updateMascotIllustration(containerId, score) {
   } else {
     container.classList.remove('show');
   }
+<<<<<<< Updated upstream
+=======
+<<<<<<< ours
+}
+=======
+>>>>>>> Stashed changes
 }
 
 // ===== LOCAL STORAGE =====
@@ -1477,4 +1483,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDayFlow();
   setInterval(updateTimers, 1000);
   setInterval(renderDayFlow, 60000);
+<<<<<<< Updated upstream
 });
+=======
+});
+>>>>>>> theirs
+>>>>>>> Stashed changes
