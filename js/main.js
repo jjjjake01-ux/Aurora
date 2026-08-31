@@ -1691,6 +1691,10 @@ function addChatMessage(text, type) {
 let pendingTask = null;
 let selectedCategory = 'other';
 let selectedWeekDays = [];
+let selectedDuration = 30;
+let selectedRepeat = 'never';
+let customDaysValue = 2;
+let selectedSessions = 4;
 
 function openTaskModal(taskText) {
   pendingTask = parseTaskInput(taskText);
@@ -1703,25 +1707,47 @@ function openTaskModal(taskText) {
   now.setHours(now.getHours() + 1);
   const timeStr = now.toTimeString().slice(0, 5);
   document.getElementById('tmTime').value = timeStr;
+  document.getElementById('tmTimeDisplay').textContent = timeStr;
+
+  // Reset duration chips
+  selectedDuration = 30;
+  document.querySelectorAll('.tm-dur-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.tm-dur-chip[data-val="30"]').classList.add('active');
 
   // Reset category
   selectedCategory = 'other';
-  document.querySelectorAll('.tm-cat').forEach(c => c.classList.remove('active'));
-  document.querySelector('.tm-cat[data-cat="other"]').classList.add('active');
+  document.querySelectorAll('.tm-cat-item').forEach(c => c.classList.remove('active'));
+  document.querySelector('.tm-cat-item[data-cat="other"]').classList.add('active');
 
   // Reset repeat
-  document.getElementById('tmRepeat').value = 'never';
-  document.getElementById('tmRepeatOptions').style.display = 'none';
-  document.getElementById('tmCustomDaysField').style.display = 'none';
-  document.getElementById('tmWeekDaysField').style.display = 'none';
+  selectedRepeat = 'never';
+  document.querySelectorAll('.tm-rep-item').forEach(r => r.classList.remove('active'));
+  document.querySelector('.tm-rep-item[data-rep="never"]').classList.add('active');
+  document.getElementById('tmRepeatCustom').style.display = 'none';
+  document.getElementById('tmWeekdaysRow').style.display = 'none';
 
-  // Reset pomodoro
-  document.getElementById('tmPomodoro').checked = false;
-  document.getElementById('tmPomoSettings').style.display = 'none';
+  // Reset custom days
+  customDaysValue = 2;
+  document.getElementById('tmCustomDaysValue').textContent = '2';
 
   // Reset weekdays
   selectedWeekDays = [];
-  document.querySelectorAll('.tm-wd').forEach(w => w.classList.remove('active'));
+  document.querySelectorAll('.tm-wd-btn').forEach(w => w.classList.remove('active'));
+
+  // Reset pomodoro
+  document.getElementById('tmPomodoro').checked = false;
+  document.getElementById('tmPomoConfig').style.display = 'none';
+  document.getElementById('tmPomoWork').value = 25;
+  document.getElementById('tmPomoWorkVal').textContent = '25м';
+  document.getElementById('tmPomoBreak').value = 5;
+  document.getElementById('tmPomoBreakVal').textContent = '5м';
+
+  // Reset sessions
+  selectedSessions = 4;
+  document.querySelectorAll('.tm-ses-dot').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.tm-ses-dot').forEach(d => {
+    if (parseInt(d.dataset.ses) <= 4) d.classList.add('active');
+  });
 
   // Show modal
   document.getElementById('taskModalOverlay').style.display = 'flex';
@@ -1785,8 +1811,6 @@ function toggleWeekDay(btn) {
 function createTaskFromModal() {
   const name = document.getElementById('tmName').value.trim();
   const time = document.getElementById('tmTime').value;
-  const duration = parseInt(document.getElementById('tmDuration').value);
-  const repeat = document.getElementById('tmRepeat').value;
   const usePomodoro = document.getElementById('tmPomodoro').checked;
 
   if (!name) {
@@ -1813,16 +1837,16 @@ function createTaskFromModal() {
     id: Date.now(),
     name: name,
     targetTime: targetTime,
-    duration: duration,
+    duration: selectedDuration,
     needsPomodoro: usePomodoro,
     category: selectedCategory,
-    repeat: repeat,
-    repeatCustomDays: repeat === 'custom' ? parseInt(document.getElementById('tmCustomDays').value) : null,
-    repeatWeekDays: repeat === 'specific' ? [...selectedWeekDays] : null,
+    repeat: selectedRepeat,
+    repeatCustomDays: selectedRepeat === 'custom' ? customDaysValue : null,
+    repeatWeekDays: selectedRepeat === 'specific' ? [...selectedWeekDays] : null,
     pomodoroSettings: usePomodoro ? {
       work: parseInt(document.getElementById('tmPomoWork').value),
       break: parseInt(document.getElementById('tmPomoBreak').value),
-      sessions: parseInt(document.getElementById('tmPomoSessions').value)
+      sessions: selectedSessions
     } : null,
     createdAt: now,
     active: true
@@ -1835,7 +1859,46 @@ function createTaskFromModal() {
   closeTaskModal();
 
   // Add confirmation message
-  addChatMessage(`✓ «${name}» создано на ${formatTimeOfDay(targetTime)}${usePomodoro ? ' 🍅' : ''}`, 'system success');
+  addChatMessage(`✓ «${name}» создано на ${formatTimeOfDay(targetTime)}${usePomodoro ? ' с Помодоро' : ''}`, 'system success');
+}
+
+function adjustCustomDays(delta) {
+  customDaysValue = Math.max(1, Math.min(30, customDaysValue + delta));
+  document.getElementById('tmCustomDaysValue').textContent = customDaysValue;
+}
+
+function selectDuration(btn) {
+  document.querySelectorAll('.tm-dur-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  selectedDuration = parseInt(btn.dataset.val);
+}
+
+function selectRepeat(btn) {
+  document.querySelectorAll('.tm-rep-item').forEach(r => r.classList.remove('active'));
+  btn.classList.add('active');
+  selectedRepeat = btn.dataset.rep;
+
+  const customDiv = document.getElementById('tmRepeatCustom');
+  const weekdaysRow = document.getElementById('tmWeekdaysRow');
+
+  if (btn.dataset.rep === 'custom') {
+    customDiv.style.display = 'block';
+    weekdaysRow.style.display = 'none';
+  } else if (btn.dataset.rep === 'specific') {
+    customDiv.style.display = 'block';
+    weekdaysRow.style.display = 'block';
+  } else {
+    customDiv.style.display = 'none';
+    weekdaysRow.style.display = 'none';
+  }
+}
+
+function selectSession(btn) {
+  selectedSessions = parseInt(btn.dataset.ses);
+  document.querySelectorAll('.tm-ses-dot').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.tm-ses-dot').forEach(d => {
+    if (parseInt(d.dataset.ses) <= selectedSessions) d.classList.add('active');
+  });
 }
 
 // ===== INIT =====
@@ -1847,13 +1910,42 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(renderDayFlow, 60000);
   updatePomodoroStats();
 
-  // Modal category buttons
-  document.querySelectorAll('.tm-cat').forEach(btn => {
-    btn.addEventListener('click', () => selectCategory(btn));
+  // Duration chips
+  document.querySelectorAll('.tm-dur-chip').forEach(btn => {
+    btn.addEventListener('click', () => selectDuration(btn));
   });
 
-  // Modal weekday buttons
-  document.querySelectorAll('.tm-wd').forEach(btn => {
-    btn.addEventListener('click', () => toggleWeekDay(btn));
+  // Category buttons
+  document.querySelectorAll('.tm-cat-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tm-cat-item').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCategory = btn.dataset.cat;
+    });
+  });
+
+  // Repeat buttons
+  document.querySelectorAll('.tm-rep-item').forEach(btn => {
+    btn.addEventListener('click', () => selectRepeat(btn));
+  });
+
+  // Weekday buttons
+  document.querySelectorAll('.tm-wd-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const day = parseInt(btn.dataset.day);
+      const index = selectedWeekDays.indexOf(day);
+      if (index > -1) {
+        selectedWeekDays.splice(index, 1);
+        btn.classList.remove('active');
+      } else {
+        selectedWeekDays.push(day);
+        btn.classList.add('active');
+      }
+    });
+  });
+
+  // Session dots
+  document.querySelectorAll('.tm-ses-dot').forEach(btn => {
+    btn.addEventListener('click', () => selectSession(btn));
   });
 });

@@ -2163,130 +2163,150 @@
   <div class="task-modal" onclick="event.stopPropagation()">
     <div class="tm-header">
       <div class="tm-title">Новая задача</div>
-      <button class="tm-close" onclick="closeTaskModal()">✕</button>
+      <button class="tm-close" onclick="closeTaskModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
 
     <div class="tm-body">
       <!-- Название -->
       <div class="tm-field">
-        <label class="tm-label">Название</label>
-        <input type="text" id="tmName" class="tm-input" placeholder="Что нужно сделать?">
+        <input type="text" id="tmName" class="tm-input tm-input-lg" placeholder="Что нужно сделать?">
       </div>
 
-      <!-- Время -->
-      <div class="tm-field-row">
-        <div class="tm-field">
-          <label class="tm-label">Время</label>
-          <input type="time" id="tmTime" class="tm-input">
+      <!-- Время и длительность -->
+      <div class="tm-row">
+        <div class="tm-time-card" onclick="document.getElementById('tmTime').showPicker()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E6A23C" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span class="tm-time-label">Время</span>
+          <span class="tm-time-value" id="tmTimeDisplay">--:--</span>
+          <input type="time" id="tmTime" class="tm-time-input" onchange="document.getElementById('tmTimeDisplay').textContent = this.value">
         </div>
-        <div class="tm-field">
-          <label class="tm-label">Длительность</label>
-          <select id="tmDuration" class="tm-select">
-            <option value="15">15 мин</option>
-            <option value="30" selected>30 мин</option>
-            <option value="45">45 мин</option>
-            <option value="60">1 час</option>
-            <option value="90">1.5 часа</option>
-            <option value="120">2 часа</option>
-          </select>
+        <div class="tm-duration-card">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#31A8C9" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <span class="tm-time-label">Длительность</span>
+          <div class="tm-duration-chips" id="tmDurationChips">
+            <button type="button" class="tm-dur-chip" data-val="15">15м</button>
+            <button type="button" class="tm-dur-chip active" data-val="30">30м</button>
+            <button type="button" class="tm-dur-chip" data-val="45">45м</button>
+            <button type="button" class="tm-dur-chip" data-val="60">1ч</button>
+            <button type="button" class="tm-dur-chip" data-val="90">1.5ч</button>
+          </div>
         </div>
       </div>
 
       <!-- Категория -->
-      <div class="tm-field">
-        <label class="tm-label">Категория</label>
-        <div class="tm-categories" id="tmCategories">
-          <button type="button" class="tm-cat" data-cat="work">💼 Работа</button>
-          <button type="button" class="tm-cat" data-cat="study">📚 Учёба</button>
-          <button type="button" class="tm-cat" data-cat="sport">💪 Спорт</button>
-          <button type="button" class="tm-cat" data-cat="home">🏠 Дом</button>
-          <button type="button" class="tm-cat" data-cat="health">❤️ Здоровье</button>
-          <button type="button" class="tm-cat" data-cat="personal">👤 Личное</button>
-          <button type="button" class="tm-cat active" data-cat="other">📌 Другое</button>
+      <div class="tm-section">
+        <div class="tm-section-label">Категория</div>
+        <div class="tm-cat-grid" id="tmCategories">
+          <button type="button" class="tm-cat-item" data-cat="work">
+            <div class="tm-cat-dot" style="background:#E8A13C"></div>
+            <span>Работа</span>
+          </button>
+          <button type="button" class="tm-cat-item" data-cat="study">
+            <div class="tm-cat-dot" style="background:#31A8C9"></div>
+            <span>Учёба</span>
+          </button>
+          <button type="button" class="tm-cat-item" data-cat="sport">
+            <div class="tm-cat-dot" style="background:#2FBF9B"></div>
+            <span>Спорт</span>
+          </button>
+          <button type="button" class="tm-cat-item" data-cat="health">
+            <div class="tm-cat-dot" style="background:#E5677E"></div>
+            <span>Здоровье</span>
+          </button>
+          <button type="button" class="tm-cat-item" data-cat="home">
+            <div class="tm-cat-dot" style="background:#7B74D6"></div>
+            <span>Дом</span>
+          </button>
+          <button type="button" class="tm-cat-item active" data-cat="other">
+            <div class="tm-cat-dot" style="background:#9A8F82"></div>
+            <span>Другое</span>
+          </button>
         </div>
       </div>
 
       <!-- Повтор -->
-      <div class="tm-field">
-        <label class="tm-label">Повтор</label>
-        <select id="tmRepeat" class="tm-select" onchange="updateRepeatOptions()">
-          <option value="never">Нет</option>
-          <option value="daily">Ежедневно</option>
-          <option value="weekdays">Будни (Пн-Пт)</option>
-          <option value="weekends">Выходные (Сб-Вс)</option>
-          <option value="weekly">Еженедельно</option>
-          <option value="custom">Каждые N дней</option>
-          <option value="specific">Дни недели</option>
-        </select>
-      </div>
-
-      <!-- Настройки повтора -->
-      <div class="tm-repeat-options" id="tmRepeatOptions" style="display:none">
-        <div class="tm-field" id="tmCustomDaysField" style="display:none">
-          <label class="tm-label">Каждые (дней)</label>
-          <input type="number" id="tmCustomDays" class="tm-input" value="2" min="1" max="30">
+      <div class="tm-section">
+        <div class="tm-section-label">Повтор</div>
+        <div class="tm-repeat-bar" id="tmRepeatBar">
+          <button type="button" class="tm-rep-item active" data-rep="never">Нет</button>
+          <button type="button" class="tm-rep-item" data-rep="daily">День</button>
+          <button type="button" class="tm-rep-item" data-rep="weekdays">Будни</button>
+          <button type="button" class="tm-rep-item" data-rep="weekly">Неделя</button>
+          <button type="button" class="tm-rep-item" data-rep="custom">Свой</button>
         </div>
-        <div class="tm-field" id="tmWeekDaysField" style="display:none">
-          <label class="tm-label">Дни недели</label>
-          <div class="tm-weekdays">
-            <button type="button" class="tm-wd" data-day="1">Пн</button>
-            <button type="button" class="tm-wd" data-day="2">Вт</button>
-            <button type="button" class="tm-wd" data-day="3">Ср</button>
-            <button type="button" class="tm-wd" data-day="4">Чт</button>
-            <button type="button" class="tm-wd" data-day="5">Пт</button>
-            <button type="button" class="tm-wd" data-day="6">Сб</button>
-            <button type="button" class="tm-wd" data-day="0">Вс</button>
+        <div class="tm-repeat-custom" id="tmRepeatCustom" style="display:none">
+          <div class="tm-custom-row">
+            <span class="tm-custom-label">Каждые</span>
+            <div class="tm-stepper" id="tmCustomDaysStepper">
+              <button type="button" class="tm-step-btn" onclick="adjustCustomDays(-1)">−</button>
+              <span class="tm-step-value" id="tmCustomDaysValue">2</span>
+              <button type="button" class="tm-step-btn" onclick="adjustCustomDays(1)">+</button>
+            </div>
+            <span class="tm-custom-label">дней</span>
+          </div>
+          <div class="tm-weekdays-row" id="tmWeekdaysRow" style="display:none">
+            <button type="button" class="tm-wd-btn" data-day="1">Пн</button>
+            <button type="button" class="tm-wd-btn" data-day="2">Вт</button>
+            <button type="button" class="tm-wd-btn" data-day="3">Ср</button>
+            <button type="button" class="tm-wd-btn" data-day="4">Чт</button>
+            <button type="button" class="tm-wd-btn" data-day="5">Пт</button>
+            <button type="button" class="tm-wd-btn" data-day="6">Сб</button>
+            <button type="button" class="tm-wd-btn" data-day="0">Вс</button>
           </div>
         </div>
       </div>
 
       <!-- Помодоро -->
-      <div class="tm-field">
-        <div class="tm-pomo-header">
-          <label class="tm-label">🍅 Помодоро</label>
-          <label class="tm-toggle">
+      <div class="tm-pomo-card">
+        <div class="tm-pomo-top">
+          <div class="tm-pomo-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E86E5E" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>Помодоро</span>
+          </div>
+          <label class="tm-switch">
             <input type="checkbox" id="tmPomodoro" onchange="togglePomoSettings()">
-            <span class="tm-toggle-slider"></span>
+            <span class="tm-switch-track"><span class="tm-switch-thumb"></span></span>
           </label>
         </div>
-      </div>
-
-      <!-- Настройки Помодоро -->
-      <div class="tm-pomo-settings" id="tmPomoSettings" style="display:none">
-        <div class="tm-field-row">
-          <div class="tm-field">
-            <label class="tm-label-sm">Работа</label>
-            <select id="tmPomoWork" class="tm-select-sm">
-              <option value="15">15 мин</option>
-              <option value="25" selected>25 мин</option>
-              <option value="30">30 мин</option>
-              <option value="45">45 мин</option>
-              <option value="50">50 мин</option>
-            </select>
+        <div class="tm-pomo-config" id="tmPomoConfig" style="display:none">
+          <div class="tm-pomo-sliders">
+            <div class="tm-pomo-slider">
+              <div class="tm-slider-header">
+                <span>Фокус</span>
+                <span class="tm-slider-val" id="tmPomoWorkVal">25м</span>
+              </div>
+              <input type="range" id="tmPomoWork" min="10" max="60" step="5" value="25" class="tm-slider-range" oninput="document.getElementById('tmPomoWorkVal').textContent = this.value + 'м'">
+            </div>
+            <div class="tm-pomo-slider">
+              <div class="tm-slider-header">
+                <span>Отдых</span>
+                <span class="tm-slider-val" id="tmPomoBreakVal">5м</span>
+              </div>
+              <input type="range" id="tmPomoBreak" min="3" max="30" step="1" value="5" class="tm-slider-range break" oninput="document.getElementById('tmPomoBreakVal').textContent = this.value + 'м'">
+            </div>
           </div>
-          <div class="tm-field">
-            <label class="tm-label-sm">Отдых</label>
-            <select id="tmPomoBreak" class="tm-select-sm">
-              <option value="5" selected>5 мин</option>
-              <option value="10">10 мин</option>
-              <option value="15">15 мин</option>
-            </select>
-          </div>
-          <div class="tm-field">
-            <label class="tm-label-sm">Сессий</label>
-            <select id="tmPomoSessions" class="tm-select-sm">
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4" selected>4</option>
-              <option value="6">6</option>
-              <option value="8">8</option>
-            </select>
+          <div class="tm-pomo-sessions">
+            <span class="tm-sessions-label">Сессий</span>
+            <div class="tm-session-dots" id="tmSessionDots">
+              <button type="button" class="tm-ses-dot active" data-ses="2">2</button>
+              <button type="button" class="tm-ses-dot active" data-ses="3">3</button>
+              <button type="button" class="tm-ses-dot active" data-ses="4">4</button>
+              <button type="button" class="tm-ses-dot" data-ses="5">5</button>
+              <button type="button" class="tm-ses-dot" data-ses="6">6</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="tm-footer">
+      <button class="tm-btn-cancel" onclick="closeTaskModal()">Отмена</button>
+      <button class="tm-btn-create" onclick="createTaskFromModal()">Создать</button>
+    </div>
+  </div>
+</div>
       <button class="tm-btn-cancel" onclick="closeTaskModal()">Отмена</button>
       <button class="tm-btn-create" onclick="createTaskFromModal()">Создать</button>
     </div>
