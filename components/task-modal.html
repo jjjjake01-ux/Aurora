@@ -1,0 +1,86 @@
+<!-- Модальное окно задачи -->
+<!-- Включается через <object type="text/html" data="components/task-modal.html"></object> -->
+<div class="task-modal-overlay" id="taskModalOverlay" style="display:none">
+  <div class="task-modal" role="dialog" aria-modal="true" aria-labelledby="tmTitle">
+    <div class="tm-header">
+      <div class="tm-title" id="tmTitle">Новая задача</div>
+      <button class="tm-close" onclick="closeTaskModal()" aria-label="Закрыть">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="tm-body">
+      <div class="tm-field">
+        <label class="tm-label" for="tmName">Название</label>
+        <input type="text" id="tmName" class="tm-input" placeholder="Например: Тренировка">
+      </div>
+      <div class="tm-row">
+        <div class="tm-field">
+          <label class="tm-label" for="tmTime">Время</label>
+          <input type="time" id="tmTime" class="tm-input" value="18:00">
+        </div>
+        <div class="tm-field">
+          <label class="tm-label" for="tmDuration">Длительность (мин)</label>
+          <input type="number" id="tmDuration" class="tm-input tm-input-sm" min="1" max="180" value="30">
+        </div>
+      </div>
+      <div class="tm-field">
+        <label class="tm-label" for="tmCategory">Категория</label>
+        <select id="tmCategory" class="tm-select">
+          <option value="activity">Активность</option>
+          <option value="training">Тренировка</option>
+          <option value="nutrition">Питание</option>
+          <option value="sleep">Сон</option>
+          <option value="other">Другое</option>
+        </select>
+      </div>
+      <div class="tm-field tm-field-full">
+        <label class="tm-label" for="tmNote">Заметка</label>
+        <textarea id="tmNote" class="tm-textarea" rows="2" placeholder="Описание, если нужно"></textarea>
+      </div>
+      <div class="tm-advanced">
+        <div class="tm-adv-track">
+          <div class="tm-adv-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2FBF9B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>Помодоро</span>
+          </div>
+          <label class="tm-switch">
+            <input type="checkbox" id="tmPomodoro" onchange="togglePomoSettings()">
+            <span class="tm-switch-track"><span class="tm-switch-thumb"></span></span>
+          </label>
+        </div>
+        <div class="tm-pomo-config" id="tmPomoConfig" style="display:none">
+          <div class="tm-pomo-sliders">
+            <div class="tm-pomo-slider">
+              <div class="tm-slider-header">
+                <span>Фокус</span>
+                <span class="tm-slider-val" id="tmPomoWorkVal">25м</span>
+              </div>
+              <input type="range" id="tmPomoWork" min="10" max="60" step="5" value="25" class="tm-slider-range" oninput="document.getElementById('tmPomoWorkVal').textContent = this.value + 'м'">
+            </div>
+            <div class="tm-pomo-slider">
+              <div class="tm-slider-header">
+                <span>Отдых</span>
+                <span class="tm-slider-val" id="tmPomoBreakVal">5м</span>
+              </div>
+              <input type="range" id="tmPomoBreak" min="3" max="30" step="1" value="5" class="tm-slider-range break" oninput="document.getElementById('tmPomoBreakVal').textContent = this.value + 'м'">
+            </div>
+          </div>
+          <div class="tm-pomo-sessions">
+            <span class="tm-sessions-label">Сессий</span>
+            <div class="tm-session-dots" id="tmSessionDots">
+              <button type="button" class="tm-ses-dot active" data-ses="2">2</button>
+              <button type="button" class="tm-ses-dot active" data-ses="3">3</button>
+              <button type="button" class="tm-ses-dot active" data-ses="4">4</button>
+              <button type="button" class="tm-ses-dot" data-ses="5">5</button>
+              <button type="button" class="tm-ses-dot" data-ses="6">6</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tm-footer">
+      <button class="tm-btn-cancel" onclick="closeTaskModal()">Отмена</button>
+      <button class="tm-btn-create" onclick="createTaskFromModal()">Создать</button>
+    </div>
+  </div>
+</div>

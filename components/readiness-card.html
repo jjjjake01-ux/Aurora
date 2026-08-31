@@ -1,0 +1,136 @@
+<!-- Карточка статуса готовности (Readiness Card) -->
+<!-- Включается через <object type="text/html" data="components/readiness-card.html"></object> -->
+<div class="card status-card" style="--aura:rgba(47,191,155,.28)" role="region" aria-label="Статус готовности на сегодня: 78 из 100, высокий уровень">
+  <div class="status-priority-bar high"></div>
+  <div class="status-top">
+    <div class="status-ring-container">
+      <svg width="96" height="96" viewBox="0 0 96 96" class="status-ring" role="img" aria-label="Кольцо готовности заполнено на 78 процентов">
+        <circle cx="48" cy="48" r="44" fill="none" stroke="rgba(45,40,35,.03)" stroke-width="9"/>
+        <circle cx="48" cy="48" r="38" fill="none" stroke="url(#statusGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="53" transform="rotate(-90 48 48)" filter="url(#ringGlow)"/>
+        <circle cx="48" cy="48" r="32" fill="none" stroke="rgba(45,40,35,.04)" stroke-width="1"/>
+      </svg>
+      <div class="status-ring-inner">
+        <div class="status-value" aria-label="Значение готовности: 78">78</div>
+        <div class="status-unit">из 100</div>
+      </div>
+    </div>
+    <div class="status-info">
+      <div class="status-label">
+        Готовность
+        <button class="info-btn" aria-label="Что такое Готовность?" onclick="this.querySelector('.info-tooltip').classList.toggle('show')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span class="info-tooltip">Готовность —Комплексный показатель на основе HRV, сна, стресса и активности. Показывает готовность тела к нагрузкам. Считается за последние 24ч.</span>
+        </button>
+      </div>
+      <div class="status-verdict">Высокая</div>
+      <div class="status-norm">Твоя норма 72 · <span class="status-norm-diff">+6 выше обычного</span></div>
+      <div class="status-trend">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2FBF9B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <span>72→75→78 растёт 3 дня</span>
+      </div>
+      <div class="status-day-summary">
+        <div class="day-summary-title">Динамика дня</div>
+        <div class="day-summary-items">
+          <span class="day-summary-item rise">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <span class="day-summary-label">С утра</span>
+            <span class="day-summary-value">+16</span>
+          </span>
+          <span class="day-summary-item peak">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            <span class="day-summary-label">Пик</span>
+            <span class="day-summary-value">18:00</span>
+          </span>
+          <span class="day-summary-item forecast">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span class="day-summary-label">К вечеру</span>
+            <span class="day-summary-value">~55</span>
+          </span>
+        </div>
+      </div>
+      <div class="status-compare">
+        <span class="status-compare-yesterday">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#2FBF9B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          +3 от вчера
+        </span>
+        <span class="status-compare-weekday">Среда обычно 75</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Мини-бары за неделю -->
+  <div class="status-week-bars" aria-label="Динамика за неделю: Пн 72, Вт 70, Ср 75, Чт 73, Пт 76, Сб 74, Вс 78">
+    <div class="week-bars-label">Неделя</div>
+    <div class="week-bars-row">
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:72%"></div></div>
+        <span class="week-bar-day">Пн</span>
+        <span class="week-bar-val">72</span>
+      </div>
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:70%"></div></div>
+        <span class="week-bar-day">Вт</span>
+        <span class="week-bar-val">70</span>
+      </div>
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:75%"></div></div>
+        <span class="week-bar-day">Ср</span>
+        <span class="week-bar-val">75</span>
+      </div>
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:73%"></div></div>
+        <span class="week-bar-day">Чт</span>
+        <span class="week-bar-val">73</span>
+      </div>
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:76%"></div></div>
+        <span class="week-bar-day">Пт</span>
+        <span class="week-bar-val">76</span>
+      </div>
+      <div class="week-bar-item">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:74%"></div></div>
+        <span class="week-bar-day">Сб</span>
+        <span class="week-bar-val">74</span>
+      </div>
+      <div class="week-bar-item today">
+        <div class="week-bar-track"><div class="week-bar-fill" style="height:78%"></div></div>
+        <span class="week-bar-day">Вс</span>
+        <span class="week-bar-val">78</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-updated">Обновлено 5 мин назад</div>
+
+  <div class="status-chart">
+    <div class="chart-header">
+      <div class="chart-tabs"><button class="chart-tab active" data-metric="stress" onclick="switchDayChart(this,'stress')">Стресс</button><button class="chart-tab" data-metric="energy" onclick="switchDayChart(this,'energy')">Энергия</button></div>
+      <div class="chart-trend">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <span class="trend-text">+16 за 12 часов</span>
+      </div>
+    </div>
+    <div class="day-chart-container">
+      <svg class="day-chart" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true">
+        <line class="grid-line" x1="0" x2="300" y1="25" y2="25"/>
+        <line class="grid-line" x1="0" x2="300" y1="50" y2="50"/>
+        <line class="grid-line" x1="0" x2="300" y1="75" y2="75"/>
+        <path class="area-glow" d="M0 70 C25 65 25 58 50 55 C75 52 75 48 100 45 C125 42 125 48 150 50 C175 52 175 30 200 25 C225 20 225 28 250 30 C275 32 275 42 300 45" filter="url(#areaGlow)" opacity="0.4"/>
+        <path class="area-fill" d="M0 70 C25 65 25 58 50 55 C75 52 75 48 100 45 C125 42 125 48 150 50 C175 52 175 30 200 25 C225 20 225 28 250 30 C275 32 275 42 300 45 L300 100 L0 100 Z" fill="url(#dayAreaGrad)"/>
+        <path class="line-path" d="M0 70 C25 65 25 58 50 55 C75 52 75 48 100 45 C125 42 125 48 150 50 C175 52 175 30 200 25 C225 20 225 28 250 30 C275 32 275 42 300 45" stroke="#2FBF9B" fill="none" stroke-width="2" stroke-linecap="round"/>
+        <circle class="data-point" cx="0"   cy="70" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="06:00" data-value="62" data-status="Норма"/>
+        <circle class="data-point" cx="50"  cy="55" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="09:00" data-value="58" data-status="Ниже нормы"/>
+        <circle class="data-point" cx="100" cy="45" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="12:00" data-value="71" data-status="Хорошо"/>
+        <circle class="data-point" cx="150" cy="50" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="15:00" data-value="65" data-status="Норма"/>
+        <circle class="data-point" cx="200" cy="25" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="18:00" data-value="82" data-status="Высокая"/>
+        <circle class="data-point" cx="250" cy="30" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="21:00" data-value="78" data-status="Высокая"/>
+        <circle class="data-point" cx="300" cy="45" r="4" fill="#2FBF9B" stroke="#fff" stroke-width="2" data-time="24:00" data-value="55" data-status="Норма"/>
+      </svg>
+    </div>
+    <div class="status-chart-tooltip">
+      <div class="tooltip-time">18:00</div>
+      <div class="tooltip-value">82</div>
+      <div class="tooltip-status">Высокая</div>
+    </div>
+  </div>
+</div>
