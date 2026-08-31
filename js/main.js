@@ -1793,7 +1793,7 @@ function updateRepeatOptions() {
 
 function togglePomoSettings() {
   const checked = document.getElementById('tmPomodoro').checked;
-  document.getElementById('tmPomoSettings').style.display = checked ? 'block' : 'none';
+  document.getElementById('tmPomoConfig').style.display = checked ? 'block' : 'none';
 }
 
 function toggleWeekDay(btn) {
@@ -1842,7 +1842,7 @@ function createTaskFromModal() {
     category: selectedCategory,
     repeat: selectedRepeat,
     repeatCustomDays: selectedRepeat === 'custom' ? customDaysValue : null,
-    repeatWeekDays: selectedRepeat === 'specific' ? [...selectedWeekDays] : null,
+    repeatWeekDays: selectedRepeat === 'custom' && selectedWeekDays.length > 0 ? [...selectedWeekDays] : null,
     pomodoroSettings: usePomodoro ? {
       work: parseInt(document.getElementById('tmPomoWork').value),
       break: parseInt(document.getElementById('tmPomoBreak').value),
@@ -1882,9 +1882,6 @@ function selectRepeat(btn) {
   const weekdaysRow = document.getElementById('tmWeekdaysRow');
 
   if (btn.dataset.rep === 'custom') {
-    customDiv.style.display = 'block';
-    weekdaysRow.style.display = 'none';
-  } else if (btn.dataset.rep === 'specific') {
     customDiv.style.display = 'block';
     weekdaysRow.style.display = 'block';
   } else {
