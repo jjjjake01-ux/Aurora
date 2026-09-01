@@ -6213,11 +6213,12 @@
   }
   :root.dark-theme .plan-desc b{color:#fff}
 
-  /* Индикатор страниц (вертикальный справа) */
+  /* Индикатор страниц (вертикальный справа, внутри phone-frame) */
   .page-indicator{
     position:fixed;
     top:50%;
-    right:6px;
+    /* правый край phone-frame (.app max-width 480 + центрирование) */
+    right:calc(50vw - 240px - 4px);
     transform:translateY(-50%);
     z-index:65;
     display:flex;
@@ -6272,13 +6273,14 @@
   body[data-page="activity"] .pi-dot.active{background:var(--c-index);box-shadow:0 0 0 3px rgba(47,191,155,.2)}
   body[data-page="training"] .pi-dot.active{background:var(--c-energy);box-shadow:0 0 0 3px rgba(49,168,201,.22)}
   .pi-label{
-    writing-mode:vertical-rl;
-    transform:rotate(180deg);
-    font:700 10px var(--f);
-    letter-spacing:.14em;
+    font:800 9px var(--f);
+    letter-spacing:.12em;
     text-transform:uppercase;
     color:var(--ink2);
     white-space:nowrap;
+    margin-top:4px;
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
   }
   :root.dark-theme .page-indicator{
     background:rgba(245,240,234,.7);
@@ -6287,7 +6289,17 @@
   :root.dark-theme .pi-track{background:rgba(45,40,35,.16)}
   :root.dark-theme .pi-dot{background:rgba(45,40,35,.28)}
   :root.dark-theme .pi-dot:hover{background:rgba(45,40,35,.4)}
+  /* Позиционирование индикатора у правого края .app под разные max-width */
+  @media(min-width:768px){
+    .page-indicator{right:calc(50vw - 260px - 4px)}
+  }
+  @media(min-width:1024px){
+    .page-indicator{right:calc(50vw - 270px - 4px)}
+  }
+  @media(min-width:1440px){
+    .page-indicator{right:calc(50vw - 280px - 4px)}
+  }
   @media(max-width:374px){
-    .page-indicator{right:4px;padding:8px 4px;gap:8px}
+    .page-indicator{right:6px;padding:8px 4px;gap:8px}
     .pi-track{height:44px}
   }
