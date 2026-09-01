@@ -6213,93 +6213,64 @@
   }
   :root.dark-theme .plan-desc b{color:#fff}
 
-  /* Индикатор страниц (вертикальный справа, внутри phone-frame) */
+  /* Индикатор страниц — минималистичный, у правого края .app */
   .page-indicator{
     position:fixed;
     top:50%;
-    /* правый край phone-frame (.app max-width 480 + центрирование) */
-    right:calc(50vw - 240px - 4px);
+    right:calc(50vw - 240px - 2px);
     transform:translateY(-50%);
     z-index:65;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:10px;
-    padding:10px 6px;
-    background:rgba(253,252,250,.7);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    border:1px solid rgba(45,40,35,.06);
-    border-radius:18px;
-    box-shadow:0 6px 20px rgba(45,40,35,.06);
+    gap:12px;
+    padding:0;
+    background:transparent;
+    border:none;
+    box-shadow:none;
     pointer-events:auto;
   }
-  .pi-track{
-    position:relative;
-    width:3px;
-    height:54px;
-    background:rgba(45,40,35,.10);
-    border-radius:2px;
-    overflow:hidden;
-  }
-  .pi-fill{
-    position:absolute;
-    top:0;left:0;right:0;
-    height:0%;
-    background:linear-gradient(180deg, var(--c-energy), var(--c-index));
-    border-radius:2px;
-    transition:height .15s linear;
-  }
+  .pi-track{ display:none }
+  .pi-fill{ display:none }
+
   .pi-dots{
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:7px;
   }
   .pi-dot{
-    width:8px;height:8px;
+    width:5px;height:5px;
     border-radius:50%;
     border:none;
     padding:0;
-    background:rgba(45,40,35,.18);
+    background:rgba(45,40,35,.28);
     cursor:pointer;
-    transition:transform .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+    transition:transform .25s var(--ease), background .25s var(--ease);
   }
-  .pi-dot:hover{background:rgba(45,40,35,.32)}
+  .pi-dot:hover{background:rgba(45,40,35,.45)}
   .pi-dot.active{
     background:var(--c-index);
-    transform:scale(1.4);
-    box-shadow:0 0 0 3px rgba(47,191,155,.18);
+    transform:scale(1.6);
   }
-  body[data-page="activity"] .pi-dot.active{background:var(--c-index);box-shadow:0 0 0 3px rgba(47,191,155,.2)}
-  body[data-page="training"] .pi-dot.active{background:var(--c-energy);box-shadow:0 0 0 3px rgba(49,168,201,.22)}
+  body[data-page="activity"] .pi-dot.active{background:var(--c-index)}
+  body[data-page="training"] .pi-dot.active{background:var(--c-energy)}
+
   .pi-label{
-    font:800 9px var(--f);
-    letter-spacing:.12em;
+    font:700 8px var(--f);
+    letter-spacing:.14em;
     text-transform:uppercase;
     color:var(--ink2);
     white-space:nowrap;
-    margin-top:4px;
     writing-mode:vertical-rl;
     transform:rotate(180deg);
+    margin-top:2px;
+    opacity:.7;
   }
-  :root.dark-theme .page-indicator{
-    background:rgba(245,240,234,.7);
-    border-color:rgba(45,40,35,.08);
-  }
-  :root.dark-theme .pi-track{background:rgba(45,40,35,.16)}
-  :root.dark-theme .pi-dot{background:rgba(45,40,35,.28)}
-  :root.dark-theme .pi-dot:hover{background:rgba(45,40,35,.4)}
-  /* Позиционирование индикатора у правого края .app под разные max-width */
-  @media(min-width:768px){
-    .page-indicator{right:calc(50vw - 260px - 4px)}
-  }
-  @media(min-width:1024px){
-    .page-indicator{right:calc(50vw - 270px - 4px)}
-  }
-  @media(min-width:1440px){
-    .page-indicator{right:calc(50vw - 280px - 4px)}
-  }
-  @media(max-width:374px){
-    .page-indicator{right:6px;padding:8px 4px;gap:8px}
-    .pi-track{height:44px}
-  }
+
+  :root.dark-theme .pi-dot{background:rgba(45,40,35,.4)}
+  :root.dark-theme .pi-dot:hover{background:rgba(45,40,35,.6)}
+
+  @media(min-width:768px){ .page-indicator{right:calc(50vw - 260px - 2px)} }
+  @media(min-width:1024px){ .page-indicator{right:calc(50vw - 270px - 2px)} }
+  @media(min-width:1440px){ .page-indicator{right:calc(50vw - 280px - 2px)} }
+  @media(max-width:374px){ .page-indicator{right:6px;gap:6px} }
