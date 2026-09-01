@@ -32,8 +32,8 @@
          <div class="greeting-subtitle" style="color: #C97B00; opacity: 0.95;">Ты отлично восстановился за ночь — энергия на максимуме. Идеальный день для важных дел</div>
        </div>
      </div>
-     <div class="hero-weather">
-       <div class="weather-icon">
+     <div class="hero-weather" id="heroWeather" onclick="toggleWeather()">
+       <div class="weather-icon" id="weatherIcon">
          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E6A23C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
        </div>
        <div class="weather-info">
@@ -41,7 +41,90 @@
          <div class="weather-desc">Солнечно</div>
        </div>
      </div>
-   </div>
+     </div>
+
+    <!-- ПОЛНАЯ КАРТОЧКА ПОГОДЫ (раскрывается из hero-weather) -->
+    <div class="card weather-card" id="weatherCard" style="--aura:rgba(255,179,71,.22)">
+      <div class="weather-card-top">
+        <div class="wc-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </div>
+        <div class="wc-title">
+          <div class="wc-loc">Москва · сейчас</div>
+          <div class="wc-cond">Солнечно · ощущается 24°</div>
+        </div>
+        <div class="wc-temp">22°</div>
+      </div>
+
+      <div class="weather-health-banner">
+        <div class="whb-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="whb-text">Идеальные условия для прогулки и тренировки на улице. Не упусти день.</div>
+      </div>
+
+      <div class="weather-metrics">
+        <div class="wm-item" data-key="uv">
+          <div class="wm-icon uv"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <div class="wm-val">6</div>
+          <div class="wm-lbl">UV-индекс</div>
+          <div class="wm-bar"><div class="wm-fill uv" style="width:60%"></div></div>
+          <div class="wm-state">Высокий · санскрин</div>
+        </div>
+        <div class="wm-item" data-key="aqi">
+          <div class="wm-icon aqi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15a4 4 0 0 0 4 4h9a5 5 0 0 0 .9-9.9 6 6 0 0 0-11.7 1.9A4 4 0 0 0 3 15z"/></svg></div>
+          <div class="wm-val">38</div>
+          <div class="wm-lbl">Воздух (AQI)</div>
+          <div class="wm-bar"><div class="wm-fill aqi" style="width:25%"></div></div>
+          <div class="wm-state good">Чистый · дыши легко</div>
+        </div>
+        <div class="wm-item" data-key="humidity">
+          <div class="wm-icon hum"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+          <div class="wm-val">45%</div>
+          <div class="wm-lbl">Влажность</div>
+          <div class="wm-bar"><div class="wm-fill hum" style="width:45%"></div></div>
+          <div class="wm-state good">Комфортно</div>
+        </div>
+        <div class="wm-item" data-key="wind">
+          <div class="wm-icon wind"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2"/><path d="M17.73 2.27A2.5 2.5 0 1 1 19.5 6.5H2"/><path d="M12 12a3 3 0 1 1 6 0H2"/></svg></div>
+          <div class="wm-val">3 м/с</div>
+          <div class="wm-lbl">Ветер СЗ</div>
+          <div class="wm-bar"><div class="wm-fill wind" style="width:20%"></div></div>
+          <div class="wm-state good">Лёгкий</div>
+        </div>
+        <div class="wm-item" data-key="pressure">
+          <div class="wm-icon press"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12l4-4"/></svg></div>
+          <div class="wm-val">756</div>
+          <div class="wm-lbl">Давление, мм</div>
+          <div class="wm-bar"><div class="wm-fill press" style="width:55%"></div></div>
+          <div class="wm-state">Норма для метеозависимых</div>
+        </div>
+        <div class="wm-item" data-key="magnet">
+          <div class="wm-icon mag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M18 4v16M6 12h12M6 4h2M16 4h2M6 20h2M16 20h2"/></svg></div>
+          <div class="wm-val">2</div>
+          <div class="wm-lbl">Магнитное поле</div>
+          <div class="wm-bar"><div class="wm-fill mag" style="width:25%"></div></div>
+          <div class="wm-state good">Слабая буря · ок</div>
+        </div>
+      </div>
+
+      <div class="weather-sun">
+        <div class="ws-item">
+          <div class="ws-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg></div>
+          <div class="ws-time">05:42</div>
+          <div class="ws-lbl">Восход</div>
+        </div>
+        <div class="ws-track">
+          <div class="ws-arc"></div>
+          <div class="ws-sun" style="left:42%"></div>
+        </div>
+        <div class="ws-item">
+          <div class="ws-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 9V2"/><path d="M4.22 10.22l1.42 1.42"/><path d="M1 18h2"/><path d="M21 18h2"/><path d="M18.36 11.64l1.42-1.42"/></svg></div>
+          <div class="ws-time">20:14</div>
+          <div class="ws-lbl">Закат</div>
+        </div>
+      </div>
+    </div>
 
     <!-- СТАТУС ДНЯ -->
     <div class="card status-card" style="--aura:rgba(47,191,155,.28)" role="region" aria-label="Статус готовности на сегодня: 78 из 100, высокий уровень">
@@ -2000,6 +2083,11 @@
    }
 
    // History panel toggle (global — используется в onclick кнопки)
+  function toggleWeather() {
+    const c = document.getElementById('weatherCard');
+    if (c) c.classList.toggle('open');
+  }
+
   function toggleHistory() {
     const panel = document.getElementById('historyPanel');
     const btn = document.getElementById('historyBtn');
