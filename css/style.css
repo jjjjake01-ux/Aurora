@@ -581,10 +581,6 @@
   .full-page-carousel::-webkit-scrollbar {display:none;}
   .full-page{flex-shrink:0; width:100%; scroll-snap-align:start; height:auto; display:flex; flex-direction:column; gap:14px; padding:10px 0;}
 
-  /* РџР°РіРёРЅР°С†РёСЏ */
-  .carousel-dots {display:flex; justify-content:center; gap:6px; margin-top:10px;}
-  .carousel-dots i {width:6px; height:6px; border-radius:50%; background:var(--mut); opacity:0.4; transition:opacity 0.3s, width 0.3s, background 0.3s;}
-  .carousel-dots i.active {width:18px; border-radius:100px; opacity:1; background:var(--c-index);}
 
   /* Р”Р’Р• РџРћР›РќРћР­РљР РђРќРќР«Р• РЎРўР РђРќРР¦Р« */
   .snap-section {min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column; gap:14px; padding-top:50px; padding-bottom:120px;}
@@ -2282,12 +2278,6 @@
     transform: translateY(0);
   }
 
-  /* РџР°РіРёРЅР°С†РёСЏ РІС‹РіР»СЏРґРёС‚ РґРѕСЂРѕР¶Рµ */
-  .carousel-dots {
-    padding-bottom: 14px;
-    position: relative;
-    top: 6px;
-  }
 
   /* Theme toggle */
   #theme-toggle {
@@ -2900,27 +2890,6 @@
     flex: 0 0 calc(100% - 8px);
     scroll-snap-align: start;
     margin-bottom: 0;
-  }
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 12px;
-  }
-  .carousel-dots .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(45,40,35,.15);
-    transition: all 0.3s ease;
-  }
-  .carousel-dots .dot.active {
-    width: 20px;
-    border-radius: 3px;
-    background: var(--c-index);
-  }
-  :root.dark-theme .carousel-dots .dot {
-    background: rgba(255,255,255,.2);
   }
 
    /* Steps Card - Premium redesign */
@@ -3921,9 +3890,6 @@
     color: #E88060;
     background: rgba(232,128,96,.12);
   }
-  #tab-steps.active .carousel-dots i.active {
-    background: #E88060;
-  }
   #tab-steps.active .highlight-icon {
     background: rgba(232,128,96,.15);
     color: #E88060;
@@ -3974,9 +3940,6 @@
     color: #3DC9A4;
     background: rgba(61,201,164,.12);
   }
-  #tab-calories.active .carousel-dots i.active {
-    background: #3DC9A4;
-  }
   #tab-calories.active .highlight-icon {
     background: rgba(61,201,164,.15);
     color: #3DC9A4;
@@ -4021,15 +3984,6 @@
     border-color: transparent !important;
   }
   #tab-distance.active .steps-goal {
-    color: rgba(255,255,255,0.7);
-  }
-  #tab-distance.active .footer-trend.up {
-    color: #31A8C9;
-    background: rgba(49,168,201,.12);
-  }
-  #tab-distance.active .carousel-dots i.active {
-    background: #31A8C9;
-  }
   #tab-distance.active .highlight-icon {
     background: rgba(49,168,201,.15);
     color: #31A8C9;
@@ -4071,17 +4025,8 @@
   }
   #tab-sitting.active .steps-value-chip {
     background: #E5677E !important;
-    border-color: transparent !important;
-  }
-  #tab-sitting.active .steps-goal {
-    color: rgba(255,255,255,0.7);
-  }
-  #tab-sitting.active .footer-trend.up {
     color: #E5677E;
     background: rgba(229,103,126,.12);
-  }
-  #tab-sitting.active .carousel-dots i.active {
-    background: #E5677E;
   }
   #tab-sitting.active .highlight-icon {
     background: rgba(229,103,126,.15);
