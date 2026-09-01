@@ -17,35 +17,59 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
 
-  <!-- ПРИВЕТСТВИЕ -->
-  <div class="hero-header">
-    <div class="hero-greeting">
-      <div class="hero-time">
-        <div class="hero-dot" style="background: linear-gradient(135deg, #FFB347 0%, #FFCC33 100%); box-shadow: 0 0 20px rgba(255,179,71,0.5);"></div>
-        <div class="hero-time-text" style="color: #E6A23C; font-weight: 600;">Утро · 29 августа · 08:41</div>
+  <!-- ПРИВЕТСТВИЕ + ГОТОВНОСТЬ + ПОГОДА — единый hero-блок -->
+  <div class="hero-panel">
+    <div class="hero-panel-top">
+      <div class="hero-greeting">
+        <div class="hero-time">
+          <div class="hero-dot"></div>
+          <div class="hero-time-text">Утро · 29 августа · 08:41</div>
+        </div>
+        <div class="hero-greet">
+          <svg class="hero-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Доброе утро!
+        </div>
+        <div class="hero-sub">Ты отлично восстановился — энергия на максимуме</div>
       </div>
-      <div class="hero-title">
-        <div class="greeting-chip" style="background: linear-gradient(135deg, rgba(255,179,71,0.2) 0%, rgba(255,204,51,0.2) 100%); border: 1px solid rgba(255,179,71,0.4); color: #D48806; box-shadow: 0 4px 20px rgba(255,179,71,0.25);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 8px rgba(255,179,71,0.6));"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-           Доброе утро!
+      <div class="hero-readiness" aria-label="Готовность 78 из 100">
+        <svg width="62" height="62" viewBox="0 0 62 62">
+          <defs>
+            <linearGradient id="hrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#5CC4A0"/>
+              <stop offset="100%" stop-color="#1A9E7A"/>
+            </linearGradient>
+          </defs>
+          <circle cx="31" cy="31" r="27" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="5"/>
+          <circle cx="31" cy="31" r="23" fill="none" stroke="url(#hrGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="145" stroke-dashoffset="32" transform="rotate(-90 31 31)"/>
+        </svg>
+        <div class="hr-text">
+          <div class="hr-num">78</div>
+          <div class="hr-lbl">готовность</div>
         </div>
-         <div class="greeting-subtitle" style="color: #C97B00; opacity: 0.95;">Ты отлично восстановился за ночь — энергия на максимуме. Идеальный день для важных дел</div>
-       </div>
-     </div>
-      <button class="hero-weather" id="heroWeather" onclick="toggleWeather()" type="button" aria-label="Погода и здоровье">
-        <div class="weather-icon" id="weatherIcon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        </div>
-        <div class="weather-info">
-          <div class="weather-temp">22°</div>
-          <div class="weather-desc">Солнечно</div>
-        </div>
-      </button>
-      <div class="hero-health-chip" id="heroHealthChip">
-        <span class="hhc-dot"></span>
-        <span class="hhc-text">Воздух чистый · UV высокий</span>
       </div>
     </div>
+
+    <div class="hero-divider"></div>
+
+    <div class="hero-weather-row">
+      <div class="hw-main">
+        <div class="hw-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </div>
+        <div class="hw-text">
+          <div class="hw-temp">22°</div>
+          <div class="hw-cond">Солнечно</div>
+        </div>
+      </div>
+      <div class="hw-metrics">
+        <div class="hwm" title="Ощущается"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4 4 0 1 0 5 0z"/></svg><span>24°</span></div>
+        <div class="hwm" title="Влажность"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg><span>45%</span></div>
+        <div class="hwm" title="Ветер"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2"/><path d="M17.73 2.27A2.5 2.5 0 1 1 19.5 6.5H2"/></svg><span>3 м/с</span></div>
+        <div class="hwm" title="UV"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><span>6</span></div>
+        <div class="hwm aqi" title="Воздух"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15a4 4 0 0 0 4 4h9a5 5 0 0 0 .9-9.9 6 6 0 0 0-11.7 1.9A4 4 0 0 0 3 15z"/></svg><span>38</span></div>
+      </div>
+    </div>
+  </div>
 
     <!-- СТАТУС ДНЯ -->
     <div class="card status-card" style="--aura:rgba(47,191,155,.28)" role="region" aria-label="Статус готовности на сегодня: 78 из 100, высокий уровень">
