@@ -6144,49 +6144,71 @@
   :root.dark-theme .dft-freezone{border-color:rgba(255,255,255,.06); background:rgba(255,255,255,.02)}
   :root.dark-theme .dayflow-summary{background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08)}
 
-  /* Карточка «Мой план» (Тренировка) */
+  /* Карточка «Сегодняшний план» (Тренировка) — финальный стиль */
   .plan-card{
-    background:linear-gradient(135deg, rgba(49,168,201,.08), rgba(49,168,201,.02));
-    border:1px solid rgba(49,168,201,.18);
+    position:relative;
+    background:linear-gradient(160deg, #ffffff 0%, rgba(49,168,201,.06) 100%);
+    border:1px solid rgba(49,168,201,.22);
+    overflow:hidden;
   }
   .plan-card::before{
     content:"";
     position:absolute;
-    top:-40px;right:-40px;
-    width:160px;height:160px;
-    background:radial-gradient(circle, rgba(49,168,201,.18) 0%, transparent 70%);
-    border-radius:50%;
+    inset:0;
+    background:
+      radial-gradient(120px 120px at 100% 0%, rgba(49,168,201,.22) 0%, transparent 70%),
+      radial-gradient(180px 180px at 0% 100%, rgba(47,191,155,.10) 0%, transparent 70%);
     pointer-events:none;
   }
+  .plan-card > *{position:relative;z-index:1}
+  .plan-card .t-name{font-size:16px}
+  .plan-card .t-name span{font-size:12px;font-weight:500;color:var(--ink2);opacity:.8}
+  .plan-card .t-ic{background:linear-gradient(135deg, rgba(49,168,201,.18), rgba(49,168,201,.08));color:var(--c-energy)}
+  .plan-card .pillst.k-good{background:rgba(49,168,201,.14);color:#2589A8}
+
   .plan-desc{
-    font:500 13px/1.55 var(--f);
+    margin:14px 0 18px;
+    padding:14px 16px;
+    background:rgba(255,255,255,.7);
+    border:1px solid rgba(49,168,201,.14);
+    border-radius:16px;
     color:var(--ink2);
-    margin:6px 0 16px;
-    padding:12px 14px;
-    background:rgba(255,255,255,.55);
-    border:1px solid rgba(49,168,201,.12);
-    border-radius:14px;
+    font-size:13.5px;
+    line-height:1.55;
+    font-weight:500;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
   }
   .plan-desc b{color:var(--ink);font-weight:800}
+
   .plan-btn{
     width:100%;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:8px;
-    padding:14px 18px;
+    gap:10px;
+    padding:16px 20px;
     border:none;
-    border-radius:16px;
+    border-radius:18px;
     background:linear-gradient(135deg, var(--c-energy) 0%, #2589A8 100%);
     color:#fff;
-    font:800 14px var(--f);
+    font:800 15px/1 var(--f);
     letter-spacing:.01em;
     cursor:pointer;
-    box-shadow:0 6px 18px rgba(49,168,201,.28), inset 0 1px 0 rgba(255,255,255,.25);
-    transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+    box-shadow:0 8px 22px rgba(49,168,201,.32), inset 0 1px 0 rgba(255,255,255,.28);
+    transition:transform .2s var(--ease), box-shadow .2s var(--ease), filter .2s var(--ease);
   }
-  .plan-btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(49,168,201,.34), inset 0 1px 0 rgba(255,255,255,.25)}
-  .plan-btn:active{transform:translateY(0)}
-  :root.dark-theme .plan-card{background:linear-gradient(135deg, rgba(49,168,201,.12), rgba(49,168,201,.04))}
-  :root.dark-theme .plan-desc{background:rgba(255,255,255,.04);border-color:rgba(49,168,201,.18)}
-  :root.dark-theme .plan-desc b{color:var(--ink)}
+  .plan-btn:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(49,168,201,.38), inset 0 1px 0 rgba(255,255,255,.28)}
+  .plan-btn:active{transform:translateY(0);filter:brightness(.97)}
+  .plan-btn svg{transition:transform .25s var(--ease)}
+  .plan-btn:hover svg{transform:translateX(3px)}
+
+  :root.dark-theme .plan-card{
+    background:linear-gradient(160deg, rgba(255,255,255,.06) 0%, rgba(49,168,201,.12) 100%);
+    border-color:rgba(49,168,201,.28);
+  }
+  :root.dark-theme .plan-desc{
+    background:rgba(255,255,255,.06);
+    border-color:rgba(49,168,201,.22);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  :root.dark-theme .plan-desc b{color:#fff}
