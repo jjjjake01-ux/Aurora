@@ -6274,3 +6274,5 @@
   @media(min-width:1024px){ .page-indicator{right:calc(50vw - 270px - 2px)} }
   @media(min-width:1440px){ .page-indicator{right:calc(50vw - 280px - 2px)} }
   @media(max-width:374px){ .page-indicator{right:6px;gap:6px} }
+
+/* refresh */
