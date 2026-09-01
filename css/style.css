@@ -6304,8 +6304,7 @@
 /* refresh */
 
 /* ===== WEATHER CARD ===== */
-  #weatherCard{ display:none }
-  #weatherCard.open{ display:block }
+  #weatherCard{ display:block }
 
   .weather-card{
     padding:18px;
