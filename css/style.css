@@ -1,4 +1,4 @@
-﻿  :root{
+  :root{
     --f:'Manrope',system-ui,-apple-system,sans-serif;
     --bg:#F5F2ED; --card:#FDFCFA; --ink:#2D2823; --ink2:#7A6F62; --mut:#9A8F82;
     --line:rgba(24,40,60,.05); --shadow:0 10px 30px rgba(23,43,58,.07);
@@ -6,6 +6,20 @@
     --c-index:#2FBF9B; --c-sleep:#7B74D6; --c-hrv:#E5677E; --c-stress:#D47A5A;
     --c-load:#F0764B; --c-nutr:#66BB6A; --c-energy:#31A8C9; --c-sun:#F2C037;
     --r:24px;
+    /* Additional variables */
+    --r-sm:8px;
+    --r-md:16px;
+    --r-lg:24px;
+    --r-full:100px;
+    --ease:cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-fast:0.15s;
+    --duration-normal:0.3s;
+    --duration-slow:0.5s;
+    --space-xs:4px;
+    --space-sm:8px;
+    --space-md:16px;
+    --space-lg:24px;
+    --space-xl:32px;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   
