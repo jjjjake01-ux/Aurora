@@ -31,10 +31,20 @@
         </div>
         <div class="hero-sub">Ты отлично восстановился — энергия на максимуме</div>
       </div>
-      <div class="hero-readiness" aria-label="Готовность 78 из 100">
+      <div class="hero-aqi" aria-label="Качество воздуха: 38 AQI, отличное">
+        <svg width="58" height="58" viewBox="0 0 58 58">
+          <defs>
+            <linearGradient id="aqiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#5CC4A0"/>
+              <stop offset="100%" stop-color="#1A9E7A"/>
+            </linearGradient>
+          </defs>
+          <circle cx="29" cy="29" r="25" fill="none" stroke="rgba(47,163,107,.12)" stroke-width="5"/>
+          <circle cx="29" cy="29" r="25" fill="none" stroke="url(#aqiGrad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="126" transform="rotate(-90 29 29)"/>
+        </svg>
         <div class="hr-text">
-          <div class="hr-num">78<span class="hr-unit">%</span></div>
-          <div class="hr-lbl">готовность</div>
+          <div class="hr-num aqi">38</div>
+          <div class="hr-lbl aqi">воздух</div>
         </div>
       </div>
     </div>
