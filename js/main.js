@@ -452,6 +452,8 @@ function initCarouselById(trackId) {
 
   const carousel = track.closest('.steps-carousel');
   const dots = carousel.querySelectorAll('.carousel-dots .dot');
+  
+  if (dots.length === 0) return;
 
   const updateDots = () => {
     const scrollLeft = track.scrollLeft;

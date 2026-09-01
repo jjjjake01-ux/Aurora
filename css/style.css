@@ -3726,9 +3726,6 @@
   .calories-carousel .wb-fill.cal.today {
     background: linear-gradient(180deg, #D47A5A, rgba(232,161,60,.4));
   }
-  .calories-carousel .dot.active {
-    background: #D47A5A;
-  }
 
   /* Distance Carousel */
    .distance-carousel .progress-fill.dist {
@@ -3747,9 +3744,6 @@
   .distance-carousel .wb-fill.dist.today {
     background: linear-gradient(180deg, #31A8C9, rgba(49,168,201,.4));
   }
-  .distance-carousel .dot.active {
-    background: #31A8C9;
-  }
 
   /* Sitting Carousel */
    .sitting-carousel .progress-fill.sit {
@@ -3767,9 +3761,6 @@
   }
   .sitting-carousel .wb-fill.sit.today {
     background: linear-gradient(180deg, #E5677E, rgba(229,103,126,.4));
-  }
-  .sitting-carousel .dot.active {
-    background: #E5677E;
   }
   .sitting-carousel .arc-percent.good {
     color: var(--good);
