@@ -1848,15 +1848,6 @@
    </div>
   </div>
 
- <!-- Индикатор страниц (вертикальный справа) -->
- <aside class="page-indicator" id="pageIndicator" aria-label="Индикатор страниц">
-   <div class="pi-track">
-     <div class="pi-fill" id="piFill"></div>
-   </div>
-   <div class="pi-dots" id="piDots"></div>
-   <div class="pi-label" id="piLabel">Главная</div>
- </aside>
-
  <button class="scroll-bottom-btn" onclick="scrollToBottom()" title="В конец страницы">
    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
      <path d="M12 5v14M5 12l7 7 7-7"/>
@@ -2101,68 +2092,6 @@
       initializedTabs.add('steps');
     }
   });
-</script>
-
-<script>
-  (function(){
-    const sections = Array.from(document.querySelectorAll('.snap-section'));
-    const dotsEl = document.getElementById('piDots');
-    const labelEl = document.getElementById('piLabel');
-    const fillEl = document.getElementById('piFill');
-    if (!sections.length || !dotsEl) return;
-
-    sections.forEach((s, i) => {
-      const d = document.createElement('button');
-      d.type = 'button';
-      d.className = 'pi-dot';
-      d.setAttribute('aria-label', s.dataset.sectionLabel || ('Стр. ' + (i+1)));
-      d.addEventListener('click', () => {
-        const app = document.querySelector('.app');
-        const top = s.offsetTop;
-        if (app) app.scrollTo({ top, behavior: 'smooth' });
-        else window.scrollTo({ top, behavior: 'smooth' });
-      });
-      dotsEl.appendChild(d);
-    });
-    const dots = dotsEl.querySelectorAll('.pi-dot');
-
-    let active = -1;
-    function update(){
-      const app = document.querySelector('.app');
-      const scrollTop = app ? app.scrollTop : window.pageYOffset;
-      const winH = window.innerHeight;
-      const docH = app ? app.scrollHeight : document.body.scrollHeight;
-      const max = Math.max(1, docH - winH);
-      const progress = Math.min(1, Math.max(0, scrollTop / max));
-      if (fillEl) fillEl.style.height = (progress * 100) + '%';
-
-      let best = 0, bestDist = Infinity;
-      sections.forEach((s, i) => {
-        const rect = s.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const dist = Math.abs(center - winH / 2);
-        if (dist < bestDist) { bestDist = dist; best = i; }
-      });
-      if (best !== active) {
-        active = best;
-        dots.forEach((d, i) => d.classList.toggle('active', i === active));
-        const s = sections[active];
-        if (labelEl) labelEl.textContent = s.dataset.sectionLabel || ('Стр. ' + (active+1));
-        document.body.setAttribute('data-page', s.dataset.section || '');
-      }
-    }
-
-    const app = document.querySelector('.app');
-    const target = app || window;
-    target.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-    // несколько прогонов после загрузки/шрифтов
-    update();
-    requestAnimationFrame(update);
-    setTimeout(update, 100);
-    setTimeout(update, 500);
-  })();
 </script>
 </body>
 </html>
