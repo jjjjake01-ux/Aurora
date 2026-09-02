@@ -5,11 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Atlas Health — Сегодня</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="app">
+
+  <!-- ВЕРХНЯЯ НАВИГАЦИЯ: КАПСУЛЫ -->
+  <nav class="top-pills" aria-label="Основная навигация">
+    <button class="top-pill is-active" type="button" data-section="workout">
+      <svg class="top-pill-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>
+      </svg>
+      <span>Workout</span>
+    </button>
+    <button class="top-pill" type="button" data-section="nutrition">
+      <svg class="top-pill-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 2v8a4 4 0 0 0 8 0V2"/>
+        <path d="M7 2v20"/>
+        <path d="M16 11h2a3 3 0 0 1 0 6h-2v-6z"/>
+        <path d="M16 17v5"/>
+      </svg>
+      <span>Nutrition</span>
+    </button>
+    <button class="top-pill" type="button" data-section="checkin">
+      <svg class="top-pill-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+      <span>Check-In</span>
+    </button>
+    <button class="top-pill" type="button" data-section="rex">
+      <svg class="top-pill-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>Rex</span>
+    </button>
+  </nav>
 
   <!-- СТРАНИЦА 1: ГЛАВНАЯ -->
   <div class="snap-section" data-section="main" data-section-label="Главная">

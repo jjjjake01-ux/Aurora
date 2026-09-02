@@ -22,7 +22,56 @@
     --space-xl:32px;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  
+
+  /* ВЕРХНЯЯ НАВИГАЦИЯ — КАПСУЛЫ */
+  .top-pills{
+    display:flex;
+    gap:8px;
+    padding:0 16px;
+    margin:0 0 16px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:linear-gradient(180deg,rgba(5,5,10,.85) 0%,rgba(5,5,10,.6) 70%,rgba(5,5,10,0) 100%);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    overflow-x:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .top-pills::-webkit-scrollbar{display:none}
+  .top-pill{
+    flex:1 1 0;
+    min-width:0;
+    height:38px;
+    padding:0 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border-radius:999px;
+    border:0.5px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.55);
+    font-family:'Inter',var(--f);
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:-.01em;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:background .2s ease,color .2s ease,box-shadow .2s ease,border-color .2s ease;
+  }
+  .top-pill-ic{flex-shrink:0;display:block}
+  .top-pill:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.75)}
+  .top-pill.is-active{
+    background:#E8C882;
+    color:#05050a;
+    border-color:transparent;
+    font-weight:600;
+    box-shadow:0 2px 8px rgba(232,200,130,.25);
+  }
+  .top-pill.is-active:hover{background:#E8C882;color:#05050a}
+
   /* РњРћР‘РР›Р¬РќР«Р™ Р­РљР РђРќ: РћРіСЂР°РЅРёС‡РµРЅРёРµ С€РёСЂРёРЅС‹ РєР°Рє Сѓ С‚РµР»РµС„РѕРЅР° */
   body{font-family:var(--f);background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:var(--ink);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden;padding:20px 0}
   .app{width:100%;max-width:480px;height:100vh;background:linear-gradient(180deg,#EDF3F2 0%,var(--bg) 30%);border-radius:40px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;padding:30px 16px 120px;box-shadow:0 25px 80px rgba(0,0,0,0.5),0 0 0 12px #1a1a1a,0 0 0 14px #333;position:relative}
