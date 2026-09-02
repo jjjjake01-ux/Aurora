@@ -6217,7 +6217,7 @@
   .page-indicator{
     position:fixed;
     top:50%;
-    right:calc(50vw - 240px + 6px);
+    right:calc(50vw - 240px + 16px);
     transform:translateY(-50%);
     z-index:65;
     display:flex;
@@ -6293,9 +6293,9 @@
   :root.dark-theme .pi-track{background:rgba(45,40,35,.22)}
   :root.dark-theme .pi-dot{background:var(--card)}
 
-  @media(min-width:768px){ .page-indicator{right:calc(50vw - 260px + 6px)} }
-  @media(min-width:1024px){ .page-indicator{right:calc(50vw - 270px + 6px)} }
-  @media(min-width:1440px){ .page-indicator{right:calc(50vw - 280px + 6px)} }
+  @media(min-width:768px){ .page-indicator{right:calc(50vw - 260px + 20px)} }
+  @media(min-width:1024px){ .page-indicator{right:calc(50vw - 270px + 24px)} }
+  @media(min-width:1440px){ .page-indicator{right:calc(50vw - 280px + 28px)} }
   @media(max-width:374px){
     .page-indicator{right:6px;gap:6px}
     .pi-track{height:48px}
