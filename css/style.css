@@ -879,19 +879,19 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vring-num.is-bad{color:var(--bad)}
 
 .vring-tag{
-  font:700 6.5px/1 var(--f-ui);
+  font:700 5.5px/1 var(--f-ui);
   fill:var(--ink2);
-  letter-spacing:.06em;
+  letter-spacing:.04em;
   text-transform:uppercase;
   opacity:.65;
   transition:opacity .25s var(--ease),fill .25s var(--ease);
   pointer-events:none;
   transform:rotate(90deg);
-  transform-origin:92px 56px;
+  transform-origin:90px 56px;
 }
-.vring-tag-energy{transform:rotate(90deg)  translate(0,0)}
-.vring-tag-focus {transform:rotate(90deg)  translate(0,0)}
-.vring-tag-mood  {transform:rotate(90deg)  translate(0,0)}
+.vring-tag-energy{transform:rotate(90deg) translate(0,0)}
+.vring-tag-focus {transform:rotate(90deg) translate(0,0)}
+.vring-tag-mood  {transform:rotate(90deg) translate(0,0)}
 .vring-fill[data-key="energy"].is-active ~ .vring-tag-energy,
 .vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus,
 .vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{opacity:1}
