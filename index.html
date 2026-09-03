@@ -338,6 +338,37 @@
 <div class="moment-narrative" id="momentNarrative" hidden></div>
 
 <div class="moment-insight" id="momentInsight"></div>
+
+<section class="status-strip" id="statusStrip" aria-label="Прогресс дня">
+  <div class="ss-row">
+    <div class="ss-meta">
+      <span class="ss-label">Шаги</span>
+      <span class="ss-val" id="ssStepsVal">—</span>
+    </div>
+    <div class="ss-bar"><div class="ss-bar-fill" id="ssStepsBar" style="width:0%"></div></div>
+    <span class="ss-target" id="ssStepsTarget">/ 8 000</span>
+  </div>
+  <div class="ss-row">
+    <div class="ss-meta">
+      <span class="ss-label">Вода</span>
+      <span class="ss-val" id="ssWaterVal">—</span>
+    </div>
+    <div class="ss-bar"><div class="ss-bar-fill ss-bar-water" id="ssWaterBar" style="width:0%"></div></div>
+    <span class="ss-target" id="ssWaterTarget">/ 2.5 L</span>
+  </div>
+</section>
+
+<section class="next-action" id="nextAction" aria-live="polite">
+  <div class="na-ic" id="nextActionIc" aria-hidden="true">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 11-12h-7l1-8z"/></svg>
+  </div>
+  <div class="na-body">
+    <div class="na-title" id="nextActionTitle">Сейчас подходящий момент для короткой прогулки</div>
+    <div class="na-sub" id="nextActionSub">5 минут · 320 шагов</div>
+  </div>
+  <button class="na-btn" type="button" id="nextActionBtn">Сделать</button>
+</section>
+
 <div class="moment-actions">
   <button class="btn btn-soft" type="button" id="momentPrimary">Разобраться</button>
   <button class="btn btn-link" type="button" id="momentGhost">Поправить</button>

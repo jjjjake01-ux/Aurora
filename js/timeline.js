@@ -787,6 +787,12 @@ let PERIOD_MODE = false;
       hydVital.dataset.warn = metrics.hydration < 50 ? 'true' : 'false';
     }
 
+    // Status strip: шаги + вода (дневные цели)
+    renderStatusStrip(metrics);
+
+    // Next action: тренер-рекомендация
+    renderNextAction(h, metrics, nextEvent);
+
     // Сохраняем для следующего count-up
     _vitalsState.h = h;
     _vitalsState.vals = {
@@ -795,6 +801,105 @@ let PERIOD_MODE = false;
       vitalLoad: metrics.load,
       vitalHydration: metrics.hydration
     };
+  }
+
+  // ===== STATUS STRIP — дневные цели =====
+  function renderStatusStrip(metrics){
+    const stepsVal = document.getElementById('ssStepsVal');
+    const stepsBar = document.getElementById('ssStepsBar');
+    const stepsTarget = document.getElementById('ssStepsTarget');
+    const waterVal = document.getElementById('ssWaterVal');
+    const waterBar = document.getElementById('ssWaterBar');
+
+    // Шаги: цель 8 000 (можно вынести в настройки позже)
+    const stepsGoal = 8000;
+    const stepsPct = Math.min(100, Math.round((metrics.steps / stepsGoal) * 100));
+    if (stepsVal) stepsVal.textContent = metrics.steps.toLocaleString('ru-RU');
+    if (stepsBar) stepsBar.style.width = stepsPct + '%';
+    if (stepsTarget) stepsTarget.textContent = '/ ' + stepsGoal.toLocaleString('ru-RU');
+
+    // Вода: цель 2.5L = 2500мл. hydration — %, конвертируем в мл для читаемости.
+    const waterGoalMl = 2500;
+    const waterMl = Math.round((metrics.hydration / 100) * waterGoalMl);
+    const waterL = (waterMl / 1000).toFixed(1).replace('.', '.');
+    const waterPct = Math.min(100, metrics.hydration);
+    if (waterVal) waterVal.textContent = waterL + ' L';
+    if (waterBar) waterBar.style.width = waterPct + '%';
+  }
+
+  // ===== NEXT ACTION — тренер говорит, что делать =====
+  // Приоритеты (по убыванию):
+  //   1. Сидим > 60 мин — встать и пройтись
+  //   2. Вечер + кофеин > 0 — не пить больше
+  //   3. Утро + вода < 30% — выпить стакан
+  //   4. Шаги < 30% от цели + день — пройтись
+  //   5. Энергия низкая + день — перерыв 10 мин
+  function renderNextAction(h, metrics, nextEvent){
+    const wrap = document.getElementById('nextAction');
+    if (!wrap) return;
+    const titleEl = document.getElementById('nextActionTitle');
+    const subEl   = document.getElementById('nextActionSub');
+    const icEl    = document.getElementById('nextActionIc');
+    const btnEl   = document.getElementById('nextActionBtn');
+
+    // 1) Сидячий alarm
+    if (metrics.sitting > 60){
+      wrap.className = 'next-action is-bad';
+      titleEl.textContent = 'Ты сидишь ' + Math.round(metrics.sitting) + ' мин без перерыва';
+      subEl.textContent = '5 минут ходьбы восстановят кровоток и фокус';
+      btnEl.textContent = 'Встать';
+      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v8m0 0l-3-3m3 3l3-3M5 21h14M7 17l-2 4m12-4l2 4"/></svg>';
+      return;
+    }
+
+    // 2) Вечер + кофеин
+    if (h >= 16 && metrics.caffeine > 50){
+      wrap.className = 'next-action is-warn';
+      titleEl.textContent = 'Кофеин ещё в крови — сон будет поверхностным';
+      subEl.textContent = 'Лучшее время для последней чашки — до 15:00';
+      btnEl.textContent = 'Понял';
+      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>';
+      return;
+    }
+
+    // 3) Утро + мало воды
+    if (h >= 6 && h < 11 && metrics.hydration < 30){
+      wrap.className = 'next-action is-warn';
+      titleEl.textContent = 'Утро без воды — кровь гуще, фокус медленнее';
+      subEl.textContent = 'Стакан воды сейчас = +8% к концентрации через 20 мин';
+      btnEl.textContent = 'Выпить';
+      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>';
+      return;
+    }
+
+    // 4) Шаги отстают
+    if (h >= 14 && metrics.steps < 2400){
+      wrap.className = 'next-action';
+      titleEl.textContent = 'До вечера ещё 4 часа — шаги пока отстают';
+      subEl.textContent = 'Прогулка 15 минут закроет треть дневной цели';
+      btnEl.textContent = 'Пройтись';
+      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4l3 5-3 5 4 6M9 20l-2-4 4-3-2-4 3-5"/></svg>';
+      return;
+    }
+
+    // 5) Энергия низкая в середине дня
+    if (h >= 13 && h < 16 && metrics.energy < 50){
+      wrap.className = 'next-action is-warn';
+      titleEl.textContent = 'Послеобеденный спад — норма';
+      subEl.textContent = '10 минут тишины и воды вернут фокус лучше кофе';
+      btnEl.textContent = 'Отдохнуть';
+      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      return;
+    }
+
+    // По умолчанию — позитивная рекомендация
+    wrap.className = 'next-action';
+    titleEl.textContent = nextEvent
+      ? 'До ' + nextEvent.label + ' ещё ' + nextEvent.minutesUntil + ' мин'
+      : 'Хороший темп — продолжай в том же духе';
+    subEl.textContent = 'Лёгкая прогулка или вода усилят эффект';
+    btnEl.textContent = 'Ок';
+    icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
   }
 
   // Контекст: следующее событие в ближайший час
@@ -1357,6 +1462,7 @@ let PERIOD_MODE = false;
     setupMascotInteraction();
     setupTrendPanel();
     setupModals();
+    setupNextAction();
     renderPatterns();
 
     setInterval(tick, 30*1000);
@@ -1501,6 +1607,22 @@ let PERIOD_MODE = false;
     setTimeout(() => { m.hidden = true; }, 280);
     document.body.style.overflow = '';
   }
+  // Клик по кнопке next-action: подтверждение, что действие выполнено.
+  // В скелетной версии — локальная визуальная обратная связь.
+  function setupNextAction(){
+    const btn = document.getElementById('nextActionBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const wrap = document.getElementById('nextAction');
+      if (!wrap) return;
+      btn.disabled = true;
+      btn.textContent = 'Готово';
+      btn.style.opacity = '.6';
+      wrap.style.transition = 'opacity .3s var(--ease)';
+      wrap.style.opacity = '.55';
+    });
+  }
+
   function setupModals(){
     // Закрытие по клику на бэдроп / крестик
     document.addEventListener('click', (e) => {

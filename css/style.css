@@ -1003,6 +1003,107 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .moment-insight{display:flex;gap:6px;padding:6px 0 0;font:500 11.5px/1.45 var(--f-ui);color:var(--mut);align-items:flex-start}
 .mi-ic{flex-shrink:0;color:var(--mut);margin-top:2px;opacity:.7}
 .mi-ic svg{width:12px;height:12px}
+
+/* ===== STATUS STRIP — дневные цели (шаги + вода), 2 строки бара ===== */
+.status-strip{
+  display:flex;flex-direction:column;gap:8px;
+  padding:10px 12px 11px;
+  background:rgba(255,255,255,.5);
+  border:.5px solid var(--line);
+  border-radius:14px;
+  margin-top:4px;
+}
+.ss-row{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
+  font-variant-numeric:tabular-nums;
+}
+.ss-meta{
+  display:inline-flex;align-items:baseline;gap:6px;
+  min-width:74px;
+}
+.ss-label{
+  font:600 11px/1 var(--f-ui);
+  color:var(--ink2);
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.ss-val{
+  font:800 12.5px/1 var(--f);
+  color:var(--ink);
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+.ss-bar{
+  height:6px;
+  background:rgba(154,143,130,.14);
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+}
+.ss-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent-light),var(--accent));
+  border-radius:3px;
+  transition:width .5s var(--ease);
+}
+.ss-bar-water{background:linear-gradient(90deg,#7BA8D9,#5CC4A0)}
+.ss-target{
+  font:600 10.5px/1 var(--f-ui);
+  color:var(--mut);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+/* ===== NEXT ACTION — карточка-тренер ===== */
+.next-action{
+  display:flex;align-items:center;gap:10px;
+  margin-top:8px;
+  padding:11px 12px;
+  background:linear-gradient(135deg,var(--accent-bg) 0%,rgba(47,191,155,.04) 100%);
+  border:.5px solid var(--accent-line);
+  border-radius:14px;
+  transition:background .2s var(--ease),transform .12s var(--ease);
+}
+.next-action:hover{background:linear-gradient(135deg,rgba(47,191,155,.14) 0%,rgba(47,191,155,.05) 100%)}
+.next-action.is-warn{background:linear-gradient(135deg,rgba(201,138,31,.12) 0%,rgba(201,138,31,.04) 100%);border-color:rgba(201,138,31,.3)}
+.next-action.is-bad{background:linear-gradient(135deg,rgba(208,101,82,.12) 0%,rgba(208,101,82,.04) 100%);border-color:rgba(208,101,82,.3)}
+.na-ic{
+  flex-shrink:0;
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--accent-light),var(--accent));
+  color:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 6px var(--accent-glow);
+}
+.next-action.is-warn .na-ic{background:linear-gradient(135deg,#F5C037,#C98A1F);box-shadow:0 2px 6px rgba(201,138,31,.3)}
+.next-action.is-bad  .na-ic{background:linear-gradient(135deg,#F0764B,#C95F3B);box-shadow:0 2px 6px rgba(208,101,82,.3)}
+.na-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.na-title{
+  font:700 12.5px/1.35 var(--f);
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+.na-sub{
+  font:500 11px/1.3 var(--f-ui);
+  color:var(--ink2);
+}
+.na-btn{
+  flex-shrink:0;
+  height:30px;
+  padding:0 14px;
+  background:rgba(255,255,255,.85);
+  color:var(--accent-dark);
+  border:.5px solid var(--accent-line);
+  border-radius:10px;
+  font:700 12px/1 var(--f);
+  cursor:pointer;
+  transition:background .15s var(--ease),transform .12s var(--ease);
+}
+.na-btn:hover{background:#fff}
+.na-btn:active{transform:scale(.97)}
 /* actions — одна тонкая ссылка вместо двух равных кнопок */
 .moment-actions{display:flex;gap:14px;padding-top:4px}
 .moment-actions .btn-soft{
@@ -1591,6 +1692,21 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 :root.dark-theme .dc-to{color:#fff}
 :root.dark-theme .dc-to.flat{color:rgba(255,255,255,.6)}
 :root.dark-theme .moment-insight{color:rgba(255,255,255,.45)}
+
+/* DARK: status-strip + next-action */
+:root.dark-theme .status-strip{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08)}
+:root.dark-theme .ss-label{color:rgba(255,255,255,.6)}
+:root.dark-theme .ss-val{color:#fff}
+:root.dark-theme .ss-bar{background:rgba(255,255,255,.08)}
+:root.dark-theme .ss-target{color:rgba(255,255,255,.5)}
+:root.dark-theme .next-action{background:linear-gradient(135deg,rgba(47,191,155,.1) 0%,rgba(47,191,155,.02) 100%);border-color:rgba(47,191,155,.2)}
+:root.dark-theme .next-action:hover{background:linear-gradient(135deg,rgba(47,191,155,.16) 0%,rgba(47,191,155,.04) 100%)}
+:root.dark-theme .next-action.is-warn{background:linear-gradient(135deg,rgba(201,138,31,.16) 0%,rgba(201,138,31,.04) 100%);border-color:rgba(201,138,31,.35)}
+:root.dark-theme .next-action.is-bad{background:linear-gradient(135deg,rgba(208,101,82,.16) 0%,rgba(208,101,82,.04) 100%);border-color:rgba(208,101,82,.35)}
+:root.dark-theme .na-title{color:#fff}
+:root.dark-theme .na-sub{color:rgba(255,255,255,.6)}
+:root.dark-theme .na-btn{background:rgba(255,255,255,.1);color:var(--accent-light);border-color:rgba(47,191,155,.3)}
+:root.dark-theme .na-btn:hover{background:rgba(255,255,255,.16)}
 :root.dark-theme .moment-actions .btn-soft{color:var(--accent-light);border-color:rgba(47,191,155,.25)}
 :root.dark-theme .moment-actions .btn-link{color:rgba(255,255,255,.5)}
 :root.dark-theme .btn-ghost{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.85)}
