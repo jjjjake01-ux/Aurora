@@ -113,6 +113,62 @@
     const axis = document.getElementById('timelineAxis');
     if (axis) axis.classList.toggle('is-zoomed', ZOOM > 1.05);
   }
+
+  // ===== Период дня (Утро / День / Вечер / Ночь) =====
+  const PERIODS = {
+    day:     { start:  6, end: 24, label: 'Весь день' },
+    morning: { start:  6, end: 12, label: 'Утро' },
+    daypart: { start: 12, end: 17, label: 'День' },
+    evening: { start: 17, end: 22, label: 'Вечер' },
+    night:   { start: 22, end: 24, label: 'Ночь' }
+  };
+  let ACTIVE_PERIOD = 'day';
+
+  function applyPeriod(periodKey){
+    const period = PERIODS[periodKey] || PERIODS.day;
+    ACTIVE_PERIOD = periodKey;
+    // 1) viewBox: показываем только окно периода
+    const svg = document.querySelector('.timeline-svg');
+    if (svg){
+      const startX = xFromHour(period.start);
+      const endX   = xFromHour(period.end);
+      const vbX = Math.max(0, startX - TL_LEFT_PAD);
+      const vbW = Math.min(SVG_W, endX - startX + TL_LEFT_PAD + TL_RIGHT_PAD);
+      svg.setAttribute('viewBox', `${vbX} 0 ${vbW} 200`);
+      ZOOM = 1;
+    }
+    // 2) Перерисовываем события с фильтром по периоду
+    const gTop = document.getElementById('tlEventsTopInner');
+    const gBot = document.getElementById('tlEventsBottomInner');
+    if (gTop) gTop.innerHTML = '';
+    if (gBot) gBot.innerHTML = '';
+    if (svg) renderEvents(svg, 1, period);
+    // 3) Scrubber → на текущий час (если в окне) или центр периода
+    const nowH = hoursNow();
+    const focus = (nowH >= period.start && nowH <= period.end) ? nowH : (period.start + period.end) / 2;
+    setMomentHour(focus, true);
+    // 4) Edge labels под период
+    updateEdgeLabels(period);
+    // 5) UI: подсветка чипа
+    document.querySelectorAll('.th-period').forEach(b => {
+      const isActive = b.dataset.period === periodKey;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    // 6) Убираем is-zoomed (period — отдельный режим)
+    const axis = document.getElementById('timelineAxis');
+    if (axis) axis.classList.remove('is-zoomed');
+  }
+
+  function updateEdgeLabels(period){
+    const left = document.querySelector('.timeline-edge-l');
+    const center = document.querySelector('.timeline-edge-c');
+    const right = document.querySelector('.timeline-edge-r');
+    if (!left || !center || !right) return;
+    left.textContent   = pad2(Math.floor(period.start));
+    center.textContent = pad2(Math.floor((period.start + period.end) / 2));
+    right.textContent  = pad2(Math.floor(period.end));
+  }
   const el = (n, a, t) => {
     const e = document.createElementNS(SVG_NS, n);
     if (a) for (const k in a) e.setAttribute(k, a[k]);
@@ -136,8 +192,9 @@
 
   // Сгруппировать события по стороне (top/bottom), упаковать в строки и стеки.
   // visualScale = 1.0 в обычном режиме, > 1.0 при зуме — пороги сжаты.
-  function packEvents(visualScale){
+  function packEvents(visualScale, eventsSrc){
     visualScale = visualScale || 1;
+    const src = eventsSrc || EVENTS;
     const stackThreshold = STACK_THRESHOLD / visualScale; // при зуме порог меньше
     function pack(list){
       // 1) Сортируем по X
@@ -194,8 +251,8 @@
       return { list, stacks, packItems, rows };
     }
 
-    const tops = EVENTS.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
-    const bots = EVENTS.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
+    const tops = src.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
+    const bots = src.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
     return { top: pack(tops), bottom: pack(bots) };
   }
 
@@ -392,8 +449,12 @@
     svg.appendChild(g);
   }
 
-  function renderEvents(svg, visualScale){
-    const packed = packEvents(visualScale || 1);
+  function renderEvents(svg, visualScale, period){
+    let eventsFiltered = EVENTS;
+    if (period){
+      eventsFiltered = EVENTS.filter(ev => ev.start < period.end && (ev.end || ev.start) > period.start);
+    }
+    const packed = packEvents(visualScale || 1, eventsFiltered);
 
     // Helper: одна видимая «единица» — либо full card, либо stack counter.
     // packItem = { x, w, row, items:[ev, ev, ...], stack }
@@ -1292,6 +1353,7 @@
     renderNextEvent(startH);
     setupScrubber();
     setupZoomButton();
+    setupPeriodTabs();
     setupMascotInteraction();
     setupTrendPanel();
     setupModals();
@@ -1692,12 +1754,23 @@
       if (ZOOM > 1.05){
         setZoom(1, 12);
         axis.classList.remove('is-zoomed');
+        // Возврат к выбранному периоду
+        applyPeriod(ACTIVE_PERIOD);
       } else {
         const nowH = hoursNow();
         setZoom(3.5, nowH);
         axis.classList.add('is-zoomed');
         setMomentHour(nowH, true);
       }
+    });
+  }
+
+  function setupPeriodTabs(){
+    document.querySelectorAll('.th-period').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.period;
+        if (key) applyPeriod(key);
+      });
     });
   }
 
