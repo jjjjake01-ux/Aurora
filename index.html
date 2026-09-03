@@ -66,64 +66,94 @@
 </div>
 
 <section class="timeline" aria-label="Лента дня">
-<div class="timeline-edge timeline-edge-l">06</div>
-<div class="timeline-edge timeline-edge-r">24</div>
+<div class="timeline-head">
+<button class="th-period" data-period="day" type="button">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<span>День</span>
+</button>
+<div class="th-now" id="thNow">14:58</div>
+<button class="th-zoom" type="button" aria-label="Приблизить">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+</button>
+</div>
+<div class="timeline-stage">
 <div class="timeline-axis" id="timelineAxis">
-<svg class="timeline-svg" viewBox="0 0 700 160" preserveAspectRatio="none" aria-hidden="true">
+<svg class="timeline-svg" viewBox="0 0 700 180" preserveAspectRatio="none" aria-hidden="true">
 <defs>
+<linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
+<stop offset="20%" stop-color="#5CC4A0" stop-opacity=".22"/>
+<stop offset="55%" stop-color="#2FBF9B" stop-opacity=".24"/>
+<stop offset="80%" stop-color="#F0764B" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#7B74D6" stop-opacity=".18"/>
+</linearGradient>
 <linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/>
-<stop offset="20%" stop-color="var(--accent)" stop-opacity=".22"/>
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
 <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
 </linearGradient>
-<linearGradient id="moodFillBad" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="var(--bad)" stop-opacity="0"/>
-<stop offset="20%" stop-color="var(--bad)" stop-opacity=".18"/>
-<stop offset="100%" stop-color="var(--bad)" stop-opacity="0"/>
-</linearGradient>
-<linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/>
-<stop offset="100%" stop-color="var(--accent)" stop-opacity=".5"/>
-</linearGradient>
 <linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0%" stop-color="var(--accent)"/>
-<stop offset="60%" stop-color="var(--accent)"/>
-<stop offset="80%" stop-color="#F2A037"/>
-<stop offset="100%" stop-color="var(--bad)"/>
+<stop offset="0%" stop-color="#F2C037"/>
+<stop offset="22%" stop-color="#5CC4A0"/>
+<stop offset="55%" stop-color="#2FBF9B"/>
+<stop offset="78%" stop-color="#F0764B"/>
+<stop offset="100%" stop-color="#7B74D6"/>
 </linearGradient>
-<filter id="moodGlow" x="-20%" y="-50%" width="140%" height="200%">
-<feGaussianBlur stdDeviation="3" result="blur"/>
+<linearGradient id="eventMarker" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="rgba(255,255,255,.96)"/>
+<stop offset="100%" stop-color="rgba(255,255,255,.82)"/>
+</linearGradient>
+<radialGradient id="scrubberHalo" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".08"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</radialGradient>
+<filter id="moodGlow" x="-10%" y="-50%" width="120%" height="200%">
+<feGaussianBlur stdDeviation="2" result="blur"/>
 <feMerge>
 <feMergeNode in="blur"/>
 <feMergeNode in="SourceGraphic"/>
 </feMerge>
 </filter>
+<clipPath id="stageClip">
+<rect x="0" y="0" width="700" height="180"/>
+</clipPath>
 </defs>
+
+<rect class="tod-bg" x="0" y="0" width="700" height="180" fill="url(#todGrad)"/>
+
 <g class="tl-grid">
-<line x1="0" y1="40" x2="700" y2="40"/>
-<line x1="0" y1="80" x2="700" y2="80"/>
-<line x1="0" y1="120" x2="700" y2="120"/>
+<line x1="0" y1="50" x2="700" y2="50"/>
+<line x1="0" y1="100" x2="700" y2="100"/>
+<line x1="0" y1="150" x2="700" y2="150"/>
 </g>
-<path id="tlMoodArea" d="M0 80 L0 80" fill="url(#moodFill)" opacity="0.9"/>
-<path id="tlMoodPath" d="M0 80" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
-<g class="tl-events" id="tlEvents"></g>
+
+<g class="tl-tod-labels" id="tlTodLabels"></g>
+
+<g class="tl-events-top" id="tlEventsTop"></g>
+<g class="tl-events-bottom" id="tlEventsBottom"></g>
+
+<path id="tlMoodArea" d="M0 100 L0 100" fill="url(#moodFill)"/>
+<path id="tlMoodPath" d="M0 100" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
+<g class="tl-mood-dots" id="tlMoodDots"></g>
+
 <g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
-<line class="tl-cursor-track" x1="0" y1="20" x2="0" y2="140"/>
-<line class="tl-cursor-glow" x1="0" y1="20" x2="0" y2="140"/>
-<line class="tl-cursor" x1="0" y1="20" x2="0" y2="140"/>
-<circle class="tl-handle-glow" cx="0" cy="80" r="14"/>
-<circle class="tl-handle" cx="0" cy="80" r="6"/>
-<circle class="tl-handle-dot" cx="0" cy="80" r="2.5"/>
+<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="180" fill="url(#scrubberHalo)"/>
+<line class="tl-cursor" x1="0" y1="14" x2="0" y2="166"/>
+<circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
+<circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
+<circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>
 </g>
 </svg>
+
 <div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
-<div class="timeline-tooltip" id="timelineTooltip">
-<div class="tt-time" id="ttTime">14:00</div>
-<div class="tt-mood" id="ttMood">отлично</div>
-<div class="tt-bars" id="ttBars">
-<div class="tt-bar"><span class="tt-bar-l">Энергия</span><div class="tt-bar-t"><div class="tt-bar-f" style="width:75%"></div></div><span class="tt-bar-v">75</span></div>
+<div class="timeline-scrubber-bubble" id="scrubberBubble">
+<span class="tsb-time" id="tsbTime">14:00</span>
 </div>
 </div>
+<div class="timeline-edge timeline-edge-l">06</div>
+<div class="timeline-edge timeline-edge-c">12</div>
+<div class="timeline-edge timeline-edge-r">24</div>
 </div>
 </section>
 
