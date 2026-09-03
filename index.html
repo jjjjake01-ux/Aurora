@@ -27,15 +27,15 @@
 <div class="mascot-wrap" id="mascotWrap" aria-label="Маскот-компаньон">
 <svg class="mascot" id="mascotSvg" viewBox="0 0 120 120" aria-hidden="true">
 <defs>
-<radialGradient id="mascotGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="var(--accent-light)" stop-opacity=".5"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
-<linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent-light)"/><stop offset="100%" stop-color="var(--accent-dark)"/></linearGradient>
+<radialGradient id="mascotGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="currentColor" stop-opacity=".5"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient>
+<linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--m-color-light)"/><stop offset="100%" stop-color="var(--m-color-dark)"/></linearGradient>
 <linearGradient id="mascotBelly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4F7EE"/><stop offset="100%" stop-color="#C8EEDC"/></linearGradient>
 <radialGradient id="blushGrad" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#FF8AA0" stop-opacity="0.8"/><stop offset="100%" stop-color="#FF8AA0" stop-opacity="0"/></radialGradient>
 <filter id="softShadow"><feGaussianBlur stdDeviation="0.8"/></filter>
 </defs>
 
-<!-- Aura glow -->
-<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)" class="m-aura"/>
+<!-- Aura glow (использует currentColor = --m-color через CSS) -->
+<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)" class="m-aura" style="color:var(--m-color)"/>
 
 <!-- Floating particles (сердечки при хорошем, капли при тяжёлом) -->
 <g class="m-particles" id="mParticles"></g>

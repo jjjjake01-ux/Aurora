@@ -130,6 +130,12 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 
 /* МАСКОТ — premium */
 .mascot-wrap{
+  --m-color: #5CC4A0;
+  --m-color-dark: #2FBF9B;
+  --m-color-light: #7AD9B8;
+  --m-color-soft: rgba(47,191,155,.22);
+  --m-mouth: #E85A7A;
+  --m-particle: #FF6B95;
   position:relative;
   flex-shrink:0;
   width:108px;height:108px;
@@ -138,15 +144,36 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   cursor:pointer;
   transition:transform .3s var(--ease);
 }
+.mascot-wrap[data-mood-color="good"]{
+  --m-color: #5CC4A0; --m-color-dark: #2FBF9B; --m-color-light: #7AD9B8;
+  --m-color-soft: rgba(47,191,155,.22); --m-mouth: #E85A7A;
+  --m-particle: #FF6B95;
+}
+.mascot-wrap[data-mood-color="warn"]{
+  --m-color: #F5C037; --m-color-dark: #C98A1F; --m-color-light: #FAD878;
+  --m-color-soft: rgba(242,160,55,.22); --m-mouth: #E89A6A;
+  --m-particle: #F5C037;
+}
+.mascot-wrap[data-mood-color="load"]{
+  --m-color: #F0764B; --m-color-dark: #C95F3B; --m-color-light: #F59B7A;
+  --m-color-soft: rgba(240,118,75,.22); --m-mouth: #E85A7A;
+  --m-particle: #F0764B;
+}
+.mascot-wrap[data-mood-color="bad"]{
+  --m-color: #7BA8D9; --m-color-dark: #4A7AAB; --m-color-light: #A8C8E6;
+  --m-color-soft: rgba(123,168,217,.22); --m-mouth: #A8C0D4;
+  --m-particle: #7BA8D9;
+}
 .mascot-wrap:hover{transform:translateY(-2px) scale(1.02)}
 .mascot{
   width:108px;height:108px;display:block;
-  filter:drop-shadow(0 6px 16px rgba(47,191,155,.18));
-  transition:filter .3s var(--ease);
+  filter:drop-shadow(0 6px 16px var(--m-color-soft));
+  transition:filter .4s var(--ease);
 }
-.mascot-wrap[data-mood="good"] .mascot{filter:drop-shadow(0 6px 20px rgba(47,191,155,.45))}
-.mascot-wrap[data-mood="warn"] .mascot{filter:drop-shadow(0 6px 18px rgba(201,138,31,.3))}
-.mascot-wrap[data-mood="bad"] .mascot{filter:drop-shadow(0 6px 18px rgba(208,101,82,.3));opacity:.94}
+.mascot-wrap[data-mood-color="good"] .mascot{filter:drop-shadow(0 6px 22px rgba(47,191,155,.5))}
+.mascot-wrap[data-mood-color="warn"] .mascot{filter:drop-shadow(0 6px 22px rgba(242,160,55,.45))}
+.mascot-wrap[data-mood-color="load"] .mascot{filter:drop-shadow(0 6px 22px rgba(240,118,75,.45))}
+.mascot-wrap[data-mood-color="bad"] .mascot{filter:drop-shadow(0 6px 22px rgba(123,168,217,.4));opacity:.94}
 
 /* Idle дыхание (грудь) */
 .m-body-wrap{
@@ -178,16 +205,41 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 }
 @keyframes blinkSleep{0%,100%{transform:scaleY(.15)}50%{transform:scaleY(.05)}}
 
-/* Покачивание головы */
-.mascot-wrap{animation:headFloat 5s ease-in-out infinite}
+/* Покачивание головы (объединено с tilt через CSS variable) */
+.mascot-wrap{animation:headFloat 5s ease-in-out infinite;transform-origin:60px 90px}
 @keyframes headFloat{
   0%,100%{transform:rotate(0)}
   25%{transform:rotate(.6deg)}
   75%{transform:rotate(-.6deg)}
 }
+/* Когда scrubber двигает head — отключаем idle-анимацию */
+.mascot-wrap.is-tracking{animation:none}
 
-/* Брови — разные выражения */
-.m-brow{transition:d .3s var(--ease)}
+/* Tilt head по scrubber — накладывается на idle */
+.mascot-wrap.tilt-left{transform:rotate(4deg)}
+.mascot-wrap.tilt-right{transform:rotate(-4deg)}
+
+/* Брови — разные выражения, цвет от mood */
+.m-brow{transition:d .3s var(--ease);stroke:var(--ink)}
+
+/* Уши, ноги, руки — все используют --m-color */
+.m-ear-l,.m-ear-r{fill:var(--m-color-light)}
+.m-foot-l,.m-foot-r{fill:var(--m-color-dark)}
+.m-arm-l,.m-arm-r{fill:var(--m-color-dark)}
+.m-tuft{stroke:var(--m-color-dark)}
+.m-handle-outer{stroke:var(--m-color-dark)}
+.m-handle-inner,.m-handle-dot{stroke:var(--m-color);fill:var(--m-color)}
+
+/* Blush — radial gradient (цвет чуть розовый/оранжевый по mood) */
+.m-blush{fill:var(--m-mouth);opacity:.6}
+
+/* Рот — fill по mood */
+#mMouthFill{fill:var(--m-mouth)}
+
+/* Pupils — keep dark for contrast */
+.m-pupil-l,.m-pupil-r{fill:#2D3B35;transition:fill .3s var(--ease)}
+.mascot-wrap[data-mood-color="bad"] .m-pupil-l,
+.mascot-wrap[data-mood-color="bad"] .m-pupil-r{fill:#3A4855}
 
 /* Улыбка (много форм через d) */
 #mSmile{transition:d .4s var(--ease),opacity .3s var(--ease)}

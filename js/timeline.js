@@ -515,7 +515,8 @@
     for (let i=0; i<3; i++){
       const cx = 40 + i*20 + (Math.random()-0.5)*8;
       const cy = 50 + (Math.random()-0.5)*8;
-      const fill = isGood ? '#FF6B95' : '#7BA8D9';
+      const fill = isGood ? 'var(--m-particle)' : 'var(--m-color-light)';
+      c.style.fill = isGood ? '#FF6B95' : 'var(--m-color-light)';
       const r = isGood ? 2.2 : 1.8;
       const c = document.createElementNS(SVG_NS, 'circle');
       c.setAttribute('cx', cx);
@@ -597,6 +598,16 @@
     const timeMood = timePose + '_' + moodPose;
     wrap.setAttribute('data-pose', timeMood);
     wrap.setAttribute('data-mood', moodState(v));
+    // Color mode: 4 состояния (good/warn/load/bad) → меняет цвета тела, ушей, blush, рта, particles
+    let colorMode = 'good';
+    if (moodPose === 'tired') colorMode = 'load';
+    else if (moodPose === 'sad') colorMode = 'bad';
+    else if (moodPose === 'neutral') colorMode = 'warn';
+    // Override: в load-mood (12-13ч тренировка) — оранжевый, даже если v не < 50
+    if (timePose === 'day' && (h >= 12 && h <= 13)) colorMode = 'load';
+    // Override: в night-mood — синий, всегда
+    if (timePose === 'night') colorMode = 'bad';
+    wrap.setAttribute('data-mood-color', colorMode);
 
     // 1. Зрачки следят за scrubber
     const pupils = document.querySelectorAll('.m-pupil');
@@ -609,14 +620,10 @@
       p.setAttribute('cy', String(52 + dy));
     });
 
-    // 2. Голова наклоняется в сторону scrubber
+    // 2. Голова наклоняется в сторону scrubber (класс на wrap)
     const headTilt = dx * 4; // -4..4 градуса
-    wrap.style.setProperty('--head-tilt', headTilt + 'deg');
-    const svg = wrap.querySelector('svg');
-    if (svg){
-      svg.style.transform = `rotate(${headTilt}deg)`;
-      svg.style.transformOrigin = '60px 90px';
-    }
+    wrap.classList.toggle('tilt-left',  dx < -0.05);
+    wrap.classList.toggle('tilt-right', dx >  0.05);
 
     // 3. Улыбка/рот — много форм
     const smile = document.getElementById('mSmile');
