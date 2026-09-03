@@ -3,59 +3,60 @@
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const SVG_W = 700;
-  const SVG_H = 140;
+  const SVG_H = 160;
   const TL_AXIS_Y = 80;
   const TL_LEFT_PAD = 6;
   const TL_RIGHT_PAD = 18;
   const DAY_START = 6;
   const DAY_END = 24;
 
+  // ============================================================
+  // MOOD CURVE — эмоциональный ландшафт дня
+  // 19 точек × 18 часов, value 0..100 (выше = лучше)
+  // ============================================================
+  const MOOD = [
+    { h:6,    v:60, label:'сон',         state:'rest' },
+    { h:7,    v:75, label:'восстановление', state:'good' },
+    { h:8,    v:80, label:'бодро',         state:'good' },
+    { h:9,    v:85, label:'отлично',       state:'good' },
+    { h:10,   v:78, label:'хорошо',        state:'good' },
+    { h:11,   v:72, label:'норма',         state:'warn' },
+    { h:12,   v:55, label:'нагрузка',      state:'load' },
+    { h:13,   v:42, label:'тяжело',        state:'bad'  },
+    { h:14,   v:62, label:'восстановление',state:'good' },
+    { h:15,   v:78, label:'хорошо',        state:'good' },
+    { h:16,   v:88, label:'пик',           state:'good' },
+    { h:17,   v:85, label:'отлично',       state:'good' },
+    { h:18,   v:72, label:'хорошо',        state:'good' },
+    { h:19,   v:80, label:'хорошо',        state:'good' },
+    { h:20,   v:75, label:'норма',         state:'warn' },
+    { h:21,   v:60, label:'спад',          state:'warn' },
+    { h:22,   v:42, label:'усталость',     state:'bad'  },
+    { h:23,   v:30, label:'тяжело',        state:'bad'  },
+    { h:24,   v:25, label:'сон',           state:'rest' }
+  ];
+
   const EVENTS = [
-    { id:'sleep-am',  start:6,    end:8,    type:'sleep',   label:'Сон',     state:'rest' },
-    { id:'wake',     start:8.5,         type:'wake',    label:'Подъём',  state:'good' },
-    { id:'workout',  start:12,    end:13,  type:'workout', label:'Силовая', state:'load' },
-    { id:'meal-l',   start:14,          type:'meal',    label:'Обед',    state:'good' },
-    { id:'checkin',  start:16,          type:'checkin', label:'Check-in',state:'good' },
-    { id:'meal-d',   start:19,          type:'meal',    label:'Ужин',    state:'good' },
-    { id:'sleep-pm', start:22.5,        type:'sleep',   label:'Сон',     state:'rest' }
+    { id:'sleep-am',  start:6,    end:8,    label:'Сон'      },
+    { id:'wake',     start:8.5,         label:'Подъём'   },
+    { id:'workout',  start:12,    end:13,  label:'Силовая'  },
+    { id:'meal-l',   start:14,          label:'Обед'     },
+    { id:'checkin',  start:16,          label:'Check-in' },
+    { id:'meal-d',   start:19,          label:'Ужин'     },
+    { id:'sleep-pm', start:22.5,        label:'Сон'      }
   ];
 
   const METRICS = {
-    readiness: { 6:72, 9:75, 12:82, 15:80, 18:76, 21:74, 24:72 },
-    energy:    { 6:60, 9:68, 12:75, 15:62, 18:70, 21:68, 24:55 },
-    steps:     { 6:0,  9:1200, 12:2400, 15:4200, 18:6800, 21:8400, 24:9200 }
+    energy: { 6:60, 9:78, 12:75, 15:62, 18:75, 21:65, 24:45 },
+    steps:  { 6:0,  9:1200, 12:2400, 15:4200, 18:6800, 21:8400, 24:9200 }
   };
-
-  // Эмоциональный ландшафт дня: 5 состояний (отлично/хорошо/средне/тяжело/ужасно)
-  // Значение 0-100 где 100 = отлично, 0 = ужасно
-  const MOOD = [
-    { h:6,    v:60, label:'сон' },
-    { h:7,    v:75, label:'восстановление' },
-    { h:8,    v:80, label:'бодро' },
-    { h:9,    v:85, label:'отлично' },
-    { h:10,   v:78, label:'хорошо' },
-    { h:11,   v:72, label:'норма' },
-    { h:12,   v:55, label:'нагрузка' },
-    { h:13,   v:48, label:'тяжело' },
-    { h:14,   v:62, label:'восстановление' },
-    { h:15,   v:78, label:'хорошо' },
-    { h:16,   v:88, label:'отлично' },
-    { h:17,   v:85, label:'пик' },
-    { h:18,   v:72, label:'хорошо' },
-    { h:19,   v:80, label:'хорошо' },
-    { h:20,   v:75, label:'норма' },
-    { h:21,   v:60, label:'спад' },
-    { h:22,   v:40, label:'усталость' },
-    { h:23,   v:30, label:'тяжело' },
-    { h:24,   v:25, label:'сон' }
-  ];
 
   const STATE_COLORS = {
     good: '#2FBF9B',
     load: '#F0764B',
-    warn: '#E5677E',
-    rest: '#7B74D6',
-    bad:  '#D06552'
+    warn: '#F2A037',
+    bad:  '#D06552',
+    rest: '#7B74D6'
   };
 
   const NOW = new Date();
@@ -75,10 +76,10 @@
     return e;
   };
 
-  // Маппинг значения 0-100 в Y-координату (выше = лучше)
-  const moodY = v => TL_AXIS_Y - ((v - 25) / 75) * 50; // 25→80, 100→30
-  // Безопасный clamp
-  const clampY = y => Math.max(30, Math.min(120, y));
+  // Маппинг mood value (0-100) в Y-координату
+  // 0 (ужасно) → Y=140 (низ), 100 (отлично) → Y=30 (верх)
+  const moodY = v => 30 + ((100 - v) / 100) * 110;
+  const clampY = y => Math.max(28, Math.min(140, y));
 
   function greetingForHour(h){
     if (h>=5 && h<12)  return { text:'Доброе утро',  icon:'sunrise', color:'#F2C037' };
@@ -113,6 +114,7 @@
     const t = (h - prev) / (next - prev);
     return Math.round(METRICS[metric][prev]*(1-t) + METRICS[metric][next]*t);
   }
+
   function moodAt(h){
     let prev = MOOD[0], next = MOOD[MOOD.length-1];
     for (let i=0; i<MOOD.length-1; i++){
@@ -120,17 +122,21 @@
         prev = MOOD[i]; next = MOOD[i+1]; break;
       }
     }
-    if (prev === next) return prev;
+    if (prev === next){
+      return { h, v:prev.v, label:prev.label, state:prev.state };
+    }
     const t = (h - prev.h) / (next.h - prev.h);
     return {
       h, v: prev.v*(1-t) + next.v*t,
-      label: prev.v < next.v ? next.label : prev.label
+      label: t < 0.5 ? prev.label : next.label,
+      state: t < 0.5 ? prev.state : next.state
     };
   }
+
   function moodLabel(v){
     if (v >= 80) return 'отлично';
     if (v >= 65) return 'хорошо';
-    if (v >= 50) return 'норма';
+    if (v >= 50) return 'нормально';
     if (v >= 35) return 'тяжело';
     return 'ужасно';
   }
@@ -141,6 +147,7 @@
     if (v >= 35) return 'bad';
     return 'bad';
   }
+
   function nearestEvent(h){
     let best = null, bestDist = Infinity;
     for (const ev of EVENTS){
@@ -153,88 +160,57 @@
 
   function momentFor(h){
     const { event } = nearestEvent(h);
-    const rFrom = metricAt('readiness', Math.max(DAY_START, h-0.5));
-    const rTo   = metricAt('readiness', h);
+    const eTo = metricAt('energy', h);
     const eFrom = metricAt('energy', Math.max(DAY_START, h-0.5));
-    const eTo   = metricAt('energy', h);
     const s     = metricAt('steps', h);
 
     const deltas = [
-      { label:'Готовность', from:rFrom, to:rTo, lag:'сейчас',    suffix:'',    bar:rTo },
-      { label:'Энергия',    from:eFrom, to:eTo, lag:'через 30м', suffix:'%', bar:eTo },
+      { label:'Энергия',    from:eFrom, to:eTo, lag:'сейчас', suffix:'%', bar:eTo },
       { label:'Шаги',       from:Math.max(0,s-800), to:s, lag:'сегодня', suffix:'', bar:Math.min(100,Math.round(s/90)) }
     ];
-    return { event, deltas, insight: makeInsight(event, h, rTo, eTo) };
+    return { event, deltas, insight: makeInsight(event, h) };
   }
 
-  function makeInsight(event, h, readiness, energy){
+  function makeInsight(event, h){
     if (event){
-      if (event.type === 'meal' && event.id === 'meal-l'){
-        return 'Плотный обед с углеводами — к 15:00 возможен спад энергии. Прогулка в 15:30 вернёт тонус.';
-      }
-      if (event.type === 'workout'){
-        return 'Силовая в обед снизит стресс через 1-2ч. Пик восстановления придётся на 16:00.';
-      }
-      if (event.type === 'checkin'){
-        return 'Хороший момент проверить самочувствие. Запись займёт 10 секунд.';
-      }
-      if (event.type === 'sleep' && h < 8){
-        return 'Сон 7ч 12м, качество 78%. Восстановление хорошее — день будет сильным.';
-      }
-      if (event.type === 'meal' && event.id === 'meal-d'){
-        return 'Лёгкий ужин за 3ч до сна улучшит качество отдыха. Избегай углеводов.';
-      }
-      if (event.type === 'sleep' && event.id === 'sleep-pm'){
-        return 'Ложись до 23:00 — завтра готовность будет на 8 пунктов выше.';
-      }
-      if (event.type === 'wake'){
-        return 'Подъём. Готовность высокая. Сегодня можно тренироваться в полную силу.';
-      }
+      if (event.id === 'meal-l')  return 'Плотный обед с углеводами — к 15:00 возможен спад. Прогулка в 15:30 вернёт тонус.';
+      if (event.id === 'workout') return 'Силовая снизит стресс через 1-2ч. Пик восстановления — к 16:00.';
+      if (event.id === 'checkin') return 'Хороший момент проверить самочувствие. Запись займёт 10 секунд.';
+      if (event.id === 'sleep-am')return 'Сон 7ч 12м, качество 78%. Восстановление хорошее — день будет сильным.';
+      if (event.id === 'meal-d')  return 'Лёгкий ужин за 3ч до сна улучшит качество отдыха.';
+      if (event.id === 'sleep-pm')return 'Ложись до 23:00 — завтра готовность +8.';
+      if (event.id === 'wake')    return 'Подъём. Готовность высокая. Тренируйся в полную силу.';
     }
-    if (h >= 20) return 'Вечер — лучшее время для расслабления. Рутина в 21:00 улучшит сон.';
-    if (readiness >= 75) return 'Готовность в норме. Можно дать полную нагрузку сегодня.';
-    if (readiness < 60)  return 'Готовность снижена. Лёгкая активность и сон восстановят форму.';
-    return 'День идёт ровно. Следи за водой и шагами.';
+    if (h >= 20) return 'Вечер. Лучшее время для расслабления. Рутина в 21:00 улучшит сон.';
+    if (h >= 12) return 'Середина дня. Активность на пике.';
+    if (h >= 8)  return 'Утро. Набирай темп.';
+    return 'Раннее утро.';
   }
 
   function describeEvent(event, h){
     if (!event){
-      if (h >= 22) return 'Поздний вечер. Время готовиться ко сну.';
-      if (h >= 19) return 'Вечер. Самое время расслабиться.';
-      if (h >= 16) return 'Послеобеденное время. Следи за энергией.';
-      if (h >= 12) return 'Середина дня. Активность на пике.';
-      if (h >= 8)  return 'Утро. Набирай темп.';
+      if (h >= 22) return 'Поздний вечер. Готовься ко сну.';
+      if (h >= 19) return 'Вечер. Расслабься.';
+      if (h >= 16) return 'После обеда. Следи за энергией.';
+      if (h >= 12) return 'Середина дня.';
+      if (h >= 8)  return 'Утро.';
       return 'Раннее утро.';
     }
-    if (event.type === 'sleep' && event.id === 'sleep-am') return 'Сон 7ч 12м · качество 78%';
-    if (event.type === 'wake')   return 'Подъём. Готовность высокая';
-    if (event.type === 'workout')return 'Силовая 45 мин · интенсивность 7/10';
-    if (event.type === 'meal' && event.id === 'meal-l') return 'Сбалансированный обед · 580 ккал';
-    if (event.type === 'meal')   return 'Лёгкий ужин · 420 ккал';
-    if (event.type === 'checkin')return 'Микро-пауза. Отметь, как ты сейчас';
-    if (event.type === 'sleep' && event.id === 'sleep-pm') return 'Подготовка ко сну';
+    if (event.id === 'sleep-am') return 'Сон 7ч 12м · качество 78%';
+    if (event.id === 'wake')     return 'Подъём. Готовность высокая';
+    if (event.id === 'workout')  return 'Силовая 45 мин · интенсивность 7/10';
+    if (event.id === 'meal-l')   return 'Сбалансированный обед · 580 ккал';
+    if (event.id === 'meal-d')   return 'Лёгкий ужин · 420 ккал';
+    if (event.id === 'checkin')  return 'Микро-пауза. Отметь, как ты сейчас';
+    if (event.id === 'sleep-pm') return 'Подготовка ко сну';
     return '';
   }
 
-  // =========================================
-  // RENDER: TIMELINE
-  // =========================================
-  function renderHours(svg){
-    const g = el('g');
-    const hours = [6,9,12,15,18,21,24];
-    const nowH = hoursNow();
-    let nearest = hours[0];
-    for (const hh of hours) if (Math.abs(hh-nowH) < Math.abs(nearest-nowH)) nearest = hh;
-    for (const hh of hours){
-      const t = el('text', { x:xFromHour(hh), y:TL_AXIS_Y+50, 'data-hour':hh }, String(hh).padStart(2,'0'));
-      if (hh === nearest) t.classList.add('is-now');
-      g.appendChild(t);
-    }
-    svg.appendChild(g);
-  }
-
+  // ============================================================
+  // RENDER: TIMELINE V3 — Apple/Whoop/Oura стиль
+  // ============================================================
   function renderMoodPath(svg){
-    // Строим плавную mood-кривую через весь день
+    // Плавная кривая через все mood-точки
     const points = MOOD.map(p => ({ x: xFromHour(p.h), y: clampY(moodY(p.v)) }));
     let d = `M${points[0].x} ${points[0].y}`;
     for (let i=1; i<points.length; i++){
@@ -246,109 +222,93 @@
     const moodPath = document.getElementById('tlMoodPath');
     if (moodPath) moodPath.setAttribute('d', d);
 
-    // Area fill под кривой
+    // Area fill: сначала вниз к baseline, потом обратно
     const last = points[points.length-1];
     const first = points[0];
-    const areaD = d + ` L${last.x} ${TL_AXIS_Y+30} L${first.x} ${TL_AXIS_Y+30} Z`;
+    const areaD = d + ` L${last.x} 150 L${first.x} 150 Z`;
     const moodArea = document.getElementById('tlMoodArea');
     if (moodArea) moodArea.setAttribute('d', areaD);
   }
 
-  function renderMoodLabels(svg){
-    // Рисуем метки в точках экстремумов (пик/спад)
+  function renderEvents(svg){
+    // Минималистичные метки событий ВЫШЕ кривой
     const g = el('g');
-    const peaks = [
-      { h:9, label:'отлично', cls:'mood-peak' },
-      { h:13, label:'тяжело', cls:'mood-trough' },
-      { h:16, label:'пик', cls:'mood-peak' },
-      { h:23, label:'усталость', cls:'mood-trough' }
+    const visible = [
+      { h:8.5,  label:'☀', name:'Подъём', state:'good' },
+      { h:12.5, label:'◆', name:'Силовая', state:'load' },
+      { h:14,   label:'●', name:'Обед', state:'good' },
+      { h:16,   label:'◇', name:'Check-in', state:'good' },
+      { h:19,   label:'●', name:'Ужин', state:'good' }
     ];
-    peaks.forEach(p => {
-      const m = moodAt(p.h);
-      const x = xFromHour(p.h);
-      const y = clampY(moodY(m.v));
-      const labelY = p.cls === 'mood-peak' ? y - 14 : y + 22;
-      g.appendChild(el('text', { x:x, y:labelY, class:p.cls }, p.label));
+    visible.forEach(ev => {
+      const x = xFromHour(ev.h);
+      const m = moodAt(ev.h);
+      const y = clampY(moodY(m.v)) - 18;
+      // Тонкая вертикальная линия-связь
+      g.appendChild(el('line', {
+        x1:x, y1:y+8, x2:x, y2:clampY(moodY(m.v)),
+        stroke: STATE_COLORS[ev.state] || STATE_COLORS.good,
+        'stroke-width':.5, 'stroke-dasharray':'1 2', opacity:.4
+      }));
+      // Иконка события
+      g.appendChild(el('text', {
+        x:x, y:y+3, 'font-size':10, 'font-weight':600,
+        fill: STATE_COLORS[ev.state] || STATE_COLORS.good,
+        'text-anchor':'middle', 'font-family':'Manrope, sans-serif',
+        opacity:.85, style:'cursor:pointer;letter-spacing:.04em'
+      }, ev.label));
     });
     svg.appendChild(g);
-  }
-
-  function renderEvents(svg){
-    const g = el('g');
-    for (const ev of EVENTS){
-      const isBlock = !!ev.end;
-      const color = STATE_COLORS[ev.state] || STATE_COLORS.good;
-      const grp = el('g', { 'data-event-id':ev.id, 'data-event-start':ev.start });
-      if (isBlock){
-        const x1 = xFromHour(ev.start);
-        const x2 = xFromHour(ev.end);
-        const w = x2 - x1;
-        grp.appendChild(el('rect', {
-          x:x1, y:TL_AXIS_Y-12, width:w, height:24, rx:12, ry:12,
-          fill:color, 'fill-opacity':.22,
-          stroke:color, 'stroke-width':1.2
-        }));
-        grp.appendChild(el('text', { x:(x1+x2)/2, y:TL_AXIS_Y+4 }, ev.label));
-      } else {
-        const x = xFromHour(ev.start);
-        grp.appendChild(el('circle', {
-          cx:x, cy:TL_AXIS_Y, r:7,
-          fill:color, stroke:'#FDFCFA', 'stroke-width':2
-        }));
-        grp.appendChild(el('text', { x:x, y:TL_AXIS_Y-14 }, ev.label));
-      }
-      grp.addEventListener('click', () => setMomentHour(ev.start, true));
-      g.appendChild(grp);
-    }
-    svg.appendChild(g);
-  }
-  function updateLineSegments(){
-    const xNow = xFromHour(Math.min(hoursNow(), DAY_END));
-    const past = document.getElementById('tlLinePast');
-    const future = document.getElementById('tlLineFuture');
-    if (past) past.setAttribute('x2', String(xNow));
-    if (future) future.setAttribute('x1', String(xNow));
   }
 
   function setScrubber(h, snap){
     const x = xFromHour(Math.max(DAY_START, Math.min(DAY_END, h)));
     const scrub = document.getElementById('tlScrubber');
     if (scrub) scrub.setAttribute('transform', 'translate('+x+',0)');
-    const aura = document.getElementById('tlAura');
-    if (aura){
-      aura.setAttribute('cx', String(x));
-      const m = momentFor(h);
+
+    // Обновляем tooltip
+    const tt = document.getElementById('timelineTooltip');
+    if (tt){
+      const axisEl = document.getElementById('timelineAxis');
+      if (axisEl){
+        const rect = axisEl.getBoundingClientRect();
+        const axisW = rect.width;
+        // Позиция tooltip в % относительно timeline
+        const pct = (x - TL_LEFT_PAD) / (SVG_W - TL_LEFT_PAD - TL_RIGHT_PAD);
+        const leftPx = Math.max(60, Math.min(axisW - 60, pct * axisW));
+        tt.style.left = leftPx + 'px';
+      }
       const mood = moodAt(h);
-      const ms = moodState(mood.v);
-      const isLoad = m.event && m.event.state === 'load';
-      const isBad = ms === 'bad';
-      let grad = 'auraGood';
-      if (isBad) grad = 'auraBad';
-      else if (isLoad) grad = 'auraLoad';
-      aura.setAttribute('fill', 'url(#'+grad+')');
-      aura.setAttribute('opacity', snap ? '0.9' : '0.55');
+      const ttTime = document.getElementById('ttTime');
+      const ttMood = document.getElementById('ttMood');
+      if (ttTime) ttTime.textContent = fmtTime(h);
+      if (ttMood) {
+        ttMood.textContent = moodLabel(mood.v);
+        ttMood.setAttribute('data-mood', moodState(mood.v));
+      }
+      // Бар энергии
+      const e = metricAt('energy', h);
+      const ttBars = document.getElementById('ttBars');
+      if (ttBars){
+        const fill = ttBars.querySelector('.tt-bar-f');
+        if (fill) fill.style.width = e + '%';
+        const val = ttBars.querySelector('.tt-bar-v');
+        if (val) val.textContent = e + '%';
+      }
+      tt.classList.add('is-visible');
     }
-    // Mood label
-    const moodEl = document.getElementById('timelineMood');
-    if (moodEl){
-      const mood = moodAt(h);
-      moodEl.textContent = moodLabel(mood.v);
-      moodEl.setAttribute('data-mood', moodState(mood.v));
-    }
-    // Mascot
+
+    // Показываем scrubber (если был скрыт)
+    if (scrub) scrub.style.opacity = '1';
+
+    // Маскот
     updateMascot(h);
   }
-  function updateActiveEvent(h){
-    const grps = document.querySelectorAll('#tlEvents g');
-    grps.forEach(g => g.classList.remove('is-active'));
-    const { event } = nearestEvent(h);
-    if (!event) return;
-    const node = document.querySelector('#tlEvents g[data-event-id="'+event.id+'"]');
-    if (node) node.classList.add('is-active');
-  }
+
+  function updateActiveEvent(h){ /* не используется в v3 */ }
+
   function setMomentHour(h, snap){
     setScrubber(h, snap);
-    updateActiveEvent(h);
     renderMoment(h);
   }
 
@@ -403,16 +363,16 @@
     if (t && tt && ts && nextEv){
       t.textContent = fmtTime(nextEv.start);
       tt.textContent = nextEv.label;
-      ts.textContent = nextEv.type === 'checkin' ? 'Как ты сейчас?' :
-                       nextEv.type === 'meal' ? 'Приём пищи' :
-                       nextEv.type === 'workout' ? 'Силовая' :
-                       nextEv.type === 'sleep' ? 'Подготовка ко сну' : 'Запланировано';
+      ts.textContent = nextEv.id === 'checkin' ? 'Как ты сейчас?' :
+                       nextEv.id === 'meal-l' || nextEv.id === 'meal-d' ? 'Приём пищи' :
+                       nextEv.id === 'workout' ? 'Силовая' :
+                       nextEv.id === 'sleep-pm' ? 'Подготовка ко сну' : 'Запланировано';
     }
   }
 
-  // =========================================
-  // MASCOT (реагирует на время и состояние)
-  // =========================================
+  // ============================================================
+  // MASCOT
+  // ============================================================
   function updateMascot(h){
     const wrap = document.getElementById('mascotWrap');
     if (!wrap) return;
@@ -432,22 +392,17 @@
     else if (v >= 35) moodPose = 'tired';
     else moodPose = 'sad';
 
-    const pose = timePose + '-' + moodPose;
-    wrap.setAttribute('data-pose', pose);
+    wrap.setAttribute('data-pose', timePose + '-' + moodPose);
     wrap.setAttribute('data-mood', moodState(v));
 
-    // Анимация зрачков: смотрят на scrubber (направление X)
     const pupils = document.querySelectorAll('.mascot-pupil');
     const nowX = xFromHour(Math.min(h, DAY_END));
-    const cx = 700/2;
-    const dx = (nowX - cx) / 700; // -1..1
+    const dx = (nowX - 350) / 350;
     pupils.forEach((p, i) => {
-      const offsetX = dx * 2.2;
       const cxAttr = i === 0 ? 46 : 78;
-      p.setAttribute('cx', String(cxAttr + offsetX));
+      p.setAttribute('cx', String(cxAttr + dx * 2.2));
     });
 
-    // Смайл: меняется по mood
     const smile = document.getElementById('mascotSmile');
     if (smile){
       if (moodPose === 'happy') smile.setAttribute('d', 'M46 70 Q60 86 74 70');
@@ -458,9 +413,9 @@
     }
   }
 
-  // =========================================
+  // ============================================================
   // INTERACTION: SCRUBBER
-  // =========================================
+  // ============================================================
   function setupScrubber(){
     const track = document.getElementById('timelineTrack');
     const axis  = document.getElementById('timelineAxis');
@@ -498,9 +453,9 @@
     window.addEventListener('touchend', onUp);
   }
 
-  // =========================================
+  // ============================================================
   // DYNAMIC HERO
-  // =========================================
+  // ============================================================
   function setupDynamicBackground(){
     document.body.setAttribute('data-time-period', periodForHour(hoursNow()));
   }
@@ -524,7 +479,8 @@
   function setupSubline(){
     const el = document.getElementById('heroSubline');
     if (!el) return;
-    const r = metricAt('readiness', hoursNow());
+    const mood = moodAt(hoursNow());
+    const r = Math.round(mood.v);
     if (r >= 75) el.textContent = 'Готовность ' + r + ' — день будет сильным';
     else if (r >= 60) el.textContent = 'Готовность ' + r + ' — день в норме';
     else el.textContent = 'Готовность ' + r + ' — береги ресурс';
@@ -571,9 +527,9 @@
     }
   }
 
-  // =========================================
+  // ============================================================
   // INIT
-  // =========================================
+  // ============================================================
   function init(){
     setupDynamicBackground();
     setupGreeting();
@@ -584,15 +540,12 @@
     const svg = document.querySelector('.timeline-svg');
     if (svg){
       renderMoodPath(svg);
-      renderHours(svg);
       renderEvents(svg);
-      renderMoodLabels(svg);
     }
 
     const nowH = hoursNow();
     const startH = Math.min(Math.max(nowH, DAY_START), DAY_END);
     setMomentHour(startH, true);
-    updateLineSegments();
     renderNextEvent(startH);
     setupScrubber();
     setupPageIndicator();

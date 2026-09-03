@@ -66,40 +66,65 @@
 </div>
 
 <section class="timeline" aria-label="Лента дня">
-<div class="timeline-head">
-<div class="timeline-title">Как проходит день</div>
-<div class="timeline-legend">
-<span class="tl-leg tl-leg-good"><i></i>отлично</span>
-<span class="tl-leg tl-leg-load"><i></i>нагрузка</span>
-<span class="tl-leg tl-leg-bad"><i></i>тяжело</span>
-</div>
-</div>
+<div class="timeline-edge timeline-edge-l">06</div>
+<div class="timeline-edge timeline-edge-r">24</div>
 <div class="timeline-axis" id="timelineAxis">
-<svg class="timeline-svg" viewBox="0 0 700 140" preserveAspectRatio="none" aria-hidden="true">
+<svg class="timeline-svg" viewBox="0 0 700 160" preserveAspectRatio="none" aria-hidden="true">
 <defs>
-<linearGradient id="auraGood" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/><stop offset="50%" stop-color="var(--accent)" stop-opacity=".45"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
-<linearGradient id="auraLoad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#F0764B" stop-opacity="0"/><stop offset="50%" stop-color="#F0764B" stop-opacity=".5"/><stop offset="100%" stop-color="#F0764B" stop-opacity="0"/></linearGradient>
-<linearGradient id="auraBad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#D06552" stop-opacity="0"/><stop offset="50%" stop-color="#D06552" stop-opacity=".5"/><stop offset="100%" stop-color="#D06552" stop-opacity="0"/></linearGradient>
-<linearGradient id="emotionGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+<linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/>
+<stop offset="20%" stop-color="var(--accent)" stop-opacity=".22"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="moodFillBad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="var(--bad)" stop-opacity="0"/>
+<stop offset="20%" stop-color="var(--bad)" stop-opacity=".18"/>
+<stop offset="100%" stop-color="var(--bad)" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity=".5"/>
+</linearGradient>
+<linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="var(--accent)"/>
+<stop offset="60%" stop-color="var(--accent)"/>
+<stop offset="80%" stop-color="#F2A037"/>
+<stop offset="100%" stop-color="var(--bad)"/>
+</linearGradient>
+<filter id="moodGlow" x="-20%" y="-50%" width="140%" height="200%">
+<feGaussianBlur stdDeviation="3" result="blur"/>
+<feMerge>
+<feMergeNode in="blur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
 </defs>
-<g id="tlMoodBg"></g>
-<line class="tl-line-past" id="tlLinePast" x1="0" y1="80" x2="700" y2="80" />
-<line class="tl-line-future" id="tlLineFuture" x1="0" y1="80" x2="700" y2="80" />
-<ellipse class="tl-aura" id="tlAura" cx="0" cy="80" rx="86" ry="32" fill="url(#auraGood)" opacity="0"/>
-<path id="tlMoodPath" d="M0 80" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="tlMoodArea" d="M0 80 L0 80" fill="url(#emotionGrad)" opacity="0.5"/>
-<g class="tl-hours" id="tlHours"></g>
+<g class="tl-grid">
+<line x1="0" y1="40" x2="700" y2="40"/>
+<line x1="0" y1="80" x2="700" y2="80"/>
+<line x1="0" y1="120" x2="700" y2="120"/>
+</g>
+<path id="tlMoodArea" d="M0 80 L0 80" fill="url(#moodFill)" opacity="0.9"/>
+<path id="tlMoodPath" d="M0 80" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
 <g class="tl-events" id="tlEvents"></g>
-<g class="tl-mood-labels" id="tlMoodLabels"></g>
 <g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
-<line class="tl-cursor" x1="0" y1="20" x2="0" y2="140" />
-<circle class="tl-handle" cx="0" cy="80" r="9" />
-<circle class="tl-handle-inner" cx="0" cy="80" r="3.5" />
+<line class="tl-cursor-track" x1="0" y1="20" x2="0" y2="140"/>
+<line class="tl-cursor-glow" x1="0" y1="20" x2="0" y2="140"/>
+<line class="tl-cursor" x1="0" y1="20" x2="0" y2="140"/>
+<circle class="tl-handle-glow" cx="0" cy="80" r="14"/>
+<circle class="tl-handle" cx="0" cy="80" r="6"/>
+<circle class="tl-handle-dot" cx="0" cy="80" r="2.5"/>
 </g>
 </svg>
 <div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
+<div class="timeline-tooltip" id="timelineTooltip">
+<div class="tt-time" id="ttTime">14:00</div>
+<div class="tt-mood" id="ttMood">отлично</div>
+<div class="tt-bars" id="ttBars">
+<div class="tt-bar"><span class="tt-bar-l">Энергия</span><div class="tt-bar-t"><div class="tt-bar-f" style="width:75%"></div></div><span class="tt-bar-v">75</span></div>
 </div>
-<div class="timeline-mood" id="timelineMood">отлично</div>
+</div>
+</div>
 </section>
 
 <section class="moment-card" id="momentCard" aria-live="polite">
