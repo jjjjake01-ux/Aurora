@@ -1358,6 +1358,7 @@
     renderNextEvent(startH);
     setupScrubber();
     setupZoomButton();
+    setupPeriodButtons();
     setupMascotInteraction();
     setupTrendPanel();
     setupModals();
@@ -1747,6 +1748,18 @@
         else b.scrollIntoView({ behavior:'smooth', block:'center' });
       });
     }
+  }
+
+  function setupPeriodButtons(){
+    document.querySelectorAll('.th-period').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const period = btn.dataset.period;
+        if (period){
+          setZoom(1, (PERIODS[period] ? PERIODS[period].start : 6) + ((PERIODS[period] ? (PERIODS[period].end - PERIODS[period].start) : 18) / 2));
+          applyPeriod(period);
+        }
+      });
+    });
   }
 
   function setupZoomButton(){
