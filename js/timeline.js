@@ -599,30 +599,19 @@
     const titleEl = document.getElementById('momentTitle');
     const descEl = document.getElementById('momentDesc');
     const insightEl = document.getElementById('momentInsight');
-    const deltasEl = document.getElementById('momentDeltas');
 
     if (timeEl) timeEl.textContent = fmtTime(h);
     if (titleEl) titleEl.textContent = m.event ? m.event.label : 'Сейчас';
     if (descEl) descEl.textContent = describeEvent(m.event, h);
 
-    if (deltasEl){
-      deltasEl.innerHTML = '';
-      m.deltas.forEach(d => {
-        const dir = d.to > d.from ? 'up' : (d.to < d.from ? 'down' : 'flat');
-        const arrow = dir === 'up' ? '↑' : (dir === 'down' ? '↓' : '—');
-        const fromTxt = d.from === d.to ? '' : '<span class="dc-from">'+d.from+d.suffix+'</span><span class="dc-arrow"> '+arrow+'</span>';
-        const html =
-          '<div class="dc">'+
-            '<div class="dc-label">'+d.label+'</div>'+
-            '<div class="dc-row">'+fromTxt+'<span class="dc-to '+dir+'">'+d.to+d.suffix+'</span></div>'+
-            '<div class="dc-bar"><div class="dc-bar-fill" style="width:'+Math.max(6,Math.min(100,d.bar))+'%"></div></div>'+
-            '<div class="dc-lag">'+d.lag+'</div>'+
-          '</div>';
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        deltasEl.appendChild(tmp.firstChild);
-      });
-    }
+    // Vitals: кольцо + сетка
+    renderMomentVitals(h, m);
+
+    // Контекст: следующее событие
+    renderMomentNext(h);
+
+    // Narrative (одна фраза про архетип момента)
+    renderMomentNarrative(h);
 
     if (insightEl){
       insightEl.innerHTML =
@@ -630,6 +619,159 @@
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>'+
         '</span>'+
         '<span>'+m.insight+'</span>';
+    }
+  }
+
+  // ============== VITALS RENDER ==============
+  // Кольцо обновляется через stroke-dasharray
+  // Числа — count-up анимация (300мс)
+  const _vitalsState = { h: null, vals: {} };
+
+  function countUpTo(el, from, to, duration){
+    if (!el) return;
+    if (from === null || from === undefined) from = 0;
+    if (from === to){ el.textContent = to; return; }
+    const start = performance.now();
+    const dur = Math.max(120, duration || 320);
+    function step(now){
+      const t = Math.min(1, (now - start) / dur);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = Math.round(from + (to - from) * eased);
+      el.textContent = v;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderMomentVitals(h, m){
+    if (!window.AtlasMetrics) return;
+    const mood = window.AtlasMetrics.defaultMoodAt(h);
+    const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    const prev = _vitalsState.vals;
+
+    // Vitals ring (3 кольца)
+    // Окружность радиуса r = 2πr
+    const setRing = (sel, pct) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      const r = +el.getAttribute('r');
+      const C = 2 * Math.PI * r;
+      // 0% → dasharray "0 C" (пусто), 100% → "C 0"
+      const filled = (pct / 100) * C;
+      el.style.strokeDasharray = filled + ' ' + C;
+    };
+    setRing('.vring-energy', metrics.energy);
+    setRing('.vring-focus',  metrics.focus);
+    setRing('.vring-mood',   metrics.mood);
+
+    // Центр кольца — общий статус
+    const numEl = document.getElementById('vringNum');
+    const labEl = document.getElementById('vringLabel');
+    if (numEl){
+      countUpTo(numEl, prev.status != null ? prev.status : 0, metrics.status, 350);
+      numEl.classList.remove('is-good','is-warn','is-bad');
+      if (metrics.status >= 65) numEl.classList.add('is-good');
+      else if (metrics.status >= 50) numEl.classList.add('is-warn');
+      else numEl.classList.add('is-bad');
+    }
+    if (labEl) labEl.textContent = metrics.statusLabel;
+
+    // Метрики: count-up + дельты
+    const setVal = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) countUpTo(el, prev[id] != null ? prev[id] : 0, v, 300);
+    };
+    setVal('vitalEnergy',    metrics.energy);
+    setVal('vitalFocus',     metrics.focus);
+    setVal('vitalHeart',     metrics.heart);
+    setVal('vitalLoad',      metrics.load);
+    setVal('vitalHydration', metrics.hydration);
+
+    // Дельта энергии
+    const energyDeltaEl = document.getElementById('vitalEnergyDelta');
+    if (energyDeltaEl){
+      const d = metrics.energyDelta;
+      const arrowSvg = d.dir === 'up'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
+        : d.dir === 'down'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>';
+      energyDeltaEl.innerHTML = arrowSvg + '<span>'+(d.val === '0' ? '0' : d.val)+'</span>';
+      energyDeltaEl.className = 'vital-delta ' + (d.dir === 'up' ? 'is-up' : d.dir === 'down' ? 'is-down' : '');
+    }
+
+    // Пульс-индикатор (только когда метрика «живая» — пульс > 65 bpm)
+    const heartVital = document.querySelector('.vital[data-key="heart"]');
+    if (heartVital){
+      heartVital.dataset.active = metrics.heart > 65 ? 'true' : 'false';
+    }
+
+    // Hydration warn
+    const hydVital = document.querySelector('.vital[data-key="hydration"]');
+    if (hydVital){
+      hydVital.dataset.warn = metrics.hydration < 50 ? 'true' : 'false';
+    }
+
+    // Сохраняем для следующего count-up
+    _vitalsState.h = h;
+    _vitalsState.vals = {
+      status: metrics.status,
+      vitalEnergy: metrics.energy,
+      vitalFocus: metrics.focus,
+      vitalHeart: metrics.heart,
+      vitalLoad: metrics.load,
+      vitalHydration: metrics.hydration
+    };
+  }
+
+  // Контекст: следующее событие в ближайший час
+  function renderMomentNext(h){
+    const wrap = document.getElementById('momentNext');
+    if (!wrap) return;
+    let nextEv = null;
+    for (const ev of EVENTS){
+      if (ev.start > h + 0.1){ nextEv = ev; break; }
+    }
+    if (!nextEv){
+      wrap.hidden = true;
+      return;
+    }
+    const minutesUntil = Math.max(1, Math.round((nextEv.start - h) * 60));
+    let timeTxt;
+    if (minutesUntil < 60) timeTxt = minutesUntil + 'м';
+    else {
+      const hInt = Math.floor(minutesUntil / 60);
+      const mInt = minutesUntil % 60;
+      timeTxt = mInt > 0 ? (hInt + 'ч ' + mInt + 'м') : (hInt + 'ч');
+    }
+    const t = document.getElementById('mnTime');
+    const tx = document.getElementById('mnText');
+    if (t) t.textContent = 'через ' + timeTxt;
+    if (tx) tx.textContent = nextEv.label + ' в ' + fmtTime(nextEv.start);
+    wrap.hidden = false;
+  }
+
+  // Narrative — одна фраза про архетип момента (отдельный блок)
+  function renderMomentNarrative(h){
+    const el = document.getElementById('momentNarrative');
+    if (!el || !window.AtlasMetrics) return;
+    const mood = window.AtlasMetrics.defaultMoodAt(h);
+    const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    let phrase = '';
+    if (h < 7)        phrase = 'Пробуждение. Организм просыпается.';
+    else if (h < 9)   phrase = 'Утро. Готовность растёт.';
+    else if (h < 12)  phrase = metrics.energy >= 80 ? 'Пик утра — лучшее время для важного.' : 'Утро. Набирай темп.';
+    else if (h < 14)  phrase = metrics.energy < 65 ? 'Спад после обеда. Лёгкое движение вернёт тонус.' : 'Середина дня.';
+    else if (h < 17)  phrase = 'Пик дня. Лучшее время для фокуса.';
+    else if (h < 20)  phrase = 'Спад. Переключись на лёгкое.';
+    else if (h < 22)  phrase = metrics.caffeine > 50 ? 'Кофеин ещё в крови — повлияет на засыпание.' : 'Подготовка ко сну.';
+    else if (h < 24)  phrase = 'Время спать. Восстановление начнётся сейчас.';
+    if (phrase){
+      el.textContent = phrase;
+      el.hidden = false;
+    } else {
+      el.hidden = true;
     }
   }
 
@@ -1157,6 +1299,17 @@
         // Контекстная формулировка: «X. Сейчас Y. Что делать»
         sigText.textContent = sig.title;
         sigBtn.dataset.patternId = sig.id;
+        // Мини-кольцо текущего статуса
+        if (window.AtlasMetrics){
+          const m = window.AtlasMetrics.metricsAt(nowH);
+          const ring = document.getElementById('heroMiniFill');
+          if (ring){
+            const r = +ring.getAttribute('r');
+            const C = 2 * Math.PI * r;
+            const filled = (m.status / 100) * C;
+            ring.style.strokeDashoffset = (C - filled);
+          }
+        }
       } else {
         sigBtn.style.display = 'none';
       }

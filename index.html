@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="js/patterns.js" defer></script>
+<script src="js/metrics.js" defer></script>
 <script src="js/timeline.js" defer></script>
 <script src="js/main.js" defer></script>
 </head>
@@ -41,6 +42,12 @@
 <button class="hero-signal" id="heroSignal" type="button" aria-label="Главный сигнал дня">
 <span class="hero-signal-ic" id="heroSignalIc" aria-hidden="true"></span>
 <span class="hero-signal-text" id="heroSignalText">Загружаем…</span>
+<span class="hero-signal-mini-ring" aria-hidden="true">
+<svg viewBox="0 0 32 32" class="hero-mini-svg">
+<circle class="hmr-track" cx="16" cy="16" r="13"/>
+<circle class="hmr-fill" id="heroMiniFill" cx="16" cy="16" r="13" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+</svg>
+</span>
 <span class="hero-signal-chev" aria-hidden="true">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
 </span>
@@ -254,7 +261,94 @@
 <section class="moment-card" id="momentCard" aria-live="polite">
 <div class="moment-head"><div class="moment-time" id="momentTime">—</div><div class="moment-title" id="momentTitle">—</div></div>
 <p class="moment-desc" id="momentDesc">—</p>
-<div class="moment-deltas" id="momentDeltas"></div>
+
+<div class="moment-vitals" id="momentVitals">
+<div class="vitals-ring" aria-hidden="true">
+<svg viewBox="0 0 100 100" class="vitals-ring-svg">
+<defs>
+<linearGradient id="ringEnergy" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--good)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+<linearGradient id="ringFocus" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--accent)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+<linearGradient id="ringMood" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--sleep)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+</defs>
+<circle class="vring-track" cx="50" cy="50" r="44"/>
+<circle class="vring-track" cx="50" cy="50" r="34"/>
+<circle class="vring-track" cx="50" cy="50" r="24"/>
+<circle class="vring-fill vring-energy" cx="50" cy="50" r="44" stroke="url(#ringEnergy)"/>
+<circle class="vring-fill vring-focus"  cx="50" cy="50" r="34" stroke="url(#ringFocus)"/>
+<circle class="vring-fill vring-mood"   cx="50" cy="50" r="24" stroke="url(#ringMood)"/>
+</svg>
+<div class="vring-center">
+<div class="vring-num" id="vringNum">—</div>
+<div class="vring-label" id="vringLabel">—</div>
+</div>
+</div>
+
+<div class="vitals-grid">
+<div class="vital" data-key="energy">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 11-12h-7l1-8z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Энергия</span>
+<span class="vital-row"><span class="vital-val" id="vitalEnergy">—</span><span class="vital-delta" id="vitalEnergyDelta"></span></span>
+</span>
+</div>
+<div class="vital" data-key="focus">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Фокус</span>
+<span class="vital-row"><span class="vital-val" id="vitalFocus">—</span><span class="vital-delta" id="vitalFocusDelta"></span></span>
+</span>
+</div>
+<div class="vital" data-key="heart">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Пульс</span>
+<span class="vital-row"><span class="vital-val" id="vitalHeart">—</span><span class="vital-unit">bpm</span><span class="vital-pulse-dot" aria-hidden="true"></span></span>
+</span>
+</div>
+<div class="vital" data-key="load">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M3.5 9.5v5M20.5 9.5v5M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Нагрузка</span>
+<span class="vital-row"><span class="vital-val" id="vitalLoad">—</span><span class="vital-unit">у.е.</span></span>
+</span>
+</div>
+<div class="vital" data-key="hydration">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Гидратация</span>
+<span class="vital-row"><span class="vital-val" id="vitalHydration">—</span><span class="vital-unit">%</span></span>
+</span>
+</div>
+</div>
+</div>
+
+<div class="moment-next" id="momentNext" hidden>
+<span class="mn-time" id="mnTime">—</span>
+<span class="mn-sep">·</span>
+<span class="mn-text" id="mnText">—</span>
+</div>
+
+<div class="moment-narrative" id="momentNarrative" hidden></div>
+
 <div class="moment-insight" id="momentInsight"></div>
 <div class="moment-actions">
 <button class="btn btn-primary" type="button" id="momentPrimary">Подробнее</button>
