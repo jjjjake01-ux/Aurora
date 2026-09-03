@@ -152,7 +152,32 @@
   }
 
   // Текстовая подпись под кольцом («готов», «пик», «спад»)
-  function statusLabel(status, h){
+  // Контекстная подпись под кольцом: к чему конкретно относится статус
+  // nextEvent — {label, minutesUntil} ближайшего события
+  function statusLabel(status, h, nextEvent){
+    const timeOfDay = h < 9 ? 'к утру' : h < 12 ? 'к обеду' : h < 14 ? 'к фокусу' : h < 17 ? 'к пику' : h < 20 ? 'к вечеру' : h < 22 ? 'ко сну' : 'к отдыху';
+
+    // Если есть ближайшее событие — относим готовность к нему
+    if (nextEvent && nextEvent.minutesUntil != null && nextEvent.minutesUntil <= 180){
+      const ev = (nextEvent.label || '').toLowerCase();
+      let obj = null;
+      if (ev.indexOf('завтрак') >= 0) obj = 'завтраку';
+      else if (ev.indexOf('обед') >= 0) obj = 'обеду';
+      else if (ev.indexOf('ужин') >= 0) obj = 'ужину';
+      else if (ev.indexOf('силов') >= 0 || ev.indexOf('тренир') >= 0) obj = 'тренировке';
+      else if (ev.indexOf('прогулк') >= 0) obj = 'прогулке';
+      else if (ev.indexOf('сон') >= 0 || ev.indexOf('рутин') >= 0 || ev.indexOf('ветинг') >= 0) obj = 'сну';
+      else if (ev.indexOf('check') >= 0 || ev.indexOf('check-in') >= 0) obj = 'чек-ину';
+      if (obj){
+        if (status >= 80) return 'к ' + obj;
+        if (status >= 65) return 'к ' + obj;
+        if (status >= 50) return 'норм к ' + obj;
+        if (status >= 35) return 'спад к ' + obj;
+        return 'тяжело к ' + obj;
+      }
+    }
+
+    // Без контекста события — общее
     if (h >= 22 || h < 6) return 'отдых';
     if (status >= 80) return 'пик';
     if (status >= 65) return 'готов';
@@ -192,7 +217,7 @@
   }
 
   // ====== Главная функция ======
-  function metricsAt(h, externalMood){
+  function metricsAt(h, externalMood, nextEvent){
     const hClamped = Math.max(0, Math.min(24, h));
     const mood = (externalMood != null) ? externalMood : defaultMoodAt(hClamped);
     const energy = energyAt(hClamped);
@@ -214,7 +239,7 @@
       steps: stepsAt(hClamped),
       sitting: sittingAt(hClamped),
       status: status,
-      statusLabel: statusLabel(status, hClamped),
+      statusLabel: statusLabel(status, hClamped, nextEvent),
       energyDelta: delta(prevEnergy, energy),
       hydrationWarn: hydrationAt(hClamped) < 50,
       caffeineWarn: caffeineAt(hClamped) > 100,

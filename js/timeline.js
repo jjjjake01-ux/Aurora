@@ -613,6 +613,9 @@
     // Narrative (одна фраза про архетип момента)
     renderMomentNarrative(h);
 
+    // Прогноз до конца дня (обновляет dynamics-card)
+    updateDynamics(h);
+
     if (insightEl){
       insightEl.innerHTML =
         '<span class="mi-ic">'+
@@ -647,7 +650,15 @@
   function renderMomentVitals(h, m){
     if (!window.AtlasMetrics) return;
     const mood = window.AtlasMetrics.defaultMoodAt(h);
-    const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    // Найдём ближайшее событие для контекстной подписи кольца
+    let nextEv = null;
+    for (const ev of EVENTS){
+      if (ev.start > h + 0.1){ nextEv = ev; break; }
+    }
+    const nextEvent = nextEv
+      ? { label: nextEv.label, minutesUntil: Math.round((nextEv.start - h) * 60) }
+      : null;
+    const metrics = window.AtlasMetrics.metricsAt(h, mood, nextEvent);
     const prev = _vitalsState.vals;
 
     // Vitals ring (3 кольца)
@@ -737,6 +748,9 @@
       wrap.hidden = true;
       return;
     }
+    // (s - h) * 60 — minutes between scrubber and event.
+    // Math.round после умножения — избегаем дрейфа при дробных h.
+    // Пример: h=17.5, event=18.2 → 0.7 * 60 = 42.0 → 42м.
     const minutesUntil = Math.max(1, Math.round((nextEv.start - h) * 60));
     let timeTxt;
     if (minutesUntil < 60) timeTxt = minutesUntil + 'м';
@@ -758,15 +772,16 @@
     if (!el || !window.AtlasMetrics) return;
     const mood = window.AtlasMetrics.defaultMoodAt(h);
     const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    // Тон — мягкая забота, согласован с маскотом. Без директив.
     let phrase = '';
     if (h < 7)        phrase = 'Пробуждение. Организм просыпается.';
     else if (h < 9)   phrase = 'Утро. Готовность растёт.';
-    else if (h < 12)  phrase = metrics.energy >= 80 ? 'Пик утра — лучшее время для важного.' : 'Утро. Набирай темп.';
-    else if (h < 14)  phrase = metrics.energy < 65 ? 'Спад после обеда. Лёгкое движение вернёт тонус.' : 'Середина дня.';
-    else if (h < 17)  phrase = 'Пик дня. Лучшее время для фокуса.';
-    else if (h < 20)  phrase = 'Спад. Переключись на лёгкое.';
-    else if (h < 22)  phrase = metrics.caffeine > 50 ? 'Кофеин ещё в крови — повлияет на засыпание.' : 'Подготовка ко сну.';
-    else if (h < 24)  phrase = 'Время спать. Восстановление начнётся сейчас.';
+    else if (h < 12)  phrase = metrics.energy >= 80 ? 'Пик утра — время для важного.' : 'Утро. Набирай темп.';
+    else if (h < 14)  phrase = metrics.energy < 65 ? 'Естественный спад после обеда — небольшое движение поможет.' : 'Середина дня.';
+    else if (h < 17)  phrase = 'Пик дня. Время для фокуса.';
+    else if (h < 20)  phrase = 'Вечер. Можно переключиться на лёгкое.';
+    else if (h < 22)  phrase = metrics.caffeine > 50 ? 'Кофеин ещё в крови — стоит подождать с последней чашкой.' : 'Подготовка ко сну.';
+    else if (h < 24)  phrase = 'Время отдыхать.';
     if (phrase){
       el.textContent = phrase;
       el.hidden = false;
@@ -793,9 +808,39 @@
     }
   }
 
+  // Прогноз до конца дня (Пик / Сейчас / К 24:00)
+  function updateDynamics(h){
+    // Находим пик в MOOD[] (максимум v за оставшийся день)
+    const hClamped = Math.max(0, Math.min(24, h));
+    let peakEv = MOOD[0];
+    for (const m of MOOD){
+      if (m.h >= hClamped && m.v >= peakEv.v) peakEv = m;
+    }
+    // Если пик уже в прошлом — берём фактический
+    const peakTime = peakEv.h >= hClamped ? peakEv.h : peakEv.h;
+    // Конец дня — последний MOOD
+    const eod = MOOD[MOOD.length-1];
+    // Сейчас — moodAt(hClamped)
+    const cur = moodAt(hClamped);
+    const dynPeak = document.getElementById('dynPeak');
+    const dynNow  = document.getElementById('dynNow');
+    const dynEod  = document.getElementById('dynEod');
+    const dynTrend = document.getElementById('dynamicsTrend');
+    if (dynPeak) dynPeak.textContent = fmtTime(peakEv.h);
+    if (dynNow)  dynNow.textContent  = Math.round(cur.v) + '%';
+    if (dynEod)  dynEod.textContent  = '~' + Math.round(eod.v) + '%';
+    if (dynTrend){
+      const d = eod.v - cur.v;
+      dynTrend.textContent = 'к концу ' + (d >= 0 ? '+' : '') + Math.round(d) + '%';
+      dynTrend.classList.toggle('is-down', d < -5);
+    }
+  }
+
   // ============================================================
   // MASCOT — premium multi-state character
   // ============================================================
+  // Тон маскота согласован с narrative: забота + контекст, не оценка.
+  // Это не «как я себя чувствую» (это уже narrative), а «что я с тобой рядом».
   const MASCOT_SPEECH = {
     morning_happy:  'Доброе утро!',
     morning_calm:   'Чай с лимоном…',
@@ -804,10 +849,10 @@
     day_calm:       'Продуктивно иду',
     day_tired:      'Нужен перерыв',
     day_sad:        'Сил нет…',
-    evening_happy:  'Пик формы!',
-    evening_calm:   'Хороший вечер',
-    evening_tired:  'Устал сегодня',
-    evening_sad:    'Хочется спать',
+    evening_happy:  'В хорошем темпе',
+    evening_calm:   'Держимся',
+    evening_tired:  'Отдыхай',
+    evening_sad:    'Тяжёлый вечер',
     night_happy:    'Время спать!',
     night_calm:     'Спокойной ночи',
     night_tired:    'Совсем нет сил',

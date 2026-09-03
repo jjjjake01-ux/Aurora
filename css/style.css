@@ -944,9 +944,23 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .dc-bar{height:3px;border-radius:2px;background:var(--accent-bg);overflow:hidden;margin-top:2px}
 .dc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent-light),var(--accent));transition:width .3s var(--ease)}
 .dc-lag{font:500 9px/1 var(--f-ui);color:var(--mut)}
-.moment-insight{display:flex;gap:8px;padding:10px 12px;background:var(--accent-bg);border:.5px solid var(--accent-line);border-radius:12px;font:500 12.5px/1.45 var(--f);color:var(--ink)}
-.mi-ic{flex-shrink:0;color:var(--accent);margin-top:1px}
-.moment-actions{display:flex;gap:8px}
+/* insight — приглушён, чтобы не конкурировать с vitals/narrative */
+.moment-insight{display:flex;gap:6px;padding:6px 0 0;font:500 11.5px/1.45 var(--f-ui);color:var(--mut);align-items:flex-start}
+.mi-ic{flex-shrink:0;color:var(--mut);margin-top:2px;opacity:.7}
+.mi-ic svg{width:12px;height:12px}
+/* actions — одна тонкая ссылка вместо двух равных кнопок */
+.moment-actions{display:flex;gap:14px;padding-top:4px}
+.moment-actions .btn-primary{
+  height:32px;padding:0 14px;font-size:12px;font-weight:600;
+  background:transparent;color:var(--accent-dark);
+  box-shadow:none;border:.5px solid var(--accent-line);
+}
+.moment-actions .btn-primary:hover{background:var(--accent-bg)}
+.moment-actions .btn-ghost{
+  height:32px;padding:0 4px;font-size:11.5px;font-weight:500;
+  background:transparent;color:var(--ink2);
+  border:none;
+}
 
 /* BUTTONS */
 .btn{height:38px;border-radius:12px;font:700 13px var(--f);letter-spacing:-.01em;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
@@ -957,14 +971,20 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .btn-full{width:100%;flex:1}
 
 /* DYNAMICS */
-.dynamics-card{border-radius:var(--r-lg);background:var(--accent-bg);border:.5px solid var(--accent-line);padding:12px 14px 10px;margin-bottom:10px}
+/* dynamics — приглушён, чтобы не конкурировать с vitals */
+.dynamics-card{
+  border-radius:var(--r-lg);
+  background:rgba(154,143,130,.04);
+  border:.5px solid var(--line);
+  padding:10px 14px 8px;margin-bottom:10px
+}
 .dynamics-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .dynamics-title{font:700 12px/1 var(--f-ui);color:var(--ink2);text-transform:uppercase;letter-spacing:.05em}
 .dynamics-trend{font:700 11px/1 var(--f);color:var(--good);font-variant-numeric:tabular-nums}
 .dynamics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .dyn-cell{padding:4px 0;text-align:center}
 .dyn-label{font:600 9.5px/1 var(--f-ui);color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-.dyn-value{font:800 16px/1 var(--f);color:var(--ink);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.dyn-value{font:700 14px/1 var(--f);color:var(--ink2);letter-spacing:-.005em;font-variant-numeric:tabular-nums}
 .dynamics-foot{font:500 10.5px/1.2 var(--f-ui);color:var(--mut);text-align:center;margin-top:8px;padding-top:8px;border-top:.5px solid var(--accent-line)}
 
 /* DRILLDOWN */
@@ -1495,10 +1515,12 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 :root.dark-theme .dc{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
 :root.dark-theme .dc-to{color:#fff}
 :root.dark-theme .dc-to.flat{color:rgba(255,255,255,.6)}
-:root.dark-theme .moment-insight{background:rgba(47,191,155,.1);border-color:rgba(47,191,155,.25);color:#fff}
+:root.dark-theme .moment-insight{color:rgba(255,255,255,.45)}
+:root.dark-theme .moment-actions .btn-primary{color:var(--accent-light);border-color:rgba(47,191,155,.25)}
+:root.dark-theme .moment-actions .btn-ghost{color:rgba(255,255,255,.5)}
 :root.dark-theme .btn-ghost{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.85)}
-:root.dark-theme .dynamics-card{background:rgba(47,191,155,.06);border-color:rgba(47,191,155,.15)}
-:root.dark-theme .dyn-value{color:#fff}
+:root.dark-theme .dynamics-card{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06)}
+:root.dark-theme .dyn-value{color:rgba(255,255,255,.7)}
 :root.dark-theme .dynamics-foot{border-color:rgba(255,255,255,.08)}
 :root.dark-theme .drilldown{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
 :root.dark-theme .drilldown-summary{color:#fff}
