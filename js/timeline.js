@@ -1107,52 +1107,329 @@
     setupZoomButton();
     setupMascotInteraction();
     setupTrendPanel();
+    setupModals();
     renderPatterns();
 
     setInterval(tick, 30*1000);
   }
 
   // ============== PATTERNS (honest correlations) ==============
+  // Утилита: достать history-данные и вычислить «главный сигнал дня»
+  function pickDailySignal(all, h){
+    // Приоритет по релевантности текущему часу
+    const relevance = {
+      'sleep_readiness': [6,7,8,9,10,22,23],  // утро + планирование сна
+      'morning_workout': [6,7,8,9,10,11],
+      'sitting_dip':     [11,12,13,14,15],
+      'caffeine_loop':   [7,8,9,10,11,12,13,14],
+      'active_readiness':[6,7,8,9],
+      'steps_mood':      [17,18,19,20,21],
+      'dinner_sleep':    [18,19,20,21],
+      'winddown_sleep':  [20,21,22,23]
+    };
+    const confirmed = all.filter(p => p.tier === 'confirmed');
+    if (confirmed.length === 0) return null;
+    // Сортируем: релевантные часу → выше; потом по effect
+    return confirmed.slice().sort((a, b) => {
+      const ra = (relevance[a.id] || []).includes(Math.floor(h)) ? 1 : 0;
+      const rb = (relevance[b.id] || []).includes(Math.floor(h)) ? 1 : 0;
+      if (rb !== ra) return rb - ra;
+      return b.effect - a.effect;
+    })[0];
+  }
+
   function renderPatterns(){
     if (!window.AtlasPatterns) return;
-    const card = document.getElementById('patternsCard');
-    if (!card) return;
     const all = window.AtlasPatterns.analyze();
+    const nowH = hoursNow();
 
-    ['confirmed','observed','insufficient'].forEach(tier => {
-      const list = card.querySelector(`[data-list="${tier}"]`);
-      const count = card.querySelector(`[data-count="${tier}"]`);
-      const items = all.filter(p => p.tier === tier);
-      if (count) count.textContent = items.length;
-      if (!list) return;
-      if (items.length === 0){
-        list.innerHTML = '<div class="pattern-empty">Нет паттернов в этой категории</div>';
+    // 1) Hero signal — 1 строка
+    const sigBtn = document.getElementById('heroSignal');
+    const sigText = document.getElementById('heroSignalText');
+    const sigIc = document.getElementById('heroSignalIc');
+    if (sigBtn && sigText && sigIc){
+      const sig = pickDailySignal(all, nowH);
+      if (sig){
+        const tone = sig.effect > 0.4 ? 'good' : 'warn';
+        sigBtn.className = 'hero-signal is-' + tone;
+        const color = tone === 'good' ? '#2FA36B' : '#C98A1F';
+        sigIc.innerHTML = window.AtlasPatterns.iconSvg(sig.icon, color);
+        // Контекстная формулировка: «X. Сейчас Y. Что делать»
+        sigText.textContent = sig.title;
+        sigBtn.dataset.patternId = sig.id;
+      } else {
+        sigBtn.style.display = 'none';
+      }
+    }
+
+    // 2) Summary card — сегмент-бар + кнопка
+    const counts = {
+      confirmed: all.filter(p => p.tier === 'confirmed').length,
+      observed:  all.filter(p => p.tier === 'observed').length,
+      insufficient: all.filter(p => p.tier === 'insufficient').length
+    };
+    const total = counts.confirmed + counts.observed + counts.insufficient;
+    const totalEl = document.getElementById('patternsTotalCount');
+    if (totalEl) totalEl.textContent = total;
+
+    const bars = document.getElementById('patternsSummaryBars');
+    if (bars && total > 0){
+      bars.innerHTML = ['confirmed','observed','insufficient']
+        .filter(t => counts[t] > 0)
+        .map(t => `<div class="psb-seg" data-tier="${t}" style="flex:${counts[t]}" title="${counts[t]} ${t}"></div>`)
+        .join('');
+    }
+
+    // 3) Modal tiers (список) — рендерим заранее
+    const tiers = document.getElementById('patternsModalTiers');
+    if (tiers){
+      const labels = { confirmed:'Подтверждено', observed:'Замечено', insufficient:'Мало данных' };
+      const tierOrder = ['confirmed','observed','insufficient'];
+      // Скрываем «Мало данных» если пусто
+      tiers.innerHTML = tierOrder
+        .filter(t => counts[t] > 0)
+        .map(t => {
+          const items = all.filter(p => p.tier === t);
+          return `
+            <div class="modal-tier" data-tier="${t}">
+              <div class="modal-tier-head">
+                <span class="modal-tier-dot" aria-hidden="true"></span>
+                <span class="modal-tier-label">${labels[t]}</span>
+                <span class="modal-tier-count">${items.length}</span>
+              </div>
+              <div class="modal-tier-list">
+                ${items.map(p => {
+                  const color = t === 'confirmed' ? '#2FA36B' : t === 'observed' ? '#C98A1F' : '#9A8F82';
+                  const conf = Math.round(p.confidence * 100);
+                  return `
+                    <button class="modal-pattern-item" data-pattern-id="${p.id}" type="button">
+                      <span class="modal-pattern-ic">${window.AtlasPatterns.iconSvg(p.icon, color)}</span>
+                      <span class="modal-pattern-body">
+                        <span class="modal-pattern-title">${p.title}</span>
+                        <span class="modal-pattern-sub">${p.sub}</span>
+                        <span class="modal-pattern-stats">
+                          <span class="stat-tag">n=${p.n}</span>
+                          <span class="stat-tag">эффект ${Math.round(p.effect*100)}%</span>
+                          <span class="stat-bar"><span class="stat-bar-fill" style="width:${conf}%"></span></span>
+                        </span>
+                      </span>
+                      <span class="modal-pattern-chev">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                      </span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+    }
+  }
+
+  // ============== MODAL CONTROLLER ==============
+  function openModal(id){
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.hidden = false;
+    requestAnimationFrame(() => m.classList.add('is-open'));
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id){
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.classList.remove('is-open');
+    setTimeout(() => { m.hidden = true; }, 280);
+    document.body.style.overflow = '';
+  }
+  function setupModals(){
+    // Закрытие по клику на бэдроп / крестик
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-close-modal]');
+      if (t){
+        const modal = t.closest('.modal');
+        if (modal) closeModal(modal.id);
         return;
       }
-      list.innerHTML = items.map(p => {
-        const color = tier === 'confirmed' ? '#2FA36B'
-                    : tier === 'observed'  ? '#C98A1F'
-                    : '#9A8F82';
-        const strength = Math.round(p.effect * 100);
-        const conf     = Math.round(p.confidence * 100);
-        return `
-          <div class="pattern-item">
-            <div class="pattern-ic">${window.AtlasPatterns.iconSvg(p.icon, color)}</div>
-            <div class="pattern-body">
-              <div class="pattern-title">${p.title}</div>
-              <div class="pattern-sub">${p.sub}</div>
-              <div class="pattern-meta">
-                <span>n=${p.n}</span>
-                <span>·</span>
-                <span>эффект ${strength}%</span>
-                <div class="pattern-bar"><div class="pattern-bar-fill" style="width:${conf}%"></div></div>
-              </div>
-              <div class="pattern-action">${p.action}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
+      // Клик на паттерн в модалке → детали
+      const item = e.target.closest('[data-pattern-id]');
+      if (item){
+        const id = item.dataset.patternId;
+        if (id) openPatternDetail(id);
+        return;
+      }
+      // Кнопка «назад к списку»
+      const back = e.target.closest('[data-open-patterns]');
+      if (back){
+        closeModal('patternDetailModal');
+        setTimeout(() => openModal('patternsModal'), 200);
+        return;
+      }
     });
+    // ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape'){
+        const open = document.querySelector('.modal.is-open');
+        if (open) closeModal(open.id);
+      }
+    });
+    // Hero-signal → открывает детали
+    const heroSignal = document.getElementById('heroSignal');
+    if (heroSignal){
+      heroSignal.addEventListener('click', () => {
+        const id = heroSignal.dataset.patternId;
+        if (id) openPatternDetail(id);
+      });
+    }
+    // Кнопка «Открыть все паттерны» в summary
+    const openBtn = document.getElementById('openPatternsModal');
+    if (openBtn){
+      openBtn.addEventListener('click', () => openModal('patternsModal'));
+    }
+  }
+
+  function openPatternDetail(id){
+    if (!window.AtlasPatterns) return;
+    const all = window.AtlasPatterns.analyze();
+    const p = all.find(x => x.id === id);
+    if (!p) return;
+    renderPatternDetail(p);
+    openModal('patternDetailModal');
+  }
+
+  function renderPatternDetail(p){
+    const titleEl = document.getElementById('patternDetailTitle');
+    const body = document.getElementById('patternDetailBody');
+    if (!body) return;
+    if (titleEl) titleEl.textContent = p.title;
+
+    // Достаём реальные цифры из истории, чтобы показать в графике
+    const hist = window.AtlasPatterns.getHistory();
+    const color = p.tier === 'confirmed' ? '#2FA36B' : p.tier === 'observed' ? '#C98A1F' : '#9A8F82';
+
+    // Специфичные блоки под каждый паттерн
+    let bodyHtml = '';
+
+    if (p.id === 'sleep_readiness'){
+      const sleeps = hist.map(d => d.sleep);
+      const readiness = hist.map(d => d.readiness);
+      const bins = [
+        { label:'<6ч',     min:0,  max:6,  data:[] },
+        { label:'6-6.5ч',  min:6,  max:6.5,data:[] },
+        { label:'6.5-7ч',  min:6.5,max:7,  data:[] },
+        { label:'7-7.5ч',  min:7,  max:7.5,data:[] },
+        { label:'>7.5ч',   min:7.5,max:24, data:[] }
+      ];
+      hist.forEach(d => { for (const b of bins) if (d.sleep >= b.min && d.sleep < b.max) { b.data.push(d.readiness); break; } });
+      const maxR = 100;
+      bodyHtml = barChart(bins, maxR, 'Средняя готовность', p.sub);
+    } else if (p.id === 'morning_workout'){
+      const withW = hist.filter(d => d.workout);
+      const morning = withW.filter(d => d.workoutHour < 12);
+      const evening = withW.filter(d => d.workoutHour >= 12);
+      const groups = [
+        { label:'Утро (до 12)', data: morning.map(d => d.sleepQuality) },
+        { label:'День/вечер',   data: evening.map(d => d.sleepQuality) },
+        { label:'Без трени',    data: hist.filter(d => !d.workout).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else if (p.id === 'sitting_dip'){
+      const groups = [
+        { label:'<5ч сидя',   data: hist.filter(d => d.sitHours < 5).map(d => 100 - d.afternoonDip) },
+        { label:'5-7ч',       data: hist.filter(d => d.sitHours >= 5 && d.sitHours < 7).map(d => 100 - d.afternoonDip) },
+        { label:'7ч+',        data: hist.filter(d => d.sitHours >= 7).map(d => 100 - d.afternoonDip) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Энергия после обеда', p.sub);
+    } else if (p.id === 'caffeine_loop'){
+      const groups = [
+        { label:'Сон <6.5ч',  data: hist.filter(d => d.sleep < 6.5).map(d => d.caffeine) },
+        { label:'Сон 6.5-7ч', data: hist.filter(d => d.sleep >= 6.5 && d.sleep < 7).map(d => d.caffeine) },
+        { label:'Сон 7ч+',    data: hist.filter(d => d.sleep >= 7).map(d => d.caffeine) }
+      ];
+      bodyHtml = barChart(groups, 6, 'Чашек кофе', p.sub, 'max');
+    } else if (p.id === 'active_readiness'){
+      const groups = [
+        { label:'<5к шагов',  data: hist.filter(d => d.steps < 5000).map(d => d.readiness) },
+        { label:'5-7к',       data: hist.filter(d => d.steps >= 5000 && d.steps < 7000).map(d => d.readiness) },
+        { label:'7-9к',       data: hist.filter(d => d.steps >= 7000 && d.steps < 9000).map(d => d.readiness) },
+        { label:'9к+',        data: hist.filter(d => d.steps >= 9000).map(d => d.readiness) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Готовность', p.sub);
+    } else if (p.id === 'steps_mood'){
+      const groups = [
+        { label:'<5к',        data: hist.filter(d => d.steps < 5000).map(d => d.eveningMood) },
+        { label:'5-7к',       data: hist.filter(d => d.steps >= 5000 && d.steps < 7000).map(d => d.eveningMood) },
+        { label:'7-9к',       data: hist.filter(d => d.steps >= 7000 && d.steps < 9000).map(d => d.eveningMood) },
+        { label:'9к+',        data: hist.filter(d => d.steps >= 9000).map(d => d.eveningMood) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Настроение вечером', p.sub);
+    } else if (p.id === 'dinner_sleep'){
+      const groups = [
+        { label:'Ужин до 20:00', data: hist.filter(d => d.dinnerEarly).map(d => d.sleepQuality) },
+        { label:'После 20:00',   data: hist.filter(d => !d.dinnerEarly).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else if (p.id === 'winddown_sleep'){
+      const groups = [
+        { label:'С рутиной',     data: hist.filter(d => d.winddown).map(d => d.sleepQuality) },
+        { label:'Без',           data: hist.filter(d => !d.winddown).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else {
+      bodyHtml = `<p class="pd-lead">${p.sub}</p>`;
+    }
+
+    // Сетка статистики
+    const stats = `
+      <div class="pd-grid">
+        <div class="pd-cell"><div class="pd-cell-label">Наблюдений</div><div class="pd-cell-val">${p.n}</div></div>
+        <div class="pd-cell"><div class="pd-cell-label">Эффект</div><div class="pd-cell-val ${p.effect > 0.4 ? 'is-good' : p.effect < 0.2 ? 'is-bad' : ''}">${Math.round(p.effect*100)}%</div></div>
+        <div class="pd-cell"><div class="pd-cell-label">Доверие</div><div class="pd-cell-val">${Math.round(p.confidence*100)}%</div></div>
+      </div>
+    `;
+
+    body.innerHTML = `
+      <section class="pd-section">
+        <div class="pd-eyebrow">${p.tier === 'confirmed' ? 'Подтверждённый паттерн' : p.tier === 'observed' ? 'Замеченный паттерн' : 'Недостаточно данных'}</div>
+        <h3 class="pd-headline">${p.title}</h3>
+        <p class="pd-lead">${p.sub}</p>
+        ${stats}
+      </section>
+      <section class="pd-section">${bodyHtml}</section>
+      <section class="pd-section">
+        <div class="pd-action">
+          <span class="pd-action-ic">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </span>
+          <span class="pd-action-text">${p.action}</span>
+        </div>
+      </section>
+      <section class="pd-section">
+        <div class="pd-method"><b>Как считали:</b> сравнили средние значения по группам за ${p.n} ${p.n === 1 ? 'день' : p.n < 5 ? 'дня' : 'дней'}. Эффект — относительная разница в процентах. Доверие — насколько стабильно паттерн повторялся.</div>
+      </section>
+    `;
+  }
+
+  // Хелпер: рендер столбчатого графика «группы → среднее»
+  function barChart(groups, maxVal, yLabel, lead, scaleMode){
+    const vals = groups.map(g => g.data.length ? g.data.reduce((a,b)=>a+b,0) / g.data.length : 0);
+    const max = scaleMode === 'max' ? Math.max(maxVal, ...vals) * 1.1 : maxVal;
+    const bars = groups.map((g, i) => {
+      const v = vals[i];
+      const h = Math.max(2, Math.round((v / max) * 100));
+      const n = g.data.length;
+      return `
+        <div class="pd-bar-col${i > 0 ? ' is-compare' : ''}">
+          <div class="pd-bar-val">${Math.round(v)}${scaleMode === 'max' ? '' : '%'}</div>
+          <div class="pd-bar-track"><div class="pd-bar-fill" style="height:${h}%"></div></div>
+          <div class="pd-bar-label">${g.label}</div>
+          <div class="pd-bar-label" style="opacity:.6">n=${n}</div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="pd-eyebrow">${yLabel} по группам</div>
+      <div class="pd-bar-chart">${bars}</div>
+    `;
   }
 
   function setupTrendPanel(){
