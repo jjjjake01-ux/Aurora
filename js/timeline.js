@@ -9,17 +9,6 @@
   const DAY_START = 6;
   const DAY_END = 24;
 
-  // Периоды дня — для фильтрации таймлайна
-  // Утро: 6-12, День: 12-17, Вечер: 17-22, Ночь: 22-24
-  const PERIODS = {
-    day:      { start:  6, end: 24, label: 'Весь день' },  // «День» = весь день
-    morning:  { start:  6, end: 12, label: 'Утро' },
-    daypart:  { start: 12, end: 17, label: 'День' },
-    evening:  { start: 17, end: 22, label: 'Вечер' },
-    night:    { start: 22, end: 24, label: 'Ночь' }
-  };
-  let ACTIVE_PERIOD = 'day';
-
   // ============================================================
   // MOOD CURVE — эмоциональный ландшафт дня
   // ============================================================
@@ -125,11 +114,20 @@
     if (axis) axis.classList.toggle('is-zoomed', ZOOM > 1.05);
   }
 
-  // Применяет выбранный период дня: меняет viewBox + фильтрует события + scrubber
+  // ===== Период дня (Утро / День / Вечер / Ночь) =====
+  const PERIODS = {
+    day:     { start:  6, end: 24, label: 'Весь день' },
+    morning: { start:  6, end: 12, label: 'Утро' },
+    daypart: { start: 12, end: 17, label: 'День' },
+    evening: { start: 17, end: 22, label: 'Вечер' },
+    night:   { start: 22, end: 24, label: 'Ночь' }
+  };
+  let ACTIVE_PERIOD = 'day';
+
   function applyPeriod(periodKey){
     const period = PERIODS[periodKey] || PERIODS.day;
     ACTIVE_PERIOD = periodKey;
-    // 1) viewBox: видим только окно периода
+    // 1) viewBox: показываем только окно периода
     const svg = document.querySelector('.timeline-svg');
     if (svg){
       const startX = xFromHour(period.start);
@@ -137,39 +135,37 @@
       const vbX = Math.max(0, startX - TL_LEFT_PAD);
       const vbW = Math.min(SVG_W, endX - startX + TL_LEFT_PAD + TL_RIGHT_PAD);
       svg.setAttribute('viewBox', `${vbX} 0 ${vbW} 200`);
-      // В режиме периода zoom = 1 (period сам задаёт масштаб)
       ZOOM = 1;
     }
-    // 2) Перерисовываем события только в пределах периода
+    // 2) Перерисовываем события с фильтром по периоду
     const gTop = document.getElementById('tlEventsTopInner');
     const gBot = document.getElementById('tlEventsBottomInner');
     if (gTop) gTop.innerHTML = '';
     if (gBot) gBot.innerHTML = '';
     if (svg) renderEvents(svg, 1, period);
-    // 3) Сброс scrubber в центр окна (или на текущий час, если в окне)
+    // 3) Scrubber → на текущий час (если в окне) или центр периода
     const nowH = hoursNow();
     const focus = (nowH >= period.start && nowH <= period.end) ? nowH : (period.start + period.end) / 2;
     setMomentHour(focus, true);
-    // 4) Edge labels
+    // 4) Edge labels под период
     updateEdgeLabels(period);
-    // 5) UI: подсветка активной кнопки
+    // 5) UI: подсветка чипа
     document.querySelectorAll('.th-period').forEach(b => {
       const isActive = b.dataset.period === periodKey;
       b.classList.toggle('is-active', isActive);
       b.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
-    // 6) Убираем is-zoomed с axis (period ≠ zoom)
+    // 6) Убираем is-zoomed (period — отдельный режим)
     const axis = document.getElementById('timelineAxis');
     if (axis) axis.classList.remove('is-zoomed');
   }
 
-  // Edge labels (06 / 12 / 24) — обновляем под выбранный период
   function updateEdgeLabels(period){
     const left = document.querySelector('.timeline-edge-l');
     const center = document.querySelector('.timeline-edge-c');
     const right = document.querySelector('.timeline-edge-r');
     if (!left || !center || !right) return;
-    left.textContent  = pad2(Math.floor(period.start));
+    left.textContent   = pad2(Math.floor(period.start));
     center.textContent = pad2(Math.floor((period.start + period.end) / 2));
     right.textContent  = pad2(Math.floor(period.end));
   }
@@ -255,8 +251,8 @@
       return { list, stacks, packItems, rows };
     }
 
-    const tops = EVENTS.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
-    const bots = EVENTS.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
+    const tops = src.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
+    const bots = src.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
     return { top: pack(tops), bottom: pack(bots) };
   }
 
@@ -458,7 +454,6 @@
     if (period){
       eventsFiltered = EVENTS.filter(ev => ev.start < period.end && (ev.end || ev.start) > period.start);
     }
-    // Подменяем EVENTS временно через контекст — но чтобы не мутировать, передаём в packEvents отдельный фильтр
     const packed = packEvents(visualScale || 1, eventsFiltered);
 
     // Helper: одна видимая «единица» — либо full card, либо stack counter.
@@ -1358,7 +1353,7 @@
     renderNextEvent(startH);
     setupScrubber();
     setupZoomButton();
-    setupPeriodButtons();
+    setupPeriodTabs();
     setupMascotInteraction();
     setupTrendPanel();
     setupModals();
@@ -1750,18 +1745,6 @@
     }
   }
 
-  function setupPeriodButtons(){
-    document.querySelectorAll('.th-period').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const period = btn.dataset.period;
-        if (period){
-          setZoom(1, (PERIODS[period] ? PERIODS[period].start : 6) + ((PERIODS[period] ? (PERIODS[period].end - PERIODS[period].start) : 18) / 2));
-          applyPeriod(period);
-        }
-      });
-    });
-  }
-
   function setupZoomButton(){
     const btn = document.getElementById('thZoom');
     const axis = document.getElementById('timelineAxis');
@@ -1771,12 +1754,23 @@
       if (ZOOM > 1.05){
         setZoom(1, 12);
         axis.classList.remove('is-zoomed');
+        // Возврат к выбранному периоду
+        applyPeriod(ACTIVE_PERIOD);
       } else {
         const nowH = hoursNow();
         setZoom(3.5, nowH);
         axis.classList.add('is-zoomed');
         setMomentHour(nowH, true);
       }
+    });
+  }
+
+  function setupPeriodTabs(){
+    document.querySelectorAll('.th-period').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.period;
+        if (key) applyPeriod(key);
+      });
     });
   }
 
