@@ -858,19 +858,20 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:6px;
-  padding:6px 8px 8px;
+  padding:8px 8px 9px;
   background:rgba(255,255,255,.5);
   border:.5px solid var(--line);
   border-radius:14px;
 }
 .gr-item{
   position:relative;
-  display:flex;flex-direction:column;align-items:center;gap:2px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
   min-width:0;
 }
 .gr-svg{
   width:40px;height:40px;display:block;
   overflow:visible;
+  flex-shrink:0;
 }
 .gr-track{
   fill:none;
@@ -885,16 +886,18 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   transition:stroke-dasharray .6s var(--ease);
   filter:drop-shadow(0 1px 2px rgba(45,40,35,.06));
 }
-.gr-fill-sit{transform-origin:20px 20px}
+/* Сидячее: fill идёт против часовой (отражение по X) */
+.gr-fill-sit{transform:scaleX(-1);transform-origin:20px 20px}
+/* Число в центре кольца: абсолютное позиционирование относительно .gr-svg (40×40) */
 .gr-num{
   position:absolute;
-  top:11px;left:50%;
-  transform:translateX(-50%);
+  top:14px;left:0;right:0;
   font:800 10px/1 var(--f);
   color:var(--ink);
   font-variant-numeric:tabular-nums;
   letter-spacing:-.01em;
   pointer-events:none;
+  text-align:center;
   white-space:nowrap;
 }
 .gr-label{
@@ -902,7 +905,7 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   color:var(--ink2);
   text-transform:uppercase;letter-spacing:.04em;
   white-space:nowrap;
-  margin-top:2px;
+  margin-top:1px;
 }
 .gr-item.is-done .gr-num{color:var(--good)}
 .gr-item.is-warn .gr-num{color:var(--warn)}
