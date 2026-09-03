@@ -6,8 +6,10 @@
   const SVG_H = 180;
   const TL_LEFT_PAD = 6;
   const TL_RIGHT_PAD = 18;
-  const DAY_START = 6;
-  const DAY_END = 24;
+  let DAY_START = 6;
+  let DAY_END = 24;
+  const FULL_DAY_START = 6;
+  const FULL_DAY_END = 24;
 
   // ============================================================
   // MOOD CURVE — эмоциональный ландшафт дня
@@ -123,42 +125,53 @@
     night:   { start: 22, end: 24, label: 'Ночь' }
   };
   let ACTIVE_PERIOD = 'day';
+let PERIOD_MODE = false;
 
   function applyPeriod(periodKey){
-    const period = PERIODS[periodKey] || PERIODS.day;
-    ACTIVE_PERIOD = periodKey;
-    // 1) viewBox: показываем только окно периода
-    const svg = document.querySelector('.timeline-svg');
-    if (svg){
-      const startX = xFromHour(period.start);
-      const endX   = xFromHour(period.end);
-      const vbX = Math.max(0, startX - TL_LEFT_PAD);
-      const vbW = Math.min(SVG_W, endX - startX + TL_LEFT_PAD + TL_RIGHT_PAD);
-      svg.setAttribute('viewBox', `${vbX} 0 ${vbW} 200`);
-      ZOOM = 1;
+      const period = PERIODS[periodKey] || PERIODS.day;
+      ACTIVE_PERIOD = periodKey;
+      PERIOD_MODE = (periodKey !== 'day');
+
+      if (PERIOD_MODE){
+        DAY_START = period.start;
+        DAY_END   = period.end;
+      } else {
+        DAY_START = FULL_DAY_START;
+        DAY_END   = FULL_DAY_END;
+      }
+
+      // 1) Сбрасываем viewBox на полный
+      const svg = document.querySelector('.timeline-svg');
+      if (svg){
+        svg.setAttribute('viewBox', `0 0 ${SVG_W} 200`);
+        ZOOM = 1;
+      }
+      // 2) Перерисовываем события с фильтром по периоду
+      const gTop = document.getElementById('tlEventsTopInner');
+      const gBot = document.getElementById('tlEventsBottomInner');
+      if (gTop) gTop.innerHTML = '';
+      if (gBot) gBot.innerHTML = '';
+      if (svg){
+        renderMoodPath(svg);
+        renderTodLabels(svg);
+        renderEvents(svg, 1, period);
+      }
+      // 3) Scrubber → на текущий час (если в окне) или центр периода
+      const nowH = hoursNow();
+      const focus = (nowH >= period.start && nowH <= period.end) ? nowH : (period.start + period.end) / 2;
+      setMomentHour(focus, true);
+      // 4) Edge labels под период
+      updateEdgeLabels(period);
+      // 5) UI: подсветка чипа
+      document.querySelectorAll('.th-period').forEach(b => {
+        const isActive = b.dataset.period === periodKey;
+        b.classList.toggle('is-active', isActive);
+        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+      // 6) Убираем is-zoomed (period — отдельный режим)
+      const axis = document.getElementById('timelineAxis');
+      if (axis) axis.classList.remove('is-zoomed');
     }
-    // 2) Перерисовываем события с фильтром по периоду
-    const gTop = document.getElementById('tlEventsTopInner');
-    const gBot = document.getElementById('tlEventsBottomInner');
-    if (gTop) gTop.innerHTML = '';
-    if (gBot) gBot.innerHTML = '';
-    if (svg) renderEvents(svg, 1, period);
-    // 3) Scrubber → на текущий час (если в окне) или центр периода
-    const nowH = hoursNow();
-    const focus = (nowH >= period.start && nowH <= period.end) ? nowH : (period.start + period.end) / 2;
-    setMomentHour(focus, true);
-    // 4) Edge labels под период
-    updateEdgeLabels(period);
-    // 5) UI: подсветка чипа
-    document.querySelectorAll('.th-period').forEach(b => {
-      const isActive = b.dataset.period === periodKey;
-      b.classList.toggle('is-active', isActive);
-      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-    });
-    // 6) Убираем is-zoomed (period — отдельный режим)
-    const axis = document.getElementById('timelineAxis');
-    if (axis) axis.classList.remove('is-zoomed');
-  }
 
   function updateEdgeLabels(period){
     const left = document.querySelector('.timeline-edge-l');
@@ -398,14 +411,17 @@
   // RENDER: TIMELINE V4 — Apple/Whoop/Oura premium
   // ============================================================
   function renderMoodPath(svg){
-    const points = MOOD.map(p => ({ x: xFromHour(p.h), y: clampY(moodY(p.v)) }));
-    let d = `M${points[0].x} ${points[0].y}`;
-    for (let i=1; i<points.length; i++){
-      const prev = points[i-1], cur = points[i];
-      const cp1x = prev.x + (cur.x - prev.x) * 0.4;
-      const cp2x = prev.x + (cur.x - prev.x) * 0.6;
-      d += ` C${cp1x} ${prev.y} ${cp2x} ${cur.y} ${cur.x} ${cur.y}`;
-    }
+      // Фильтруем точки по текущему диапазону DAY_START..DAY_END
+      const filtered = MOOD.filter(p => p.h >= DAY_START - 0.01 && p.h <= DAY_END + 0.01);
+      const points = filtered.map(p => ({ x: xFromHour(p.h), y: clampY(moodY(p.v)) }));
+      if (points.length < 2) return;
+      let d = `M${points[0].x} ${points[0].y}`;
+      for (let i=1; i<points.length; i++){
+        const prev = points[i-1], cur = points[i];
+        const cp1x = prev.x + (cur.x - prev.x) * 0.4;
+        const cp2x = prev.x + (cur.x - prev.x) * 0.6;
+        d += ` C${cp1x} ${prev.y} ${cp2x} ${cur.y} ${cur.x} ${cur.y}`;
+      }
     const moodPath = document.getElementById('tlMoodPath');
     if (moodPath) moodPath.setAttribute('d', d);
 
@@ -441,7 +457,7 @@
       { h:12, text:'день' },
       { h:17, text:'закат' },
       { h:20, text:'вечер' }
-    ];
+    ].filter(l => l.h >= DAY_START - 0.01 && l.h <= DAY_END + 0.01);
     labels.forEach(l => {
       const x = xFromHour(l.h);
       g.appendChild(el('text', { x:x, y:14, class:'tl-tod-label' }, l.text));
