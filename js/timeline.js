@@ -436,30 +436,19 @@
     const titleEl = document.getElementById('momentTitle');
     const descEl = document.getElementById('momentDesc');
     const insightEl = document.getElementById('momentInsight');
-    const deltasEl = document.getElementById('momentDeltas');
 
     if (timeEl) timeEl.textContent = fmtTime(h);
     if (titleEl) titleEl.textContent = m.event ? m.event.label : 'Сейчас';
     if (descEl) descEl.textContent = describeEvent(m.event, h);
 
-    if (deltasEl){
-      deltasEl.innerHTML = '';
-      m.deltas.forEach(d => {
-        const dir = d.to > d.from ? 'up' : (d.to < d.from ? 'down' : 'flat');
-        const arrow = dir === 'up' ? '↑' : (dir === 'down' ? '↓' : '—');
-        const fromTxt = d.from === d.to ? '' : '<span class="dc-from">'+d.from+d.suffix+'</span><span class="dc-arrow"> '+arrow+'</span>';
-        const html =
-          '<div class="dc">'+
-            '<div class="dc-label">'+d.label+'</div>'+
-            '<div class="dc-row">'+fromTxt+'<span class="dc-to '+dir+'">'+d.to+d.suffix+'</span></div>'+
-            '<div class="dc-bar"><div class="dc-bar-fill" style="width:'+Math.max(6,Math.min(100,d.bar))+'%"></div></div>'+
-            '<div class="dc-lag">'+d.lag+'</div>'+
-          '</div>';
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-        deltasEl.appendChild(tmp.firstChild);
-      });
-    }
+    // Vitals: кольцо + сетка
+    renderMomentVitals(h, m);
+
+    // Контекст: следующее событие
+    renderMomentNext(h);
+
+    // Narrative (одна фраза про архетип момента)
+    renderMomentNarrative(h);
 
     if (insightEl){
       insightEl.innerHTML =
@@ -467,6 +456,159 @@
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>'+
         '</span>'+
         '<span>'+m.insight+'</span>';
+    }
+  }
+
+  // ============== VITALS RENDER ==============
+  // Кольцо обновляется через stroke-dasharray
+  // Числа — count-up анимация (300мс)
+  const _vitalsState = { h: null, vals: {} };
+
+  function countUpTo(el, from, to, duration){
+    if (!el) return;
+    if (from === null || from === undefined) from = 0;
+    if (from === to){ el.textContent = to; return; }
+    const start = performance.now();
+    const dur = Math.max(120, duration || 320);
+    function step(now){
+      const t = Math.min(1, (now - start) / dur);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      const v = Math.round(from + (to - from) * eased);
+      el.textContent = v;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderMomentVitals(h, m){
+    if (!window.AtlasMetrics) return;
+    const mood = window.AtlasMetrics.defaultMoodAt(h);
+    const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    const prev = _vitalsState.vals;
+
+    // Vitals ring (3 кольца)
+    // Окружность радиуса r = 2πr
+    const setRing = (sel, pct) => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      const r = +el.getAttribute('r');
+      const C = 2 * Math.PI * r;
+      // 0% → dasharray "0 C" (пусто), 100% → "C 0"
+      const filled = (pct / 100) * C;
+      el.style.strokeDasharray = filled + ' ' + C;
+    };
+    setRing('.vring-energy', metrics.energy);
+    setRing('.vring-focus',  metrics.focus);
+    setRing('.vring-mood',   metrics.mood);
+
+    // Центр кольца — общий статус
+    const numEl = document.getElementById('vringNum');
+    const labEl = document.getElementById('vringLabel');
+    if (numEl){
+      countUpTo(numEl, prev.status != null ? prev.status : 0, metrics.status, 350);
+      numEl.classList.remove('is-good','is-warn','is-bad');
+      if (metrics.status >= 65) numEl.classList.add('is-good');
+      else if (metrics.status >= 50) numEl.classList.add('is-warn');
+      else numEl.classList.add('is-bad');
+    }
+    if (labEl) labEl.textContent = metrics.statusLabel;
+
+    // Метрики: count-up + дельты
+    const setVal = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) countUpTo(el, prev[id] != null ? prev[id] : 0, v, 300);
+    };
+    setVal('vitalEnergy',    metrics.energy);
+    setVal('vitalFocus',     metrics.focus);
+    setVal('vitalHeart',     metrics.heart);
+    setVal('vitalLoad',      metrics.load);
+    setVal('vitalHydration', metrics.hydration);
+
+    // Дельта энергии
+    const energyDeltaEl = document.getElementById('vitalEnergyDelta');
+    if (energyDeltaEl){
+      const d = metrics.energyDelta;
+      const arrowSvg = d.dir === 'up'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
+        : d.dir === 'down'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>';
+      energyDeltaEl.innerHTML = arrowSvg + '<span>'+(d.val === '0' ? '0' : d.val)+'</span>';
+      energyDeltaEl.className = 'vital-delta ' + (d.dir === 'up' ? 'is-up' : d.dir === 'down' ? 'is-down' : '');
+    }
+
+    // Пульс-индикатор (только когда метрика «живая» — пульс > 65 bpm)
+    const heartVital = document.querySelector('.vital[data-key="heart"]');
+    if (heartVital){
+      heartVital.dataset.active = metrics.heart > 65 ? 'true' : 'false';
+    }
+
+    // Hydration warn
+    const hydVital = document.querySelector('.vital[data-key="hydration"]');
+    if (hydVital){
+      hydVital.dataset.warn = metrics.hydration < 50 ? 'true' : 'false';
+    }
+
+    // Сохраняем для следующего count-up
+    _vitalsState.h = h;
+    _vitalsState.vals = {
+      status: metrics.status,
+      vitalEnergy: metrics.energy,
+      vitalFocus: metrics.focus,
+      vitalHeart: metrics.heart,
+      vitalLoad: metrics.load,
+      vitalHydration: metrics.hydration
+    };
+  }
+
+  // Контекст: следующее событие в ближайший час
+  function renderMomentNext(h){
+    const wrap = document.getElementById('momentNext');
+    if (!wrap) return;
+    let nextEv = null;
+    for (const ev of EVENTS){
+      if (ev.start > h + 0.1){ nextEv = ev; break; }
+    }
+    if (!nextEv){
+      wrap.hidden = true;
+      return;
+    }
+    const minutesUntil = Math.max(1, Math.round((nextEv.start - h) * 60));
+    let timeTxt;
+    if (minutesUntil < 60) timeTxt = minutesUntil + 'м';
+    else {
+      const hInt = Math.floor(minutesUntil / 60);
+      const mInt = minutesUntil % 60;
+      timeTxt = mInt > 0 ? (hInt + 'ч ' + mInt + 'м') : (hInt + 'ч');
+    }
+    const t = document.getElementById('mnTime');
+    const tx = document.getElementById('mnText');
+    if (t) t.textContent = 'через ' + timeTxt;
+    if (tx) tx.textContent = nextEv.label + ' в ' + fmtTime(nextEv.start);
+    wrap.hidden = false;
+  }
+
+  // Narrative — одна фраза про архетип момента (отдельный блок)
+  function renderMomentNarrative(h){
+    const el = document.getElementById('momentNarrative');
+    if (!el || !window.AtlasMetrics) return;
+    const mood = window.AtlasMetrics.defaultMoodAt(h);
+    const metrics = window.AtlasMetrics.metricsAt(h, mood);
+    let phrase = '';
+    if (h < 7)        phrase = 'Пробуждение. Организм просыпается.';
+    else if (h < 9)   phrase = 'Утро. Готовность растёт.';
+    else if (h < 12)  phrase = metrics.energy >= 80 ? 'Пик утра — лучшее время для важного.' : 'Утро. Набирай темп.';
+    else if (h < 14)  phrase = metrics.energy < 65 ? 'Спад после обеда. Лёгкое движение вернёт тонус.' : 'Середина дня.';
+    else if (h < 17)  phrase = 'Пик дня. Лучшее время для фокуса.';
+    else if (h < 20)  phrase = 'Спад. Переключись на лёгкое.';
+    else if (h < 22)  phrase = metrics.caffeine > 50 ? 'Кофеин ещё в крови — повлияет на засыпание.' : 'Подготовка ко сну.';
+    else if (h < 24)  phrase = 'Время спать. Восстановление начнётся сейчас.';
+    if (phrase){
+      el.textContent = phrase;
+      el.hidden = false;
+    } else {
+      el.hidden = true;
     }
   }
 
@@ -879,6 +1021,410 @@
     setInterval(tick, 30*1000);
   }
 
+<<<<<<< ours
+=======
+  // ============== PATTERNS (honest correlations) ==============
+  // Утилита: достать history-данные и вычислить «главный сигнал дня»
+  function pickDailySignal(all, h){
+    // Приоритет по релевантности текущему часу
+    const relevance = {
+      'sleep_readiness': [6,7,8,9,10,22,23],  // утро + планирование сна
+      'morning_workout': [6,7,8,9,10,11],
+      'sitting_dip':     [11,12,13,14,15],
+      'caffeine_loop':   [7,8,9,10,11,12,13,14],
+      'active_readiness':[6,7,8,9],
+      'steps_mood':      [17,18,19,20,21],
+      'dinner_sleep':    [18,19,20,21],
+      'winddown_sleep':  [20,21,22,23]
+    };
+    const confirmed = all.filter(p => p.tier === 'confirmed');
+    if (confirmed.length === 0) return null;
+    // Сортируем: релевантные часу → выше; потом по effect
+    return confirmed.slice().sort((a, b) => {
+      const ra = (relevance[a.id] || []).includes(Math.floor(h)) ? 1 : 0;
+      const rb = (relevance[b.id] || []).includes(Math.floor(h)) ? 1 : 0;
+      if (rb !== ra) return rb - ra;
+      return b.effect - a.effect;
+    })[0];
+  }
+
+  function renderPatterns(){
+    if (!window.AtlasPatterns) return;
+    const all = window.AtlasPatterns.analyze();
+    const nowH = hoursNow();
+
+    // 1) Hero signal — 1 строка
+    const sigBtn = document.getElementById('heroSignal');
+    const sigText = document.getElementById('heroSignalText');
+    const sigIc = document.getElementById('heroSignalIc');
+    if (sigBtn && sigText && sigIc){
+      const sig = pickDailySignal(all, nowH);
+      if (sig){
+        const tone = sig.effect > 0.4 ? 'good' : 'warn';
+        sigBtn.className = 'hero-signal is-' + tone;
+        const color = tone === 'good' ? '#2FA36B' : '#C98A1F';
+        sigIc.innerHTML = window.AtlasPatterns.iconSvg(sig.icon, color);
+        // Контекстная формулировка: «X. Сейчас Y. Что делать»
+        sigText.textContent = sig.title;
+        sigBtn.dataset.patternId = sig.id;
+        // Мини-кольцо текущего статуса
+        if (window.AtlasMetrics){
+          const m = window.AtlasMetrics.metricsAt(nowH);
+          const ring = document.getElementById('heroMiniFill');
+          if (ring){
+            const r = +ring.getAttribute('r');
+            const C = 2 * Math.PI * r;
+            const filled = (m.status / 100) * C;
+            ring.style.strokeDashoffset = (C - filled);
+          }
+        }
+      } else {
+        sigBtn.style.display = 'none';
+      }
+    }
+
+    // 2) Summary card — сегмент-бар + кнопка
+    const counts = {
+      confirmed: all.filter(p => p.tier === 'confirmed').length,
+      observed:  all.filter(p => p.tier === 'observed').length,
+      insufficient: all.filter(p => p.tier === 'insufficient').length
+    };
+    const total = counts.confirmed + counts.observed + counts.insufficient;
+    const totalEl = document.getElementById('patternsTotalCount');
+    if (totalEl) totalEl.textContent = total;
+
+    const bars = document.getElementById('patternsSummaryBars');
+    if (bars && total > 0){
+      bars.innerHTML = ['confirmed','observed','insufficient']
+        .filter(t => counts[t] > 0)
+        .map(t => `<div class="psb-seg" data-tier="${t}" style="flex:${counts[t]}" title="${counts[t]} ${t}"></div>`)
+        .join('');
+    }
+
+    // 3) Modal tiers (список) — рендерим заранее
+    const tiers = document.getElementById('patternsModalTiers');
+    if (tiers){
+      const labels = { confirmed:'Подтверждено', observed:'Замечено', insufficient:'Мало данных' };
+      const tierOrder = ['confirmed','observed','insufficient'];
+      // Скрываем «Мало данных» если пусто
+      tiers.innerHTML = tierOrder
+        .filter(t => counts[t] > 0)
+        .map(t => {
+          const items = all.filter(p => p.tier === t);
+          return `
+            <div class="modal-tier" data-tier="${t}">
+              <div class="modal-tier-head">
+                <span class="modal-tier-dot" aria-hidden="true"></span>
+                <span class="modal-tier-label">${labels[t]}</span>
+                <span class="modal-tier-count">${items.length}</span>
+              </div>
+              <div class="modal-tier-list">
+                ${items.map(p => {
+                  const color = t === 'confirmed' ? '#2FA36B' : t === 'observed' ? '#C98A1F' : '#9A8F82';
+                  const conf = Math.round(p.confidence * 100);
+                  return `
+                    <button class="modal-pattern-item" data-pattern-id="${p.id}" type="button">
+                      <span class="modal-pattern-ic">${window.AtlasPatterns.iconSvg(p.icon, color)}</span>
+                      <span class="modal-pattern-body">
+                        <span class="modal-pattern-title">${p.title}</span>
+                        <span class="modal-pattern-sub">${p.sub}</span>
+                        <span class="modal-pattern-stats">
+                          <span class="stat-tag">n=${p.n}</span>
+                          <span class="stat-tag">эффект ${Math.round(p.effect*100)}%</span>
+                          <span class="stat-bar"><span class="stat-bar-fill" style="width:${conf}%"></span></span>
+                        </span>
+                      </span>
+                      <span class="modal-pattern-chev">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                      </span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+    }
+  }
+
+  // ============== MODAL CONTROLLER ==============
+  function openModal(id){
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.hidden = false;
+    requestAnimationFrame(() => m.classList.add('is-open'));
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id){
+    const m = document.getElementById(id);
+    if (!m) return;
+    m.classList.remove('is-open');
+    setTimeout(() => { m.hidden = true; }, 280);
+    document.body.style.overflow = '';
+  }
+  function setupModals(){
+    // Закрытие по клику на бэдроп / крестик
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-close-modal]');
+      if (t){
+        const modal = t.closest('.modal');
+        if (modal) closeModal(modal.id);
+        return;
+      }
+      // Клик на паттерн в модалке → детали
+      const item = e.target.closest('[data-pattern-id]');
+      if (item){
+        const id = item.dataset.patternId;
+        if (id) openPatternDetail(id);
+        return;
+      }
+      // Кнопка «назад к списку»
+      const back = e.target.closest('[data-open-patterns]');
+      if (back){
+        closeModal('patternDetailModal');
+        setTimeout(() => openModal('patternsModal'), 200);
+        return;
+      }
+    });
+    // ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape'){
+        const open = document.querySelector('.modal.is-open');
+        if (open) closeModal(open.id);
+      }
+    });
+    // Hero-signal → открывает детали
+    const heroSignal = document.getElementById('heroSignal');
+    if (heroSignal){
+      heroSignal.addEventListener('click', () => {
+        const id = heroSignal.dataset.patternId;
+        if (id) openPatternDetail(id);
+      });
+    }
+    // Кнопка «Открыть все паттерны» в summary
+    const openBtn = document.getElementById('openPatternsModal');
+    if (openBtn){
+      openBtn.addEventListener('click', () => openModal('patternsModal'));
+    }
+  }
+
+  function openPatternDetail(id){
+    if (!window.AtlasPatterns) return;
+    const all = window.AtlasPatterns.analyze();
+    const p = all.find(x => x.id === id);
+    if (!p) return;
+    renderPatternDetail(p);
+    openModal('patternDetailModal');
+  }
+
+  function renderPatternDetail(p){
+    const titleEl = document.getElementById('patternDetailTitle');
+    const body = document.getElementById('patternDetailBody');
+    if (!body) return;
+    if (titleEl) titleEl.textContent = p.title;
+
+    // Достаём реальные цифры из истории, чтобы показать в графике
+    const hist = window.AtlasPatterns.getHistory();
+    const color = p.tier === 'confirmed' ? '#2FA36B' : p.tier === 'observed' ? '#C98A1F' : '#9A8F82';
+
+    // Специфичные блоки под каждый паттерн
+    let bodyHtml = '';
+
+    if (p.id === 'sleep_readiness'){
+      const sleeps = hist.map(d => d.sleep);
+      const readiness = hist.map(d => d.readiness);
+      const bins = [
+        { label:'<6ч',     min:0,  max:6,  data:[] },
+        { label:'6-6.5ч',  min:6,  max:6.5,data:[] },
+        { label:'6.5-7ч',  min:6.5,max:7,  data:[] },
+        { label:'7-7.5ч',  min:7,  max:7.5,data:[] },
+        { label:'>7.5ч',   min:7.5,max:24, data:[] }
+      ];
+      hist.forEach(d => { for (const b of bins) if (d.sleep >= b.min && d.sleep < b.max) { b.data.push(d.readiness); break; } });
+      const maxR = 100;
+      bodyHtml = barChart(bins, maxR, 'Средняя готовность', p.sub);
+    } else if (p.id === 'morning_workout'){
+      const withW = hist.filter(d => d.workout);
+      const morning = withW.filter(d => d.workoutHour < 12);
+      const evening = withW.filter(d => d.workoutHour >= 12);
+      const groups = [
+        { label:'Утро (до 12)', data: morning.map(d => d.sleepQuality) },
+        { label:'День/вечер',   data: evening.map(d => d.sleepQuality) },
+        { label:'Без трени',    data: hist.filter(d => !d.workout).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else if (p.id === 'sitting_dip'){
+      const groups = [
+        { label:'<5ч сидя',   data: hist.filter(d => d.sitHours < 5).map(d => 100 - d.afternoonDip) },
+        { label:'5-7ч',       data: hist.filter(d => d.sitHours >= 5 && d.sitHours < 7).map(d => 100 - d.afternoonDip) },
+        { label:'7ч+',        data: hist.filter(d => d.sitHours >= 7).map(d => 100 - d.afternoonDip) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Энергия после обеда', p.sub);
+    } else if (p.id === 'caffeine_loop'){
+      const groups = [
+        { label:'Сон <6.5ч',  data: hist.filter(d => d.sleep < 6.5).map(d => d.caffeine) },
+        { label:'Сон 6.5-7ч', data: hist.filter(d => d.sleep >= 6.5 && d.sleep < 7).map(d => d.caffeine) },
+        { label:'Сон 7ч+',    data: hist.filter(d => d.sleep >= 7).map(d => d.caffeine) }
+      ];
+      bodyHtml = barChart(groups, 6, 'Чашек кофе', p.sub, 'max');
+    } else if (p.id === 'active_readiness'){
+      const groups = [
+        { label:'<5к шагов',  data: hist.filter(d => d.steps < 5000).map(d => d.readiness) },
+        { label:'5-7к',       data: hist.filter(d => d.steps >= 5000 && d.steps < 7000).map(d => d.readiness) },
+        { label:'7-9к',       data: hist.filter(d => d.steps >= 7000 && d.steps < 9000).map(d => d.readiness) },
+        { label:'9к+',        data: hist.filter(d => d.steps >= 9000).map(d => d.readiness) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Готовность', p.sub);
+    } else if (p.id === 'steps_mood'){
+      const groups = [
+        { label:'<5к',        data: hist.filter(d => d.steps < 5000).map(d => d.eveningMood) },
+        { label:'5-7к',       data: hist.filter(d => d.steps >= 5000 && d.steps < 7000).map(d => d.eveningMood) },
+        { label:'7-9к',       data: hist.filter(d => d.steps >= 7000 && d.steps < 9000).map(d => d.eveningMood) },
+        { label:'9к+',        data: hist.filter(d => d.steps >= 9000).map(d => d.eveningMood) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Настроение вечером', p.sub);
+    } else if (p.id === 'dinner_sleep'){
+      const groups = [
+        { label:'Ужин до 20:00', data: hist.filter(d => d.dinnerEarly).map(d => d.sleepQuality) },
+        { label:'После 20:00',   data: hist.filter(d => !d.dinnerEarly).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else if (p.id === 'winddown_sleep'){
+      const groups = [
+        { label:'С рутиной',     data: hist.filter(d => d.winddown).map(d => d.sleepQuality) },
+        { label:'Без',           data: hist.filter(d => !d.winddown).map(d => d.sleepQuality) }
+      ];
+      bodyHtml = barChart(groups, 100, 'Качество сна', p.sub);
+    } else {
+      bodyHtml = `<p class="pd-lead">${p.sub}</p>`;
+    }
+
+    // Сетка статистики
+    const stats = `
+      <div class="pd-grid">
+        <div class="pd-cell"><div class="pd-cell-label">Наблюдений</div><div class="pd-cell-val">${p.n}</div></div>
+        <div class="pd-cell"><div class="pd-cell-label">Эффект</div><div class="pd-cell-val ${p.effect > 0.4 ? 'is-good' : p.effect < 0.2 ? 'is-bad' : ''}">${Math.round(p.effect*100)}%</div></div>
+        <div class="pd-cell"><div class="pd-cell-label">Доверие</div><div class="pd-cell-val">${Math.round(p.confidence*100)}%</div></div>
+      </div>
+    `;
+
+    body.innerHTML = `
+      <section class="pd-section">
+        <div class="pd-eyebrow">${p.tier === 'confirmed' ? 'Подтверждённый паттерн' : p.tier === 'observed' ? 'Замеченный паттерн' : 'Недостаточно данных'}</div>
+        <h3 class="pd-headline">${p.title}</h3>
+        <p class="pd-lead">${p.sub}</p>
+        ${stats}
+      </section>
+      <section class="pd-section">${bodyHtml}</section>
+      <section class="pd-section">
+        <div class="pd-action">
+          <span class="pd-action-ic">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </span>
+          <span class="pd-action-text">${p.action}</span>
+        </div>
+      </section>
+      <section class="pd-section">
+        <div class="pd-method"><b>Как считали:</b> сравнили средние значения по группам за ${p.n} ${p.n === 1 ? 'день' : p.n < 5 ? 'дня' : 'дней'}. Эффект — относительная разница в процентах. Доверие — насколько стабильно паттерн повторялся.</div>
+      </section>
+    `;
+  }
+
+  // Хелпер: рендер столбчатого графика «группы → среднее»
+  function barChart(groups, maxVal, yLabel, lead, scaleMode){
+    const vals = groups.map(g => g.data.length ? g.data.reduce((a,b)=>a+b,0) / g.data.length : 0);
+    const max = scaleMode === 'max' ? Math.max(maxVal, ...vals) * 1.1 : maxVal;
+    const bars = groups.map((g, i) => {
+      const v = vals[i];
+      const h = Math.max(2, Math.round((v / max) * 100));
+      const n = g.data.length;
+      return `
+        <div class="pd-bar-col${i > 0 ? ' is-compare' : ''}">
+          <div class="pd-bar-val">${Math.round(v)}${scaleMode === 'max' ? '' : '%'}</div>
+          <div class="pd-bar-track"><div class="pd-bar-fill" style="height:${h}%"></div></div>
+          <div class="pd-bar-label">${g.label}</div>
+          <div class="pd-bar-label" style="opacity:.6">n=${n}</div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="pd-eyebrow">${yLabel} по группам</div>
+      <div class="pd-bar-chart">${bars}</div>
+    `;
+  }
+
+  function setupTrendPanel(){
+    const btn = document.getElementById('trendExpandBtn');
+    const panel = document.getElementById('trendPanel');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      if (isOpen){
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.querySelector('.teb-label').textContent = 'Развернуть тренд за неделю';
+      } else {
+        panel.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.teb-label').textContent = 'Свернуть тренд';
+        // Плавный скролл к раскрытой панели
+        setTimeout(() => {
+          panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, 50);
+      }
+    });
+
+    // Период-табы внутри панели
+    panel.querySelectorAll('.period-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        panel.querySelectorAll('.period-tab').forEach(t => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('is-active');
+        tab.setAttribute('aria-selected', 'true');
+        const period = tab.dataset.period;
+        // Тут в реале — подгрузка данных. Пока обновим заголовок недели.
+        const title = panel.querySelector('.week-chart .card-title');
+        if (title){
+          const map = { week:'Готовность по дням', month:'Готовность по неделям', year:'Готовность по месяцам' };
+          title.textContent = map[period] || title.textContent;
+        }
+      });
+    });
+
+    // Hero-trend клик → открывает/фокусирует панель тренда
+    const heroTrend = document.getElementById('heroTrend');
+    if (heroTrend){
+      heroTrend.addEventListener('click', () => {
+        const b = document.getElementById('trendExpandBtn');
+        if (!b) return;
+        if (b.getAttribute('aria-expanded') !== 'true') b.click();
+        else b.scrollIntoView({ behavior:'smooth', block:'center' });
+      });
+    }
+  }
+
+  function setupZoomButton(){
+    const btn = document.getElementById('thZoom');
+    const axis = document.getElementById('timelineAxis');
+    if (!btn || !axis) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (ZOOM > 1.05){
+        setZoom(1, 12);
+        axis.classList.remove('is-zoomed');
+      } else {
+        const nowH = hoursNow();
+        setZoom(3.5, nowH);
+        axis.classList.add('is-zoomed');
+        setMomentHour(nowH, true);
+      }
+    });
+  }
+
+>>>>>>> theirs
   if (document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);
   } else {
