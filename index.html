@@ -4,1965 +4,493 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Atlas Health — Сегодня</title>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/design-system.css">
-  <link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/patterns.js" defer></script>
+<script src="js/metrics.js" defer></script>
+<script src="js/timeline.js" defer></script>
+<script src="js/main.js" defer></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#E88060"/>
-      <stop offset="100%" stop-color="#E86E5E"/>
-    </linearGradient>
-    <linearGradient id="productivityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#5CC4A0"/>
-      <stop offset="100%" stop-color="#2FBF9B"/>
-    </linearGradient>
-  </defs>
-</svg>
 <div class="app">
 
-  <!-- СТРАНИЦА 1: ГЛАВНАЯ -->
-  <div class="snap-section">
-    <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-
-  <div id="comp-hero-header"></div>
-    <div id="comp-readiness-card"></div>
-
-    <!-- ГЛАВНОЕ ДЕЙСТВИЕ ДНЯ -->
-    <div class="card action-card" style="--aura:var(--activity-accent-glow)">
-      <div class="action-header">
-        <div class="action-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <div class="action-content">
-          <div class="action-title">Сон короче нормы на 1ч</div>
-          <div class="action-text">Ложись сегодня до 23:00 — иначе завтра готовность −10, как в прошлую пятницу</div>
-        </div>
-      </div>
-      <button class="action-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-         Напомнить в 22:30
-       </button>
-     </div>
-
-
-    <!-- ТАЙМЕРЫ И ЗАДАЧИ -->
-    <div class="card timers-card" style="--aura:rgba(232,161,60,.18)">
-      <div class="timers-header">
-        <div class="timers-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        </div>
-        <div class="timers-title">Таймеры и задачи</div>
-      </div>
-
-      <!-- Активные таймеры -->
-      <div class="active-timers" id="activeTimers"></div>
-
-      <!-- Помодоро -->
-      <div class="pomodoro-section" id="pomodoroSection">
-        <div class="pomodoro-header">
-          <div class="pomodoro-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg>
-          </div>
-          <div class="pomodoro-label">Помодоро</div>
-          <div class="pomodoro-cycles"><span id="pomodoroCount">0</span> циклов</div>
-          <button class="pomodoro-settings-btn" onclick="togglePomodoroSettings()" aria-label="Настройки">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </button>
-        </div>
-
-        <!-- Панель настроек -->
-        <div class="pomodoro-settings" id="pomodoroSettings" style="display:none">
-          <div class="ps-row">
-            <label class="ps-label">Работа</label>
-            <div class="ps-input-wrap">
-              <button class="ps-btn" onclick="adjustPomodoroSetting('work', -1)">−</button>
-              <input type="number" id="psWork" value="25" min="1" max="60" class="ps-input" onchange="updatePomodoroSetting('work', this.value)">
-              <span class="ps-unit">мин</span>
-              <button class="ps-btn" onclick="adjustPomodoroSetting('work', 1)">+</button>
-            </div>
-          </div>
-          <div class="ps-row">
-            <label class="ps-label">Отдых</label>
-            <div class="ps-input-wrap">
-              <button class="ps-btn" onclick="adjustPomodoroSetting('break', -1)">−</button>
-              <input type="number" id="psBreak" value="5" min="1" max="30" class="ps-input" onchange="updatePomodoroSetting('break', this.value)">
-              <span class="ps-unit">мин</span>
-              <button class="ps-btn" onclick="adjustPomodoroSetting('break', 1)">+</button>
-            </div>
-          </div>
-          <div class="ps-row">
-            <label class="ps-label">Длинный отдых</label>
-            <div class="ps-input-wrap">
-              <button class="ps-btn" onclick="adjustPomodoroSetting('longBreak', -1)">−</button>
-              <input type="number" id="psLongBreak" value="15" min="1" max="60" class="ps-input" onchange="updatePomodoroSetting('longBreak', this.value)">
-              <span class="ps-unit">мин</span>
-              <button class="ps-btn" onclick="adjustPomodoroSetting('longBreak', 1)">+</button>
-            </div>
-          </div>
-          <div class="ps-row">
-            <label class="ps-label">Циклов до отдыха</label>
-            <div class="ps-input-wrap">
-              <button class="ps-btn" onclick="adjustPomodoroSetting('cyclesBeforeLong', -1)">−</button>
-              <input type="number" id="psCyclesBeforeLong" value="4" min="1" max="10" class="ps-input" onchange="updatePomodoroSetting('cyclesBeforeLong', this.value)">
-              <span class="ps-unit">цикл</span>
-              <button class="ps-btn" onclick="adjustPomodoroSetting('cyclesBeforeLong', 1)">+</button>
-            </div>
-          </div>
-          <button class="ps-save-btn" onclick="togglePomodoroSettings()">Сохранить</button>
-        </div>
-
-        <div class="pomodoro-display">
-          <div class="pomodoro-time" id="pomodoroTime">25:00</div>
-          <div class="pomodoro-status" id="pomodoroStatus">Готов к работе</div>
-        </div>
-
-        <!-- Статистика за сегодня -->
-        <div class="pomodoro-stats" id="pomodoroStats">
-          <div class="pomo-stat">
-            <div class="pomo-stat-value" id="pomoCompleted">0</div>
-            <div class="pomo-stat-label">сессий</div>
-          </div>
-          <div class="pomo-stat">
-            <div class="pomo-stat-value" id="pomoFocusTime">0ч 0м</div>
-            <div class="pomo-stat-label">фокус</div>
-          </div>
-          <div class="pomo-stat">
-            <div class="pomo-stat-value" id="pomoGoal">0/8</div>
-            <div class="pomo-stat-label">цель</div>
-          </div>
-        </div>
-
-        <div class="pomodoro-controls">
-          <button class="pomodoro-btn" id="pomodoroStart" onclick="startPomodoro()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
-            Старт
-          </button>
-          <button class="pomodoro-btn reset" onclick="resetPomodoro()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            Сброс
-          </button>
-        </div>
-      </div>
-
-      <!-- Чат для создания задач -->
-      <div class="task-chat">
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-hint">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span>Напиши задачу — например: «Почистить зубы в 18:00»</span>
-          </div>
-        </div>
-        <form class="chat-input-row" onsubmit="handleChatSubmit(event)">
-          <input type="text" id="chatInput" class="chat-input" placeholder="Приготовить ужин через 50 минут..." autocomplete="off">
-          <button type="submit" class="chat-send">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- ПОТОК ДНЯ -->
-    <div class="card dayflow-card" style="--aura:rgba(232,161,60,.15)">
-      <div class="dayflow-header">
-        <div class="dayflow-title-group">
-          <div class="dayflow-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <div class="dayflow-title">Поток дня</div>
-        </div>
-        <div class="dayflow-summary">
-          <div class="dfs-spent">
-            <span class="dfs-label">Занято</span>
-            <span class="dfs-value" id="dfsSpent">—</span>
-          </div>
-          <div class="dfs-divider"></div>
-          <div class="dfs-free">
-            <span class="dfs-label">Свободно</span>
-            <span class="dfs-value" id="dfsFree">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Таймлайн -->
-      <div class="dayflow-timeline">
-        <div class="dft-hours">
-          <span>6</span>
-          <span>9</span>
-          <span>12</span>
-          <span>15</span>
-          <span>18</span>
-          <span>21</span>
-          <span>24</span>
-        </div>
-        <div class="dft-track" id="dftTrack">
-          <div class="dft-now" id="dftNow"></div>
-        </div>
-      </div>
-
-      <!-- Фокус и Продуктивность -->
-      <div class="dayflow-performance">
-        <div class="dfp-item">
-          <div class="dfp-ring-wrap">
-            <svg class="dfp-ring" viewBox="0 0 36 36">
-              <circle class="dfp-ring-bg" cx="18" cy="18" r="15"/>
-              <circle class="dfp-ring-fill focus-ring" cx="18" cy="18" r="15" id="dfpFocusRing"/>
-            </svg>
-            <div class="dfp-ring-value" id="dfpFocusValue">0%</div>
-          </div>
-          <div class="dfp-info">
-            <span class="dfp-label">Фокус</span>
-            <span class="dfp-sub" id="dfpFocusSub">0 из 8</span>
-          </div>
-        </div>
-        <div class="dfp-divider"></div>
-        <div class="dfp-item">
-          <div class="dfp-ring-wrap">
-            <svg class="dfp-ring" viewBox="0 0 36 36">
-              <circle class="dfp-ring-bg" cx="18" cy="18" r="15"/>
-              <circle class="dfp-ring-fill productivity-ring" cx="18" cy="18" r="15" id="dfpProductivityRing"/>
-            </svg>
-            <div class="dfp-ring-value" id="dfpProductivityValue">0%</div>
-          </div>
-          <div class="dfp-info">
-            <span class="dfp-label">Продуктивность</span>
-            <span class="dfp-sub" id="dfpProductivitySub">0/0 задач</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Список задач -->
-      <div class="dayflow-tasks" id="dayflowTasks"></div>
-
-      <!-- Панель Помодоро для задачи (скрыта по умолчанию) -->
-      <div class="task-pomodoro-panel" id="taskPomodoroPanel" style="display:none">
-        <div class="tpp-header">
-          <div class="tpp-title">
-            <span class="tpp-icon">🍅</span>
-            <span id="tppTaskName">Задача</span>
-          </div>
-          <button class="tpp-close" onclick="closeTaskPomodoro()">✕</button>
-        </div>
-        <div class="tpp-display">
-          <div class="tpp-time" id="tppTime">25:00</div>
-          <div class="tpp-status" id="tppStatus">Готов к работе</div>
-        </div>
-        <div class="tpp-progress">
-          <div class="tpp-sessions" id="tppSessions">
-            <span class="tpp-dot done"></span>
-            <span class="tpp-dot done"></span>
-            <span class="tpp-dot active"></span>
-            <span class="tpp-dot"></span>
-          </div>
-          <div class="tpp-sessions-text" id="tppSessionsText">2 из 4 сессий</div>
-        </div>
-        <div class="tpp-controls">
-          <button class="tpp-btn" id="tppStart" onclick="startTaskPomodoro()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
-            Старт
-          </button>
-          <button class="tpp-btn reset" onclick="resetTaskPomodoro()">Сброс</button>
-        </div>
-      </div>
-
-      <!-- Легенда -->
-      <div class="dayflow-legend">
-        <div class="dfl-item"><div class="dfl-dot pomodoro"></div><span>Фокус</span></div>
-        <div class="dfl-item"><div class="dfl-dot task"></div><span>Задачи</span></div>
-        <div class="dfl-item"><div class="dfl-dot workout"></div><span>Спорт</span></div>
-        <div class="dfl-item"><div class="dfl-dot free"></div><span>Свободно</span></div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- СТРАНИЦА 1.5: АКТИВНОСТЬ ДНЯ -->
-   <div id="activity-page" class="snap-section" style="--glow-color: var(--activity-accent-glow); --page-tint: var(--activity-accent-bg);">
-    <div class="activity-header">
-      <div class="activity-header-left">
-        <div>
-          <div class="page-title">Активность</div>
-          <div class="activity-subtitle">29 августа · Готовность высокая</div>
-        </div>
-        <div class="mascot-speech">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span class="speech-text">78 — отлично! Шаги почти закрыты. Добавь 15 мин ходьбы — и индекс будет 85+</span>
-        </div>
-      </div>
-        <div class="activity-mascot">
-          <div class="mascot-illustration" id="activityMascotIllustration"></div>
-          <div class="mascot-glow" id="activity-mascot-glow" style="--glow-color: var(--activity-accent-glow)"></div>
-          <svg width="80" height="90" viewBox="0 0 120 130" fill="none" xmlns="http://www.w3.org/2000/svg" id="activity-mascot-svg">
-            <ellipse cx="60" cy="120" rx="24" ry="5" fill="rgba(24,40,60,.06)"/>
-            <ellipse cx="44" cy="112" rx="9" ry="6" fill="#E8A07A" id="mascot-foot-l"/>
-            <ellipse cx="76" cy="112" rx="9" ry="6" fill="#E8A07A" id="mascot-foot-r"/>
-            <circle cx="60" cy="65" r="40" fill="#E8A07A" id="mascot-body"/>
-            <ellipse cx="60" cy="76" rx="24" ry="20" fill="#F0A090" id="mascot-belly"/>
-            <ellipse cx="24" cy="65" rx="9" ry="12" fill="#E8A07A" transform="rotate(-15 24 65)" id="mascot-arm-l"/>
-            <ellipse cx="96" cy="65" rx="9" ry="12" fill="#E8A07A" transform="rotate(15 96 65)" id="mascot-arm-r"/>
-            <rect x="35" y="40" width="50" height="8" rx="4" fill="#E8A07A"/>
-            <!-- Глаза - больше и выразительнее -->
-            <ellipse cx="40" cy="52" rx="14" ry="17" fill="#F0A090"/>
-            <ellipse cx="80" cy="52" rx="14" ry="17" fill="#F0A090"/>
-            <ellipse cx="42" cy="54" rx="10" ry="12" fill="#C87050"/>
-            <ellipse cx="82" cy="54" rx="10" ry="12" fill="#C87050"/>
-            <!-- Блики в глазах -->
-            <circle cx="46" cy="49" r="5" fill="#F0A090"/>
-            <circle cx="86" cy="49" r="5" fill="#F0A090"/>
-            <circle cx="39" cy="57" r="3" fill="#F0A090" opacity="0.7"/>
-            <circle cx="79" cy="57" r="3" fill="#F0A090" opacity="0.7"/>
-            <!-- Улыбка - дружелюбная -->
-            <path d="M44 78 Q60 92 76 78" stroke="#C87050" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <path d="M48 78 Q60 86 72 78" fill="#C87050" opacity="0.3"/>
-            <!-- Щёки - румяные -->
-            <ellipse cx="26" cy="68" rx="9" ry="6" fill="#F0A090" opacity="0.6"/>
-            <ellipse cx="94" cy="68" rx="9" ry="6" fill="#F0A090" opacity="0.6"/>
-            <!-- Маленькие веснушки -->
-            <circle cx="30" cy="64" r="1.2" fill="#E8A07A" opacity="0.4"/>
-            <circle cx="90" cy="64" r="1.2" fill="#E8A07A" opacity="0.4"/>
-            <!-- Брови - мягкие -->
-            <path d="M32 38 Q40 32 50 36" stroke="#C87050" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path d="M70 36 Q80 32 88 38" stroke="#C87050" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
-    </div>
-
-    <!-- Индекс активности (Oura/Whoop Score) -->
-    <div class="card activity-index-card" style="--aura:var(--activity-accent-glow)">
-      <div class="activity-index-top">
-        <div class="activity-index-label">Индекс активности</div>
-         <div class="activity-index-top-right">
-          <button class="history-btn" id="historyBtn" type="button" onclick="toggleHistory()" aria-expanded="false" aria-controls="historyPanel">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            История
-          </button>
-        </div>
-      </div>
-       <div class="history-panel" id="historyPanel">
-         <!-- Навигация периода -->
-         <div class="history-nav">
-           <button class="history-nav-arrow" id="historyPrev" type="button" onclick="navHistoryPeriod(-1)" aria-label="Предыдущий период">
-             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-           </button>
-           <div class="history-nav-center">
-             <div class="history-nav-period" id="historyPeriodLabel">23–29 августа</div>
-             <div class="history-toggle" role="tablist" aria-label="Период истории">
-               <button class="history-toggle-btn active" id="toggleWeek" type="button" role="tab" aria-selected="true" onclick="switchHistoryRange('week')">Неделя</button>
-               <button class="history-toggle-btn" id="toggleMonth" type="button" role="tab" aria-selected="false" onclick="switchHistoryRange('month')">Месяц</button>
-             </div>
-           </div>
-           <button class="history-nav-arrow" id="historyNext" type="button" onclick="navHistoryPeriod(1)" aria-label="Следующий период">
-             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-           </button>
-           <button class="history-close" type="button" onclick="toggleHistory()" aria-label="Свернуть историю">
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-           </button>
-         </div>
-
-         <!-- Статистика периода -->
-         <div class="history-stats" id="historyStats">
-           <div class="history-stat">
-             <div class="history-stat-val" id="statAvg">77</div>
-             <div class="history-stat-label">Среднее</div>
-           </div>
-           <div class="history-stat">
-             <div class="history-stat-val" id="statMax">85</div>
-             <div class="history-stat-label">Максимум</div>
-           </div>
-           <div class="history-stat">
-             <div class="history-stat-val" id="statTrend">
-               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-             </div>
-             <div class="history-stat-label">+5 к норме</div>
-           </div>
-         </div>
-
-         <!-- График -->
-         <div class="history-bars-wrap">
-           <div class="history-bars" id="historyBars">
-             <div class="history-col"><span>78</span><div class="history-bar" style="height:36px"></div><i>Сб</i></div>
-             <div class="history-col"><span>74</span><div class="history-bar" style="height:34px"></div><i>Вс</i></div>
-             <div class="history-col"><span>81</span><div class="history-bar" style="height:37px"></div><i>Пн</i></div>
-             <div class="history-col"><span>69</span><div class="history-bar" style="height:32px"></div><i>Вт</i></div>
-             <div class="history-col"><span>85</span><div class="history-bar" style="height:39px"></div><i>Ср</i></div>
-             <div class="history-col"><span>72</span><div class="history-bar" style="height:33px"></div><i>Чт</i></div>
-             <div class="history-col today"><span>78</span><div class="history-bar today" style="height:36px"></div><i>Пт</i></div>
-           </div>
-         </div>
-
-         <!-- История активностей -->
-         <div class="history-section" id="historySection">
-           <div class="history-section-title">История активностей</div>
-
-          <div class="history-day">
-            <div class="history-day-head">
-              <span class="hd-date">Пятница, 29 августа</span>
-              <span class="hd-score">78</span>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Ходьба</div>
-                <div class="session-time">14:05 – 14:45 · 40 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>2.7 км</b>
-                <span>3 900 шагов</span>
-              </div>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Утренняя прогулка</div>
-                <div class="session-time">08:10 – 08:35 · 25 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>1.5 км</b>
-                <span>2 300 шагов</span>
-              </div>
-            </div>
-            <div class="history-day-total">Итог: 6 200 шагов · 4.2 км</div>
-          </div>
-
-          <div class="history-day history-extra">
-            <div class="history-day-head">
-              <span class="hd-date">Четверг, 28 августа</span>
-              <span class="hd-score">72</span>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Ходьба</div>
-                <div class="session-time">13:00 – 13:50 · 50 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>3.1 км</b>
-                <span>4 100 шагов</span>
-              </div>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Вечерняя прогулка</div>
-                <div class="session-time">18:30 – 18:50 · 20 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>1.2 км</b>
-                <span>1 700 шагов</span>
-              </div>
-            </div>
-            <div class="history-day-total">Итог: 5 800 шагов · 4.3 км</div>
-          </div>
-
-          <div class="history-day history-extra">
-            <div class="history-day-head">
-              <span class="hd-date">Среда, 27 августа</span>
-              <span class="hd-score">81</span>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Ходьба</div>
-                <div class="session-time">15:00 – 15:40 · 40 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>3.0 км</b>
-                <span>4 000 шагов</span>
-              </div>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Утренняя прогулка</div>
-                <div class="session-time">09:00 – 09:20 · 20 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>1.4 км</b>
-                <span>1 800 шагов</span>
-              </div>
-            </div>
-            <div class="session-item">
-              <div class="session-icon">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></svg>
-              </div>
-              <div class="session-info">
-                <div class="session-name">Вечерняя прогулка</div>
-                <div class="session-time">20:00 – 20:15 · 15 мин</div>
-              </div>
-              <div class="session-stats">
-                <b>0.8 км</b>
-                <span>1 100 шагов</span>
-              </div>
-            </div>
-            <div class="history-day-total">Итог: 6 900 шагов · 5.2 км</div>
-          </div>
-
-          <button class="history-more-btn" id="historyMoreBtn" type="button" onclick="toggleHistoryDays()" aria-expanded="false">
-            Показать все дни
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-        </div>
-      </div>
-       <div class="activity-index-main">
-        <div class="activity-visual">
-          <div class="av-score">
-            <span class="av-score-num">78</span>
-            <span class="av-score-lbl">индекс</span>
-          </div>
-          <svg class="av-wave" viewBox="0 0 120 80" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="var(--activity-accent-light)" stop-opacity="0.3"/>
-                <stop offset="50%" stop-color="var(--activity-accent)" stop-opacity="0.6"/>
-                <stop offset="100%" stop-color="var(--activity-accent)" stop-opacity="1"/>
-              </linearGradient>
-            </defs>
-            <path class="av-wave-path" d="M0,40 C15,10 30,70 45,40 C60,10 75,70 90,40 C105,10 115,55 120,40 L120,80 L0,80 Z"/>
-          </svg>
-          <div class="av-pulse"></div>
-        </div>
-        <div class="activity-index-metrics">
-          <div class="aim-item">
-            <span class="aim-name">Шаги</span>
-            <div class="aim-bar"><div class="aim-fill" style="width:85%"></div></div>
-            <span class="aim-value">85%</span>
-          </div>
-          <div class="aim-item">
-            <span class="aim-name">Калории</span>
-            <div class="aim-bar"><div class="aim-fill" style="width:72%"></div></div>
-            <span class="aim-value">72%</span>
-          </div>
-          <div class="aim-item">
-            <span class="aim-name">Дистанция</span>
-            <div class="aim-bar"><div class="aim-fill" style="width:70%"></div></div>
-            <span class="aim-value">70%</span>
-          </div>
-          <div class="aim-item">
-            <span class="aim-name">Сидячее</span>
-            <div class="aim-bar"><div class="aim-fill" style="width:65%"></div></div>
-            <span class="aim-value">65%</span>
-          </div>
-        </div>
-      </div>
-      <div class="activity-index-trends">
-        <div class="ait-item">
-          <span class="ait-label">Вчера</span>
-          <span class="ait-value up">↑5</span>
-        </div>
-        <div class="ait-item">
-          <span class="ait-label">Твоя норма</span>
-          <span class="ait-value">72</span>
-        </div>
-        <div class="ait-item">
-          <span class="ait-label">Твой рекорд</span>
-          <span class="ait-value">89</span>
-        </div>
-      </div>
-      <div class="activity-index-verdict">
-        Отличная динамика! 78 выше твоей нормы (72)
-      </div>
-    </div>
-
-    <!-- СВЯЗЬ АКТИВНОСТИ С ГОТОВНОСТЬЮ -->
-    <div class="card connection-card" style="--aura:rgba(232,161,60,.20)">
-      <div class="connection-header">
-        <div class="connection-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-        </div>
-        <div class="connection-title">Как твоя активность влияет на готовность</div>
-      </div>
-      <div class="connection-content">
-        <div class="connection-item">
-          <span class="connection-label">При таком индексе сегодня</span>
-          <span class="connection-value up">Завтра готовность +5</span>
-        </div>
-        <div class="connection-item">
-          <span class="connection-label">Если закроешь все цели</span>
-          <span class="connection-value up">Серия 8 дней → бонус к HRV</span>
-        </div>
-        <div class="connection-item">
-          <span class="connection-label">Если не тренируешься</span>
-          <span class="connection-value down">Готовность −3 (нет стимула)</span>
-        </div>
-      </div>
-    </div>
-
-     <!-- РЕКОМЕНДАЦИЯ НА СЕЙЧАС -->
-    <div class="card now-card" style="--aura:rgba(232,161,60,.20)">
-      <div class="now-header">
-        <div class="now-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        </div>
-        <div class="now-content">
-          <div class="now-title">Рекомендация на сейчас</div>
-          <div class="now-text">Иди пройди 15 мин быстрым шагом — это даст +2000 шагов и закроет цель к вечеру. Твоя готность высокая, нагрузка усвоится.</div>
-        </div>
-      </div>
-      <button class="now-btn">Начать прогулку</button>
-    </div>
-
-    <!-- Табы категорий -->
-    <div class="activity-tabs" id="activityTabs">
-      <button class="activity-tab active" data-tab="steps">Шаги</button>
-      <button class="activity-tab cal" data-tab="calories">Калории</button>
-      <button class="activity-tab dist" data-tab="distance">Дистанция</button>
-      <button class="activity-tab sit" data-tab="sitting">Сидячее</button>
-    </div>
-
-    <!-- Панель: Шаги -->
-    <div class="tab-panel active" id="tab-steps">
-    <!-- Мотивация шагов -->
-    <div class="card motivation-card" style="--aura:rgba(232,161,60,.28)">
-      <div class="motivation-content">
-        <div class="motivation-highlight">
-          <span class="highlight-icon">↑</span>
-          <span class="highlight-text">На 400 шагов больше чем вчера</span>
-        </div>
-        <div class="motivation-eq">
-          <span class="eq-sep">=</span>
-          <span class="eq-text">Целый маршрут от дома до работы и обратно</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Карусель шагов -->
-    <div class="steps-carousel">
-      <div class="carousel-track" id="stepsTrack">
-        <!-- Слайд 1: Основная карточка с метриками и недельным графиком -->
-         <div class="card steps-card" style="--aura:var(--activity-accent-glow)">
-           <div class="steps-main">
-              <div class="steps-score-box">
-               <div class="steps-label">Шаги</div>
-                <div class="steps-value-chip" style="background: #E88060;">
-                  <div class="steps-value" style="color: #fff; -webkit-text-fill-color: #fff;">6200</div>
-                  <div class="steps-goal" style="color: rgba(255,255,255,0.7);">/ 8000</div>
-                </div>
-             </div>
-             <div class="steps-arc-box">
-               <svg width="120" height="70" viewBox="0 0 120 70">
-                 <defs>
-                   <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                     <stop offset="0%" stop-color="#F0A090"/>
-                     <stop offset="100%" stop-color="var(--activity-accent)"/>
-                   </linearGradient>
-                   <filter id="arcGlow" x="-50%" y="-50%" width="200%" height="200%">
-                     <feGaussianBlur stdDeviation="3" result="blur"/>
-                     <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                   </filter>
-                 </defs>
-                 <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10" stroke-linecap="round"/>
-                 <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="url(#arcGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="29" filter="url(#arcGlow)"/>
-                 <circle cx="90" cy="29" r="5" fill="var(--activity-accent)" filter="url(#arcGlow)" opacity="0.9"/>
-               </svg>
-               <div class="arc-percent" style="margin-top: -8px;">77%</div>
-             </div>
-           </div>
-           <div class="steps-progress">
-             <div class="progress-track">
-               <div class="progress-fill steps" style="width: 77%"></div>
-             </div>
-           </div>
-           <div class="steps-personal">
-             <div class="sp-item">
-               <span class="sp-label">Твоя норма 30 дней</span>
-               <span class="sp-value">6,400</span>
-             </div>
-             <div class="sp-action">
-               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-               Иди пройди 15 мин — закроешь цель
-             </div>
-           </div>
-           <div class="steps-metrics">
-             <div class="step-metric">
-               <div class="step-metric-value basics">4,800</div>
-               <div class="step-metric-label">Утренние</div>
-               <div class="step-metric-sub">до 12:00</div>
-             </div>
-             <div class="step-metric">
-               <div class="step-metric-value active-cal">1,400</div>
-               <div class="step-metric-label">Дневные</div>
-               <div class="step-metric-sub">после 12:00</div>
-             </div>
-             <div class="step-metric">
-               <div class="step-metric-value forecast">7,100</div>
-               <div class="step-metric-label">Прогноз</div>
-               <div class="step-metric-sub">к 22:00</div>
-             </div>
-           </div>
-           <!-- Мини недельный график -->
-           <div class="steps-week-mini">
-             <div class="week-mini-header">
-               <span class="week-mini-title">Шаги за неделю</span>
-               <span class="week-mini-avg">Норма: 6,400</span>
-             </div>
-             <div class="week-mini-bars">
-               <div class="wm-bar"><div class="wm-fill" style="height:70%"></div><span>Пн</span></div>
-               <div class="wm-bar"><div class="wm-fill" style="height:82%"></div><span>Вт</span></div>
-               <div class="wm-bar"><div class="wm-fill" style="height:74%"></div><span>Ср</span></div>
-               <div class="wm-bar"><div class="wm-fill" style="height:68%"></div><span>Чт</span></div>
-               <div class="wm-bar"><div class="wm-fill today" style="height:77%"></div><span>Пт</span></div>
-               <div class="wm-bar"><div class="wm-fill forecast" style="height:60%"></div><span>Сб</span></div>
-               <div class="wm-bar"><div class="wm-fill forecast" style="height:55%"></div><span>Вс</span></div>
-             </div>
-           </div>
-         </div>
-         <!-- Слайд 2: По часам -->
-         <div class="card steps-hourly-card" style="--aura:var(--activity-accent-glow)">
-           <div class="hourly-header">
-             <div class="hourly-title">По часам</div>
-             <div class="hourly-peak">Пик: 14:00</div>
-           </div>
-           <div class="hourly-bars">
-             <div class="h-bar"><div class="hb-fill steps" style="height:15%"></div><span>6</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:35%"></div><span>8</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:55%"></div><span>10</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:80%"></div><span>12</span></div>
-             <div class="h-bar"><div class="hb-fill steps today" style="height:100%"></div><span>14</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:45%"></div><span>16</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:60%"></div><span>18</span></div>
-             <div class="h-bar"><div class="hb-fill steps" style="height:30%"></div><span>20</span></div>
-           </div>
-         </div>
-         <!-- Слайд 3: Серия + Рекорды -->
-         <div class="card steps-streak-card" style="--aura:rgba(240,182,76,.25)">
-           <div class="streak-header">
-             <div class="streak-title">Серия достижений</div>
-             <div class="streak-best">Ещё 5 дней до рекорда 12</div>
-           </div>
-           <div class="streak-main">
-             <div class="streak-days">7</div>
-             <div class="streak-label">дней подряд</div>
-           </div>
-           <div class="streak-week">
-             <div class="sw-day done"><span>Пн</span><div class="sw-check">✓</div></div>
-             <div class="sw-day done"><span>Вт</span><div class="sw-check">✓</div></div>
-             <div class="sw-day done"><span>Ср</span><div class="sw-check">✓</div></div>
-             <div class="sw-day done"><span>Чт</span><div class="sw-check">✓</div></div>
-             <div class="sw-day current"><span>Пт</span><div class="sw-check">·</div></div>
-             <div class="sw-day"><span>Сб</span><div class="sw-check"></div></div>
-             <div class="sw-day"><span>Вс</span><div class="sw-check"></div></div>
-           </div>
-           <div class="streak-records">
-             <div class="str-record"><span>Максимум</span><b>14,250</b></div>
-             <div class="str-record"><span>Лучшая серия</span><b>12 дней</b></div>
-           </div>
-         </div>
-         <!-- Слайд 4: Прогноз -->
-         <div class="card steps-forecast-card" style="--aura:rgba(47,191,155,.22)">
-           <div class="forecast-header">
-             <div class="forecast-title">Прогноз недели</div>
-             <div class="forecast-status good">На верном пути</div>
-           </div>
-           <div class="forecast-chart">
-             <div class="fc-bar done"><span>Пн</span><b>7800</b></div>
-             <div class="fc-bar done"><span>Вт</span><b>8200</b></div>
-             <div class="fc-bar done"><span>Ср</span><b>7400</b></div>
-             <div class="fc-bar done"><span>Чт</span><b>6800</b></div>
-             <div class="fc-bar current"><span>Пт</span><b>6200</b></div>
-             <div class="fc-bar forecast"><span>Сб</span><b>~7200</b></div>
-             <div class="fc-bar forecast"><span>Вс</span><b>~6500</b></div>
-           </div>
-           <div class="forecast-goal">Цель 56,000 · Если идишь 15 мин сейчас → закроешь</div>
-         </div>
-      </div>
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-    </div><!-- end tab-steps -->
-
-    <!-- Панель: Калории -->
-    <div class="tab-panel" id="tab-calories">
-    <!-- Мотивация калорий -->
-    <div class="card motivation-card cal" style="--aura:rgba(47,191,155,.28)">
-      <div class="motivation-content">
-        <div class="motivation-highlight">
-          <span class="highlight-icon">↑</span>
-          <span class="highlight-text">На 50 ккал больше чем вчера</span>
-        </div>
-        <div class="motivation-eq">
-          <span class="eq-sep">=</span>
-          <span class="eq-text">2 кружки латте с сахаром</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Карусель калорий -->
-    <div class="steps-carousel calories-carousel">
-      <div class="carousel-track" id="caloriesTrack">
-        <div class="card steps-card" style="--aura:var(--activity-accent-glow)">
-          <div class="steps-main">
-             <div class="steps-score-box">
-              <div class="steps-label">Калории</div>
-              <div class="steps-value-chip cal" style="background: #3DC9A4;">
-                <div class="steps-value" style="color: #fff; -webkit-text-fill-color: #fff;">320</div>
-                <div class="steps-goal" style="color: rgba(255,255,255,0.7);">/ 500 ккал</div>
-              </div>
-            </div>
-            <div class="steps-arc-box">
-              <svg width="120" height="70" viewBox="0 0 120 70">
-                <defs>
-                   <linearGradient id="calArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                     <stop offset="0%" stop-color="#5CC4A0"/>
-                     <stop offset="100%" stop-color="#3DC9A4"/>
-                   </linearGradient>
-                  <filter id="calArcGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3" result="blur"/>
-                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                  </filter>
-                </defs>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10" stroke-linecap="round"/>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="url(#calArcGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="45" filter="url(#calArcGlow)"/>
-                <circle cx="77" cy="19" r="5" fill="#3DC9A4" filter="url(#calArcGlow)" opacity="0.9"/>
-              </svg>
-              <div class="arc-percent" style="margin-top: -8px;">64%</div>
-            </div>
-          </div>
-          <div class="steps-progress">
-            <div class="progress-track">
-              <div class="progress-fill cal" style="width: 64%"></div>
-            </div>
-          </div>
-          <div class="steps-metrics">
-            <div class="step-metric">
-              <div class="step-metric-value basics">180</div>
-              <div class="step-metric-label">Базовые</div>
-              <div class="step-metric-sub">ккал</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value active-cal">140</div>
-              <div class="step-metric-label">Активные</div>
-              <div class="step-metric-sub">ккал</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value forecast">440</div>
-              <div class="step-metric-label">Прогноз</div>
-              <div class="step-metric-sub">к 22:00</div>
-            </div>
-          </div>
-          <div class="steps-personal">
-            <div class="sp-item">
-              <span class="sp-label">Твоя норма 30 дней</span>
-              <span class="sp-value">340 ккал</span>
-            </div>
-            <div class="sp-action">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              Добавь 10 мин ходьбы — закроешь цель
-            </div>
-          </div>
-        </div>
-        <div class="card steps-zones-card" style="--aura:rgba(232,161,60,.18)">
-          <div class="zones-header">
-            <div class="zones-title">Активность</div>
-            <div class="zones-total">320 ккал</div>
-          </div>
-          <div class="zones-recommend">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.6 1 1.5 1 2.5h6c0-1 .3-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>
-            Тебе не хватает активного движения — иди пройди 15 мин
-          </div>
-        </div>
-        <div class="card steps-hourly-card" style="--aura:var(--activity-accent-glow)">
-          <div class="hourly-header">
-            <div class="hourly-title">По часам</div>
-            <div class="hourly-peak">Пик: 14:00</div>
-          </div>
-          <div class="hourly-bars">
-            <div class="h-bar"><div class="hb-fill cal" style="height:20%"></div><span>6</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:40%"></div><span>8</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:65%"></div><span>10</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:90%"></div><span>12</span></div>
-            <div class="h-bar"><div class="hb-fill cal today" style="height:100%"></div><span>14</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:75%"></div><span>16</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:50%"></div><span>18</span></div>
-            <div class="h-bar"><div class="hb-fill cal" style="height:30%"></div><span>20</span></div>
-          </div>
-          <div class="hourly-footer">
-            <span>Обычно в 14:00 ты на пике → используй это время</span>
-          </div>
-        </div>
-        <div class="card steps-week-card" style="--aura:var(--activity-accent-glow)">
-          <div class="week-header">
-            <div class="week-title">Калории за неделю</div>
-            <div class="week-avg">Твоя норма: 340</div>
-          </div>
-          <div class="week-chart-container">
-            <svg class="week-chart" viewBox="0 0 300 140" id="calWeekChart"></svg>
-          </div>
-        </div>
-        <div class="card steps-records-card" style="--aura:var(--activity-accent-glow)">
-          <div class="records-header">
-            <div class="records-title">Личные рекорды</div>
-            <div class="records-count">2 рекорда</div>
-          </div>
-          <div class="records-list">
-            <div class="record-item gold">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">680 ккал</div>
-                <div class="record-label">Максимум за день</div>
-              </div>
-              <div class="record-date">15 июл</div>
-            </div>
-            <div class="record-item silver">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">3,200 ккал</div>
-                <div class="record-label">Максимум за неделю</div>
-              </div>
-              <div class="record-date">12-18 июл</div>
-            </div>
-          </div>
-        </div>
-        <div class="card steps-forecast-card" style="--aura:rgba(47,191,155,.20)">
-          <div class="forecast-header">
-            <div class="forecast-title">Прогноз недели</div>
-            <div class="forecast-status good">На верном пути</div>
-          </div>
-          <div class="forecast-chart">
-            <div class="fc-bar done"><span>Пн</span><b>350</b></div>
-            <div class="fc-bar done"><span>Вт</span><b>420</b></div>
-            <div class="fc-bar done"><span>Ср</span><b>480</b></div>
-            <div class="fc-bar done"><span>Чт</span><b>320</b></div>
-            <div class="fc-bar current"><span>Пт</span><b>320</b></div>
-            <div class="fc-bar forecast"><span>Сб</span><b>~380</b></div>
-            <div class="fc-bar forecast"><span>Вс</span><b>~350</b></div>
-          </div>
-          <div class="forecast-total">
-            <div class="ft-item">
-              <div class="ft-value">2,170</div>
-              <div class="ft-label">Текущая</div>
-            </div>
-            <div class="ft-arrow">→</div>
-            <div class="ft-item">
-              <div class="ft-value">2,900</div>
-              <div class="ft-label">Прогноз</div>
-            </div>
-          </div>
-          <div class="forecast-goal">Цель 3,500 · Если идишь 15 мин → закроешь</div>
-        </div>
-        <div class="card steps-compare-card" style="--aura:rgba(47,191,155,.20)">
-          <div class="compare-header">
-            <div class="compare-title">Сегодня vs Твоя норма</div>
-          </div>
-          <div class="compare-items">
-            <div class="compare-item">
-              <div class="compare-label">Активные</div>
-              <div class="compare-values">
-                <span class="compare-now">140</span>
-                <span class="compare-arrow up">↑ 25 к норме</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill up" style="width:65%"></div></div>
-            </div>
-            <div class="compare-item">
-              <div class="compare-label">Базовые</div>
-              <div class="compare-values">
-                <span class="compare-now">180</span>
-                <span class="compare-arrow same">≈ норма</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill" style="width:50%"></div></div>
-            </div>
-            <div class="compare-item">
-              <div class="compare-label">Всего</div>
-              <div class="compare-values">
-                <span class="compare-now">320</span>
-                <span class="compare-arrow up">↑ 25 к норме</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill up" style="width:64%"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-    </div><!-- end tab-calories -->
-
-    <!-- Панель: Дистанция -->
-    <div class="tab-panel" id="tab-distance">
-    <!-- Мотивация дистанции -->
-    <div class="card motivation-card dist" style="--aura:rgba(47,191,155,.28)">
-      <div class="motivation-content">
-        <div class="motivation-highlight">
-          <span class="highlight-icon">↑</span>
-          <span class="highlight-text">На 0.5 км больше чем вчера</span>
-        </div>
-        <div class="motivation-eq">
-          <span class="eq-sep">=</span>
-          <span class="eq-text">3 круга вокруг центрального парка</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Карусель дистанции -->
-    <div class="steps-carousel distance-carousel">
-      <div class="carousel-track" id="distanceTrack">
-        <div class="card steps-card" style="--aura:var(--activity-accent-glow)">
-          <div class="steps-main">
-             <div class="steps-score-box">
-              <div class="steps-label">Дистанция</div>
-              <div class="steps-value-chip dist" style="background: #31A8C9;">
-                <div class="steps-value" style="color: #fff; -webkit-text-fill-color: #fff;">4.2</div>
-                <div class="steps-goal" style="color: rgba(255,255,255,0.7);">/ 6 км</div>
-              </div>
-            </div>
-            <div class="steps-arc-box">
-              <svg width="120" height="70" viewBox="0 0 120 70">
-                <defs>
-                   <linearGradient id="distArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                     <stop offset="0%" stop-color="#5BB8D8"/>
-                     <stop offset="100%" stop-color="#31A8C9"/>
-                   </linearGradient>
-                  <filter id="distArcGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3" result="blur"/>
-                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                  </filter>
-                </defs>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10" stroke-linecap="round"/>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="url(#distArcGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="38" filter="url(#distArcGlow)"/>
-                <circle cx="83" cy="23" r="5" fill="#31A8C9" filter="url(#distArcGlow)" opacity="0.9"/>
-              </svg>
-              <div class="arc-percent" style="margin-top: -8px;">70%</div>
-            </div>
-          </div>
-          <div class="steps-progress">
-            <div class="progress-track">
-              <div class="progress-fill dist" style="width: 70%"></div>
-            </div>
-          </div>
-          <div class="steps-metrics">
-            <div class="step-metric">
-              <div class="step-metric-value tempo">8:30</div>
-              <div class="step-metric-label">Средний темп</div>
-              <div class="step-metric-sub">мин/км</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value cadence">52</div>
-              <div class="step-metric-label">Время ходьбы</div>
-              <div class="step-metric-sub">мин</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value forecast">5.6</div>
-              <div class="step-metric-label">Прогноз</div>
-              <div class="step-metric-sub">к 22:00</div>
-            </div>
-          </div>
-          <div class="steps-personal">
-            <div class="sp-item">
-              <span class="sp-label">Твоя норма 30 дней</span>
-              <span class="sp-value">3.8 км</span>
-            </div>
-            <div class="sp-action">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              Иди 10 мин — закроешь цель
-            </div>
-          </div>
-        </div>
-        <div class="card steps-zones-card" style="--aura:rgba(49,168,201,.18)">
-          <div class="zones-header">
-            <div class="zones-title">Темп</div>
-            <div class="zones-total">8:30 мин/км</div>
-          </div>
-          <div class="zones-recommend">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.6 1 1.5 1 2.5h6c0-1 .3-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>
-            Твой обычный темп 7:45 — ускорься на 30 сек
-          </div>
-        </div>
-        <div class="card steps-hourly-card" style="--aura:rgba(49,168,201,.22)">
-          <div class="hourly-header">
-            <div class="hourly-title">По часам</div>
-            <div class="hourly-peak">Пик: 14:00</div>
-          </div>
-          <div class="hourly-bars">
-            <div class="h-bar"><div class="hb-fill dist" style="height:10%"></div><span>6</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:30%"></div><span>8</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:55%"></div><span>10</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:80%"></div><span>12</span></div>
-            <div class="h-bar"><div class="hb-fill dist today" style="height:100%"></div><span>14</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:65%"></div><span>16</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:40%"></div><span>18</span></div>
-            <div class="h-bar"><div class="hb-fill dist" style="height:20%"></div><span>20</span></div>
-          </div>
-          <div class="hourly-footer">
-            <span>Обычно в 14:00 ты на пике → используй это время</span>
-          </div>
-        </div>
-        <div class="card steps-week-card" style="--aura:rgba(49,168,201,.25)">
-          <div class="week-header">
-            <div class="week-title">Дистанция за неделю</div>
-            <div class="week-avg">Твоя норма: 3.8 км</div>
-          </div>
-          <div class="week-chart-container">
-            <svg class="week-chart" viewBox="0 0 300 140" id="distWeekChart"></svg>
-          </div>
-        </div>
-        <div class="card steps-records-card" style="--aura:rgba(49,168,201,.22)">
-          <div class="records-header">
-            <div class="records-title">Личные рекорды</div>
-            <div class="records-count">2 рекорда</div>
-          </div>
-          <div class="records-list">
-            <div class="record-item gold">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">8.5 км</div>
-                <div class="record-label">Максимум за день</div>
-              </div>
-              <div class="record-date">15 июл</div>
-            </div>
-            <div class="record-item silver">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">42 км</div>
-                <div class="record-label">Максимум за неделю</div>
-              </div>
-               <div class="record-date">12-18 июл</div>
-            </div>
-          </div>
-        </div>
-        <div class="card steps-forecast-card" style="--aura:rgba(49,168,201,.20)">
-          <div class="forecast-header">
-            <div class="forecast-title">Прогноз недели</div>
-            <div class="forecast-status good">На верном пути</div>
-          </div>
-          <div class="forecast-chart">
-            <div class="fc-bar done"><span>Пн</span><b>3.8</b></div>
-            <div class="fc-bar done"><span>Вт</span><b>4.5</b></div>
-            <div class="fc-bar done"><span>Ср</span><b>5.2</b></div>
-            <div class="fc-bar done"><span>Чт</span><b>3.2</b></div>
-            <div class="fc-bar current"><span>Пт</span><b>4.2</b></div>
-            <div class="fc-bar forecast"><span>Сб</span><b>~4.8</b></div>
-            <div class="fc-bar forecast"><span>Вс</span><b>~4.2</b></div>
-          </div>
-          <div class="forecast-total">
-            <div class="ft-item">
-              <div class="ft-value">21</div>
-              <div class="ft-label">Текущая</div>
-            </div>
-            <div class="ft-arrow">→</div>
-            <div class="ft-item">
-              <div class="ft-value">29.4</div>
-              <div class="ft-label">Прогноз</div>
-            </div>
-          </div>
-          <div class="forecast-goal">Цель 42 км · Если идишь 15 мин → закроешь</div>
-        </div>
-        <div class="card steps-compare-card" style="--aura:rgba(49,168,201,.20)">
-          <div class="compare-header">
-            <div class="compare-title">Сегодня vs Твоя норма</div>
-          </div>
-          <div class="compare-items">
-            <div class="compare-item">
-              <div class="compare-label">Дистанция</div>
-              <div class="compare-values">
-                <span class="compare-now">4.2 км</span>
-                <span class="compare-arrow up">↑ 0.4 к норме</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill up" style="width:70%"></div></div>
-            </div>
-            <div class="compare-item">
-              <div class="compare-label">Время ходьбы</div>
-              <div class="compare-values">
-                <span class="compare-now">52 мин</span>
-                <span class="compare-arrow up">↑ 8 к норме</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill up" style="width:65%"></div></div>
-            </div>
-            <div class="compare-item">
-              <div class="compare-label">Средний темп</div>
-              <div class="compare-values">
-                <span class="compare-now">8:30</span>
-                <span class="compare-arrow down">↓ 0:15 к норме</span>
-              </div>
-              <div class="compare-bar"><div class="compare-fill down" style="width:55%"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-    </div><!-- end tab-distance -->
-
-    <!-- Панель: Сидячее -->
-    <div class="tab-panel" id="tab-sitting">
-    <!-- Мотивация сидячего -->
-    <div class="card motivation-card sit" style="--aura:rgba(47,191,155,.28)">
-      <div class="motivation-content">
-        <div class="motivation-highlight">
-          <span class="highlight-icon">↓</span>
-          <span class="highlight-text">На 20 мин меньше сидения чем вчера</span>
-        </div>
-        <div class="motivation-eq">
-          <span class="eq-sep">=</span>
-          <span class="eq-text">1 фильм без перерыва</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Карусель сидячего времени -->
-    <div class="steps-carousel sitting-carousel">
-      <div class="carousel-track" id="sittingTrack">
-        <div class="card steps-card" style="--aura:var(--activity-accent-glow)">
-          <div class="steps-main">
-             <div class="steps-score-box">
-              <div class="steps-label">Сидячее время</div>
-              <div class="steps-value-chip sit" style="background: #E5677E;">
-                <div class="steps-value" style="color: #fff; -webkit-text-fill-color: #fff;">2:15</div>
-                <div class="steps-goal" style="color: rgba(255,255,255,0.7);">/ 4ч</div>
-              </div>
-            </div>
-            <div class="steps-arc-box">
-              <svg width="120" height="70" viewBox="0 0 120 70">
-                <defs>
-                   <linearGradient id="sitArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                     <stop offset="0%" stop-color="#F08090"/>
-                     <stop offset="100%" stop-color="#E5677E"/>
-                   </linearGradient>
-                  <filter id="sitArcGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3" result="blur"/>
-                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-                  </filter>
-                </defs>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="10" stroke-linecap="round"/>
-                <path d="M 15 55 A 40 40 0 0 1 105 55" fill="none" stroke="url(#sitArcGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="58" filter="url(#sitArcGlow)"/>
-                <circle cx="65" cy="15" r="5" fill="#E5677E" filter="url(#sitArcGlow)" opacity="0.9"/>
-              </svg>
-              <div class="arc-percent good" style="margin-top: -8px;">54%</div>
-            </div>
-          </div>
-          <div class="steps-progress">
-            <div class="progress-track">
-              <div class="progress-fill sit" style="width: 54%"></div>
-            </div>
-          </div>
-          <div class="steps-metrics">
-            <div class="step-metric">
-              <div class="step-metric-value breaks">3</div>
-              <div class="step-metric-label">Перерывы</div>
-              <div class="step-metric-sub">встали</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value max-sit">45</div>
-              <div class="step-metric-label">Макс. сидя</div>
-              <div class="step-metric-sub">мин подряд</div>
-            </div>
-            <div class="step-metric">
-              <div class="step-metric-value movement">1:30</div>
-              <div class="step-metric-label">В движении</div>
-              <div class="step-metric-sub">среднее</div>
-            </div>
-          </div>
-          <div class="steps-personal">
-            <div class="sp-item">
-              <span class="sp-label">Твоя норма 30 дней</span>
-              <span class="sp-value">2:30</span>
-            </div>
-            <div class="sp-action">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              Встань сейчас — ты сидишь 45 мин подряд
-            </div>
-          </div>
-        </div>
-        <div class="card steps-hourly-card" style="--aura:rgba(229,103,126,.22)">
-          <div class="hourly-header">
-            <div class="hourly-title">По часам</div>
-            <div class="hourly-peak">Пик: 10:00</div>
-          </div>
-          <div class="hourly-bars">
-            <div class="h-bar"><div class="hb-fill sit" style="height:10%"></div><span>6</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:45%"></div><span>8</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:80%"></div><span>10</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:100%"></div><span>12</span></div>
-            <div class="h-bar"><div class="hb-fill sit today" style="height:60%"></div><span>14</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:75%"></div><span>16</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:40%"></div><span>18</span></div>
-            <div class="h-bar"><div class="hb-fill sit" style="height:20%"></div><span>20</span></div>
-          </div>
-          <div class="hourly-footer">
-            <span>Обычно в 16:00 ты сидишь 45 мин → встань сейчас</span>
-          </div>
-        </div>
-        <div class="card steps-week-card" style="--aura:rgba(229,103,126,.25)">
-          <div class="week-header">
-            <div class="week-title">Сидячее время за неделю</div>
-            <div class="week-avg">Твоя норма: 2:30</div>
-          </div>
-          <div class="week-chart-container">
-            <svg class="week-chart" viewBox="0 0 300 140" id="sitWeekChart"></svg>
-          </div>
-        </div>
-        <div class="card steps-records-card" style="--aura:rgba(229,103,126,.22)">
-          <div class="records-header">
-            <div class="records-title">Личные рекорды</div>
-            <div class="records-count">2 рекорда</div>
-          </div>
-          <div class="records-list">
-            <div class="record-item gold">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">0:45</div>
-                <div class="record-label">Минимум за день</div>
-              </div>
-              <div class="record-date">20 июл</div>
-            </div>
-            <div class="record-item silver">
-              <div class="record-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-              </div>
-              <div class="record-info">
-                <div class="record-value">5</div>
-                <div class="record-label">Дней подряд < 2ч</div>
-              </div>
-               <div class="record-date">июль</div>
-            </div>
-          </div>
-        </div>
-        <div class="card steps-forecast-card" style="--aura:rgba(229,103,126,.20)">
-          <div class="forecast-header">
-            <div class="forecast-title">Прогноз недели</div>
-            <div class="forecast-status good">Отличная неделя</div>
-          </div>
-          <div class="forecast-chart">
-            <div class="fc-bar done"><span>Пн</span><b>3:10</b></div>
-            <div class="fc-bar done"><span>Вт</span><b>3:30</b></div>
-            <div class="fc-bar done"><span>Ср</span><b>3:50</b></div>
-            <div class="fc-bar done"><span>Чт</span><b>2:50</b></div>
-            <div class="fc-bar current"><span>Пт</span><b>2:15</b></div>
-            <div class="fc-bar forecast"><span>Сб</span><b>~2:00</b></div>
-            <div class="fc-bar forecast"><span>Вс</span><b>~1:45</b></div>
-          </div>
-          <div class="forecast-total">
-            <div class="ft-item">
-              <div class="ft-value">15:25</div>
-              <div class="ft-label">Текущая</div>
-            </div>
-            <div class="ft-arrow">→</div>
-            <div class="ft-item">
-              <div class="ft-value">20:20</div>
-              <div class="ft-label">Прогноз</div>
-            </div>
-          </div>
-          <div class="forecast-goal">Цель < 24ч · Запас 3:40 · Не сиди больше 2ч подряд</div>
-        </div>
-        <div class="card steps-breaks-card" style="--aura:rgba(229,103,126,.20)">
-          <div class="breaks-header">
-            <div class="breaks-title">Перерывы</div>
-            <div class="breaks-count">3 за день</div>
-          </div>
-          <div class="breaks-list">
-            <div class="break-item">
-              <div class="break-time">9:30</div>
-              <div class="break-info">
-                <div class="break-duration">12 мин</div>
-                <div class="break-label">до 10:42</div>
-              </div>
-              <div class="break-bar"><div class="break-fill" style="width:48%"></div></div>
-            </div>
-            <div class="break-item">
-              <div class="break-time">13:15</div>
-              <div class="break-info">
-                <div class="break-duration">18 мин</div>
-                <div class="break-label">до 14:00</div>
-              </div>
-              <div class="break-bar"><div class="break-fill" style="width:72%"></div></div>
-            </div>
-            <div class="break-item">
-              <div class="break-time">16:45</div>
-              <div class="break-info">
-                <div class="break-duration">15 мин</div>
-                <div class="break-label">до 17:30</div>
-              </div>
-              <div class="break-bar"><div class="break-fill" style="width:60%"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
-    </div>
-    </div><!-- end tab-sitting -->
-
-    <!-- Итоги недели (Oura/Whoop стиль) -->
-    <div class="card week-summary-card" style="--aura:rgba(47,191,155,.25)">
-      <div class="week-summary-header">
-        <div class="week-summary-title">Итоги недели</div>
-        <div class="week-summary-avg">Ср. индекс: 72 · Твоя норма: 68 · Твой рекорд: 89</div>
-      </div>
-      <div class="week-summary-content">
-        <div class="week-summary-ring">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <defs>
-              <linearGradient id="weekRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#F0A090"/>
-                <stop offset="100%" stop-color="var(--activity-accent)"/>
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(45,40,35,.06)" stroke-width="8"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#weekRingGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset:70" transform="rotate(-90 50 50)"/>
-          </svg>
-          <div class="week-summary-ring-inner">
-            <div class="week-summary-value">540</div>
-            <div class="week-summary-max">из 700</div>
-          </div>
-        </div>
-        <div class="week-summary-details">
-          <div class="week-summary-item">
-            <div class="week-summary-label">Лучший день</div>
-            <div class="week-summary-day">Среда</div>
-            <div class="week-summary-score">92 очка</div>
-          </div>
-          <div class="week-summary-item">
-            <div class="week-summary-label">Худший день</div>
-            <div class="week-summary-day">Воскресенье</div>
-            <div class="week-summary-score">45 очков</div>
-          </div>
-        <div class="week-summary-item">
-          <div class="week-summary-label">До твоего рекорда</div>
-          <div class="week-summary-day">89 очков</div>
-          <div class="week-summary-score">осталось 11</div>
-        </div>
-        </div>
-      </div>
-      <div class="week-summary-bars">
-        <div class="wsb-item">
-          <div class="wsb-day">Пн</div>
-          <div class="wsb-bar"><div class="wsb-fill level-mid" style="height:75%"></div></div>
-          <div class="wsb-value">75</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Вт</div>
-          <div class="wsb-bar"><div class="wsb-fill level-high" style="height:82%"></div></div>
-          <div class="wsb-value">82</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Ср</div>
-          <div class="wsb-bar"><div class="wsb-fill today" style="height:92%"></div></div>
-          <div class="wsb-value">92</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Чт</div>
-          <div class="wsb-bar"><div class="wsb-fill level-mid" style="height:68%"></div></div>
-          <div class="wsb-value">68</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Пт</div>
-          <div class="wsb-bar"><div class="wsb-fill current" style="height:78%"></div></div>
-          <div class="wsb-value">78</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Сб</div>
-          <div class="wsb-bar"><div class="wsb-fill forecast" style="height:70%"></div></div>
-          <div class="wsb-value">~70</div>
-        </div>
-        <div class="wsb-item">
-          <div class="wsb-day">Вс</div>
-          <div class="wsb-bar"><div class="wsb-fill level-low" style="height:60%"></div></div>
-          <div class="wsb-value">~60</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="comp-plan-section"></div>
-  <!-- СТРАНИЦА: Тренировка -->
-  <div class="full-page" style="width: 100%; flex-shrink: 0; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px;">
-    <div class="cap">Тренировка</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-      <div class="card metric-card" style="--aura:rgba(240,118,75,.25)">
-        <div class="metric-title" style="color: var(--mut);">Нагрузка</div>
-        <div class="metric-value">251 AU</div>
-        <div class="metric-status status-warn">Выше цели</div>
-      </div>
-      <div class="card metric-card" style="--aura:rgba(47,191,155,.25)">
-        <div class="metric-title" style="color: var(--mut);">План недели</div>
-        <div class="metric-value">1/7</div>
-        <div class="metric-status status-good">Следующа: ноги</div>
-      </div>
-      <div class="card metric-card" style="--aura:rgba(49,168,201,.25)">
-        <div class="metric-title" style="color: var(--mut);">Сегодняшний план</div>
-        <div class="metric-value">60 мин</div>
-        <div class="metric-status status-neutral">Нижняя часть тела</div>
-      </div>
-      <div class="card metric-card" style="--aura:rgba(102,187,106,.25)">
-        <div class="metric-title" style="color: var(--mut);">Карта мышц</div>
-        <div class="metric-value">Баланс</div>
-        <div class="metric-status status-neutral">Ноги готовы</div>
-      </div>
-    </div>
-  </div>
-
-   </div>
-  </div>
-
- <button class="scroll-bottom-btn" onclick="scrollToBottom()" title="В конец страницы">
-   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-     <path d="M12 5v14M5 12l7 7 7-7"/>
-   </svg>
- </button>
-
-
-
-
-<script src="js/main.js"></script>
-<script>
-  let isScrollingUp = false;
-  
-  function getCurrentSection() {
-    const sections = document.querySelectorAll('.snap-section');
-    const app = document.querySelector('.app');
-    const scrollTop = app ? app.scrollTop : window.pageYOffset;
-    
-    for (let section of sections) {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-        return section;
-      }
-    }
-    return null;
-  }
-  
-  function scrollToBottom() {
-    const app = document.querySelector('.app');
-    const section = getCurrentSection();
-    
-    if (isScrollingUp) {
-      if (section) {
-        const sectionTop = section.offsetTop;
-        if (app) {
-          app.scrollTo({ top: sectionTop, behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: sectionTop, behavior: 'smooth' });
-        }
-      }
-    } else {
-      if (section) {
-        const sectionBottom = section.offsetTop + section.offsetHeight;
-        if (app) {
-          app.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
-        } else {
-          window.scrollTo({ top: sectionBottom - window.innerHeight + 100, behavior: 'smooth' });
-        }
-      } else if (app) {
-        app.scrollTo({ top: app.scrollHeight, behavior: 'smooth' });
-      }
-    }
-  }
-  
-  function updateButtonDirection() {
-    const app = document.querySelector('.app');
-    const btn = document.querySelector('.scroll-bottom-btn');
-    if (!btn) return;
-    
-    const section = getCurrentSection();
-    if (!section) return;
-    
-    const sectionBottom = section.offsetTop + section.offsetHeight;
-    const scrollTop = app ? app.scrollTop : window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    
-    const distanceFromBottom = sectionBottom - (scrollTop + windowHeight);
-    
-    if (distanceFromBottom < windowHeight * 0.3) {
-      isScrollingUp = true;
-      btn.classList.add('scroll-up');
-    } else {
-      isScrollingUp = false;
-      btn.classList.remove('scroll-up');
-    }
-  }
-  
-    // History navigation & data
-   const historyRange = { week: 0, month: 0 }; // offset from current period
-
-   const historyBarsData = {
-     week: [
-       { val: 78, day: 'Сб' }, { val: 74, day: 'Вс' }, { val: 81, day: 'Пн' },
-       { val: 69, day: 'Вт' }, { val: 85, day: 'Ср' }, { val: 72, day: 'Чт' },
-       { val: 78, day: 'Пт' }
-     ],
-     month: [
-       { val: 72, day: '1' }, { val: 75, day: '2' }, { val: 80, day: '3' },
-       { val: 68, day: '4' }, { val: 74, day: '5' }, { val: 79, day: '6' },
-       { val: 82, day: '7' }, { val: 77, day: '8' }, { val: 71, day: '9' },
-       { val: 76, day: '10' }, { val: 83, day: '11' }, { val: 78, day: '12' },
-       { val: 70, day: '13' }, { val: 75, day: '14' }, { val: 81, day: '15' },
-       { val: 84, day: '16' }, { val: 79, day: '17' }, { val: 73, day: '18' },
-       { val: 69, day: '19' }, { val: 76, day: '20' }, { val: 80, day: '21' },
-       { val: 85, day: '22' }, { val: 72, day: '23' }, { val: 74, day: '24' },
-       { val: 81, day: '25' }, { val: 69, day: '26' }, { val: 85, day: '27' },
-       { val: 72, day: '28' }, { val: 78, day: '29' }
-     ]
-   };
-
-   const historyPeriodLabels = {
-     week: ['23–29 августа', '16–22 августа', '9–15 августа'],
-     month: ['Август 2026', 'Июль 2026', 'Июнь 2026']
-   };
-
-   const historyStatsData = {
-     week: { avg: 77, max: 85, trend: '+5', trendDir: 'up', trendLabel: 'выше нормы' },
-     month: { avg: 77, max: 85, trend: '+3', trendDir: 'up', trendLabel: 'выше нормы' }
-   };
-
-   function renderHistoryBars(range) {
-     const bars = document.getElementById('historyBars');
-     const data = historyBarsData[range];
-     if (!bars || !data) return;
-     const maxVal = Math.max(...data.map(b => b.val));
-     const lastIdx = data.length - 1;
-     bars.innerHTML = data.map((b, i) => {
-       const h = Math.max(12, (b.val / maxVal) * 48);
-       const isToday = i === lastIdx;
-       return `<div class="history-col${isToday ? ' today' : ''}"><span>${b.val}</span><div class="history-bar${isToday ? ' today' : ''}" style="height:${h}px"></div><i>${b.day}</i></div>`;
-     }).join('');
-   }
-
-   function renderHistoryStats(range) {
-     const stats = historyStatsData[range];
-     if (!stats) return;
-     document.getElementById('statAvg').textContent = stats.avg;
-     document.getElementById('statMax').textContent = stats.max;
-     const trendEl = document.getElementById('statTrend');
-     const trendLabelEl = trendEl?.parentElement?.querySelector('.history-stat-label');
-     if (trendEl) {
-       const arrow = stats.trendDir === 'up'
-         ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
-         : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
-       trendEl.innerHTML = arrow;
-       trendEl.classList.toggle('down', stats.trendDir === 'down');
-     }
-     if (trendLabelEl) {
-       trendLabelEl.innerHTML = `${stats.trend} к норме`;
-     }
-   }
-
-   function switchHistoryRange(range) {
-     document.getElementById('toggleWeek').classList.toggle('active', range === 'week');
-     document.getElementById('toggleWeek').setAttribute('aria-selected', range === 'week');
-     document.getElementById('toggleMonth').classList.toggle('active', range === 'month');
-     document.getElementById('toggleMonth').setAttribute('aria-selected', range === 'month');
-     historyRange[range] = 0;
-     updateHistoryPeriodLabel(range);
-     renderHistoryBars(range);
-     renderHistoryStats(range);
-   }
-
-   function navHistoryPeriod(dir) {
-     const range = document.getElementById('toggleWeek').classList.contains('active') ? 'week' : 'month';
-     const labels = historyPeriodLabels[range];
-     const newOffset = Math.max(0, Math.min(labels.length - 1, historyRange[range] + dir));
-     historyRange[range] = newOffset;
-     updateHistoryPeriodLabel(range);
-     document.getElementById('historyPrev').style.opacity = newOffset >= labels.length - 1 ? '0.3' : '1';
-     document.getElementById('historyNext').style.opacity = newOffset <= 0 ? '0.3' : '1';
-   }
-
-   function updateHistoryPeriodLabel(range) {
-     const labels = historyPeriodLabels[range];
-     const offset = historyRange[range];
-     const idx = labels.length - 1 - offset;
-     document.getElementById('historyPeriodLabel').textContent = labels[idx] || labels[0];
-   }
-
-   // History panel toggle (global — используется в onclick кнопки)
-  function toggleHistory() {
-    const panel = document.getElementById('historyPanel');
-    const btn = document.getElementById('historyBtn');
-    const open = panel.classList.toggle('open');
-    btn.classList.toggle('active', open);
-    btn.setAttribute('aria-expanded', open);
-    if (!open) {
-      const card = btn.closest('.activity-index-card');
-      if (card) card.classList.remove('history-collapsed');
-      const sec = document.getElementById('historySection');
-      const moreBtn = document.getElementById('historyMoreBtn');
-      if (sec) sec.classList.remove('expanded');
-      if (moreBtn) {
-        moreBtn.classList.remove('expanded');
-        moreBtn.setAttribute('aria-expanded', 'false');
-        if (moreBtn.firstChild) moreBtn.firstChild.textContent = 'Показать все дни ';
-      }
-    }
-  }
-
-  // Show more / collapse history days (global)
-  function toggleHistoryDays() {
-    const sec = document.getElementById('historySection');
-    const btn = document.getElementById('historyMoreBtn');
-    const open = sec.classList.toggle('expanded');
-    btn.classList.toggle('expanded', open);
-    btn.setAttribute('aria-expanded', open);
-    btn.firstChild.textContent = open ? 'Свернуть ' : 'Показать все дни ';
-    const card = sec.closest('.activity-index-card');
-    if (card) card.classList.toggle('history-collapsed', open);
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    const app = document.querySelector('.app');
-    if (app) {
-      app.addEventListener('scroll', updateButtonDirection);
-    } else {
-      window.addEventListener('scroll', updateButtonDirection);
-    }
-    updateButtonDirection();
-
-        // Activity tabs
-    const tabs = document.querySelectorAll('.activity-tab');
-    const panels = document.querySelectorAll('.tab-panel');
-    const initializedTabs = new Set();
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        panels.forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        const panelId = 'tab-' + tab.dataset.tab;
-        const panel = document.getElementById(panelId);
-        if (panel) panel.classList.add('active');
-
-        document.body.setAttribute('data-active-tab', tab.dataset.tab);
-
-        if (!initializedTabs.has(tab.dataset.tab)) {
-          const trackId = tab.dataset.tab + 'Track';
-          if (typeof initCarouselById === 'function') {
-            initCarouselById(trackId);
-          }
-          initializedTabs.add(tab.dataset.tab);
-        }
-      });
-    });
-
-    document.body.setAttribute('data-active-tab', 'steps');
-
-    if (typeof initCarouselById === 'function') {
-      initCarouselById('stepsTrack');
-      initializedTabs.add('steps');
-    }
-  });
-</script>
-
-<div id="comp-task-modal"></div>
-      <!-- Категория -->
-      <div class="tm-section">
-        <div class="tm-section-label">Категория</div>
-        <div class="tm-cat-grid" id="tmCategories">
-          <button type="button" class="tm-cat-item" data-cat="work">
-            <div class="tm-cat-dot" style="background:#E8A13C"></div>
-            <span>Работа</span>
-          </button>
-          <button type="button" class="tm-cat-item" data-cat="study">
-            <div class="tm-cat-dot" style="background:#31A8C9"></div>
-            <span>Учёба</span>
-          </button>
-          <button type="button" class="tm-cat-item" data-cat="sport">
-            <div class="tm-cat-dot" style="background:#2FBF9B"></div>
-            <span>Спорт</span>
-          </button>
-          <button type="button" class="tm-cat-item" data-cat="health">
-            <div class="tm-cat-dot" style="background:#E5677E"></div>
-            <span>Здоровье</span>
-          </button>
-          <button type="button" class="tm-cat-item" data-cat="home">
-            <div class="tm-cat-dot" style="background:#7B74D6"></div>
-            <span>Дом</span>
-          </button>
-          <button type="button" class="tm-cat-item active" data-cat="other">
-            <div class="tm-cat-dot" style="background:#9A8F82"></div>
-            <span>Другое</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Повтор -->
-      <div class="tm-section">
-        <div class="tm-section-label">Повтор</div>
-        <div class="tm-repeat-bar" id="tmRepeatBar">
-          <button type="button" class="tm-rep-item active" data-rep="never">Нет</button>
-          <button type="button" class="tm-rep-item" data-rep="daily">День</button>
-          <button type="button" class="tm-rep-item" data-rep="weekdays">Будни</button>
-          <button type="button" class="tm-rep-item" data-rep="weekly">Неделя</button>
-          <button type="button" class="tm-rep-item" data-rep="custom">Ещё</button>
-        </div>
-        <div class="tm-repeat-custom" id="tmRepeatCustom" style="display:none">
-          <div class="tm-custom-row">
-            <span class="tm-custom-label">Каждые</span>
-            <div class="tm-stepper" id="tmCustomDaysStepper">
-              <button type="button" class="tm-step-btn" onclick="adjustCustomDays(-1)">−</button>
-              <span class="tm-step-value" id="tmCustomDaysValue">2</span>
-              <button type="button" class="tm-step-btn" onclick="adjustCustomDays(1)">+</button>
-            </div>
-            <div class="tm-unit-toggle" id="tmUnitToggle">
-              <button type="button" class="tm-unit active" data-unit="days">дней</button>
-              <button type="button" class="tm-unit" data-unit="weeks">недель</button>
-              <button type="button" class="tm-unit" data-unit="months">мес</button>
-            </div>
-          </div>
-          <div class="tm-weekdays-row" id="tmWeekdaysRow">
-            <button type="button" class="tm-wd-btn" data-day="1">Пн</button>
-            <button type="button" class="tm-wd-btn" data-day="2">Вт</button>
-            <button type="button" class="tm-wd-btn" data-day="3">Ср</button>
-            <button type="button" class="tm-wd-btn" data-day="4">Чт</button>
-            <button type="button" class="tm-wd-btn" data-day="5">Пт</button>
-            <button type="button" class="tm-wd-btn" data-day="6">Сб</button>
-            <button type="button" class="tm-wd-btn" data-day="0">Вс</button>
-          </div>
-          <div class="tm-month-options" id="tmMonthOptions" style="display:none">
-            <div class="tm-month-row">
-              <span class="tm-custom-label">Число</span>
-              <div class="tm-day-picker" id="tmDayPicker">
-                <button type="button" class="tm-day-btn active" data-day="1">1</button>
-                <button type="button" class="tm-day-btn" data-day="2">2</button>
-                <button type="button" class="tm-day-btn" data-day="3">3</button>
-                <button type="button" class="tm-day-btn" data-day="4">4</button>
-                <button type="button" class="tm-day-btn" data-day="5">5</button>
-                <button type="button" class="tm-day-btn" data-day="6">6</button>
-                <button type="button" class="tm-day-btn" data-day="7">7</button>
-                <button type="button" class="tm-day-btn" data-day="8">8</button>
-                <button type="button" class="tm-day-btn" data-day="9">9</button>
-                <button type="button" class="tm-day-btn" data-day="10">10</button>
-                <button type="button" class="tm-day-btn" data-day="11">11</button>
-                <button type="button" class="tm-day-btn" data-day="12">12</button>
-                <button type="button" class="tm-day-btn" data-day="13">13</button>
-                <button type="button" class="tm-day-btn" data-day="14">14</button>
-                <button type="button" class="tm-day-btn" data-day="15">15</button>
-                <button type="button" class="tm-day-btn" data-day="16">16</button>
-                <button type="button" class="tm-day-btn" data-day="17">17</button>
-                <button type="button" class="tm-day-btn" data-day="18">18</button>
-                <button type="button" class="tm-day-btn" data-day="19">19</button>
-                <button type="button" class="tm-day-btn" data-day="20">20</button>
-                <button type="button" class="tm-day-btn" data-day="21">21</button>
-                <button type="button" class="tm-day-btn" data-day="22">22</button>
-                <button type="button" class="tm-day-btn" data-day="23">23</button>
-                <button type="button" class="tm-day-btn" data-day="24">24</button>
-                <button type="button" class="tm-day-btn" data-day="25">25</button>
-                <button type="button" class="tm-day-btn" data-day="26">26</button>
-                <button type="button" class="tm-day-btn" data-day="27">27</button>
-                <button type="button" class="tm-day-btn" data-day="28">28</button>
-                <button type="button" class="tm-day-btn" data-day="29">29</button>
-                <button type="button" class="tm-day-btn" data-day="30">30</button>
-                <button type="button" class="tm-day-btn" data-day="31">31</button>
-                <button type="button" class="tm-day-btn" data-day="last">посл</button>
-              </div>
-            </div>
-            <div class="tm-month-row">
-              <span class="tm-custom-label">Или</span>
-              <div class="tm-month-weekday">
-                <select id="tmMonthWeekdayPos" class="tm-select-sm">
-                  <option value="1">Первый</option>
-                  <option value="2">Второй</option>
-                  <option value="3">Третий</option>
-                  <option value="4">Четвёртый</option>
-                  <option value="last">Последний</option>
-                </select>
-                <select id="tmMonthWeekdayDay" class="tm-select-sm">
-                  <option value="1">Понедельник</option>
-                  <option value="2">Вторник</option>
-                  <option value="3">Среда</option>
-                  <option value="4">Четверг</option>
-                  <option value="5">Пятница</option>
-                  <option value="6">Суббота</option>
-                  <option value="0">Воскресенье</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="tm-repeat-preview" id="tmRepeatPreview">Каждые 2 дня</div>
-        </div>
-      </div>
-
-      <!-- Помодоро -->
-      <div class="tm-pomo-card">
-        <div class="tm-pomo-top">
-          <div class="tm-pomo-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E86E5E" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <span>Помодоро</span>
-          </div>
-          <label class="tm-switch">
-            <input type="checkbox" id="tmPomodoro" onchange="togglePomoSettings()">
-            <span class="tm-switch-track"><span class="tm-switch-thumb"></span></span>
-          </label>
-        </div>
-        <div class="tm-pomo-config" id="tmPomoConfig">
-          <div class="tm-pomo-sliders">
-            <div class="tm-pomo-slider">
-              <div class="tm-slider-header">
-                <span>Фокус</span>
-                <span class="tm-slider-val" id="tmPomoWorkVal">25м</span>
-              </div>
-              <input type="range" id="tmPomoWork" min="10" max="60" step="5" value="25" class="tm-slider-range" oninput="document.getElementById('tmPomoWorkVal').textContent = this.value + 'м'">
-            </div>
-            <div class="tm-pomo-slider">
-              <div class="tm-slider-header">
-                <span>Отдых</span>
-                <span class="tm-slider-val" id="tmPomoBreakVal">5м</span>
-              </div>
-              <input type="range" id="tmPomoBreak" min="3" max="30" step="1" value="5" class="tm-slider-range break" oninput="document.getElementById('tmPomoBreakVal').textContent = this.value + 'м'">
-            </div>
-          </div>
-          <div class="tm-pomo-sessions">
-            <span class="tm-sessions-label">Сессий</span>
-            <div class="tm-session-dots" id="tmSessionDots">
-              <button type="button" class="tm-ses-dot active" data-ses="2">2</button>
-              <button type="button" class="tm-ses-dot active" data-ses="3">3</button>
-              <button type="button" class="tm-ses-dot active" data-ses="4">4</button>
-              <button type="button" class="tm-ses-dot" data-ses="5">5</button>
-              <button type="button" class="tm-ses-dot" data-ses="6">6</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tm-footer">
-
-
-  <script src="js/components.js"></script>
+<section class="snap-section snap-today" data-section="today" data-section-label="Сегодня">
+<button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" aria-label="Переключить тему">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+<div class="hero-stack">
+
+<header class="hero">
+<div class="hero-greeting">
+<div class="hero-meta"><span class="hero-meta-dot"></span><span class="hero-meta-text" id="heroDate">—</span></div>
+<h1 class="hero-title"><span class="hero-title-ic" id="heroGreetIcon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="heroGreetText">Добрый день</span></h1>
+<p class="hero-subline" id="heroSubline">Загружаем день…</p>
+
+<div class="hero-trend" id="heroTrend">
+<svg class="hero-trend-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+<defs><linearGradient id="heroSparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".32"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4 L100 28 L0 28 Z" fill="url(#heroSparkGrad)"/>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="100" cy="4" r="2.2" fill="var(--accent)" stroke="#fff" stroke-width="1.2"/>
+</svg>
+<div class="hero-trend-info">
+<div class="hero-trend-num"><span id="heroTrendNum">78</span><span class="hero-trend-delta" id="heroTrendDelta">↑ +6</span></div>
+<div class="hero-trend-foot" id="heroTrendFoot">Норма 72 · сегодня выше</div>
+</div>
+</div>
+
+<button class="hero-signal" id="heroSignal" type="button" aria-label="Главный сигнал дня">
+<span class="hero-signal-ic" id="heroSignalIc" aria-hidden="true"></span>
+<span class="hero-signal-text" id="heroSignalText">Загружаем…</span>
+<span class="hero-signal-mini-ring" aria-hidden="true">
+<svg viewBox="0 0 32 32" class="hero-mini-svg">
+<circle class="hmr-track" cx="16" cy="16" r="13"/>
+<circle class="hmr-fill" id="heroMiniFill" cx="16" cy="16" r="13" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+</svg>
+</span>
+<span class="hero-signal-chev" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</span>
+</button>
+</div>
+<div class="mascot-wrap" id="mascotWrap" aria-label="Маскот-компаньон">
+<svg class="mascot" id="mascotSvg" viewBox="0 0 120 120" aria-hidden="true">
+<defs>
+<radialGradient id="mascotGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="currentColor" stop-opacity=".5"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient>
+<linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--m-color-light)"/><stop offset="100%" stop-color="var(--m-color-dark)"/></linearGradient>
+<linearGradient id="mascotBelly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4F7EE"/><stop offset="100%" stop-color="#C8EEDC"/></linearGradient>
+<radialGradient id="blushGrad" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#FF8AA0" stop-opacity="0.8"/><stop offset="100%" stop-color="#FF8AA0" stop-opacity="0"/></radialGradient>
+<filter id="softShadow"><feGaussianBlur stdDeviation="0.8"/></filter>
+</defs>
+
+<!-- Aura glow (использует currentColor = --m-color через CSS) -->
+<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)" class="m-aura" style="color:var(--m-color)"/>
+
+<!-- Floating particles (сердечки при хорошем, капли при тяжёлом) -->
+<g class="m-particles" id="mParticles"></g>
+
+<!-- Ground shadow -->
+<ellipse cx="60" cy="108" rx="28" ry="4" fill="rgba(45,40,35,.06)" class="m-shadow"/>
+
+<!-- Feet -->
+<g class="m-feet">
+<ellipse cx="60" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-l"/>
+<ellipse cx="44" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-r"/>
+</g>
+
+<!-- Held item (позади тела) -->
+<g class="m-item" id="mItem"></g>
+
+<!-- Body (с idle-дыханием) -->
+<g class="m-body-wrap">
+<circle cx="60" cy="60" r="38" fill="url(#mascotBody)" class="m-body"/>
+<ellipse cx="60" cy="74" rx="22" ry="18" fill="url(#mascotBelly)" class="m-belly"/>
+</g>
+
+<!-- Arms (позиция рук меняется) -->
+<g class="m-arms" id="mArms">
+<ellipse class="m-arm m-arm-l" cx="26" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(-15 26 62)"/>
+<ellipse class="m-arm m-arm-r" cx="94" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(15 94 62)"/>
+</g>
+
+<!-- Ears (на макушке, шевелятся) -->
+<g class="m-ears" id="mEars">
+<ellipse class="m-ear m-ear-l" cx="36" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(-25 36 22)"/>
+<ellipse class="m-ear m-ear-r" cx="84" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(25 84 22)"/>
+</g>
+
+<!-- Hair tuft (хохолок) -->
+<g class="m-tuft">
+<path d="M58 22 Q60 14 62 22" stroke="var(--accent-dark)" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Cheeks (blush, intensity меняется) -->
+<ellipse class="m-blush m-blush-l" cx="30" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+<ellipse class="m-blush m-blush-r" cx="90" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+
+<!-- Eyes (4 состояния) -->
+<g class="m-eyes" id="mEyes">
+<ellipse class="m-eye-white m-eye-l" cx="44" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-eye-white m-eye-r" cx="76" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-pupil m-pupil-l" cx="46" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<ellipse class="m-pupil m-pupil-r" cx="78" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<circle class="m-shine m-shine-l" cx="48" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine m-shine-r" cx="80" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine-mini m-shine-l" cx="39" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+<circle class="m-shine-mini m-shine-r" cx="71" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+</g>
+
+<!-- Eyebrows (выражение меняется) -->
+<g class="m-brows" id="mBrows">
+<path class="m-brow m-brow-l" d="M34 40 Q42 34 50 38" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-brow m-brow-r" d="M70 38 Q78 34 86 40" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Smile (много форм) -->
+<path class="m-smile" id="mSmile" d="M46 70 Q60 86 74 70" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-mouth-fill" id="mMouthFill" d="M50 72 Q60 80 70 72" fill="#E85A7A" opacity="0.3"/>
+
+<!-- Cheek freckles (веснушки) -->
+<circle class="m-freckle" cx="30" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+<circle class="m-freckle" cx="90" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+
+<!-- Zzz bubbles (для sleepy state) -->
+<g class="m-zzz" id="mZzz" opacity="0">
+<text x="78" y="20" font-size="9" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="84" y="14" font-size="11" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="92" y="9" font-size="14" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">Z</text>
+</g>
+</svg>
+
+<!-- Speech bubble (появляется при клике) -->
+<div class="m-speech" id="mSpeech" aria-live="polite">
+  <span class="m-speech-text" id="mSpeechText">Привет!</span>
+</div>
+</div>
+</header>
+
+<div class="now-strip" id="nowStrip" aria-live="polite">
+<span class="now-dot" aria-hidden="true"></span>
+<span class="now-time" id="nowTime">—</span>
+<span class="now-sep">·</span>
+<span class="now-text" id="nowText">шагов 4 200 из 8 000</span>
+</div>
+
+<section class="timeline" aria-label="Лента дня">
+<div class="timeline-head">
+<div class="th-periods" role="tablist" aria-label="Период дня">
+<button class="th-period is-active" data-period="day"   type="button" role="tab" aria-selected="true">День</button>
+<button class="th-period"             data-period="morning" type="button" role="tab" aria-selected="false">Утро</button>
+<button class="th-period"             data-period="daypart" type="button" role="tab" aria-selected="false">День</button>
+<button class="th-period"             data-period="evening" type="button" role="tab" aria-selected="false">Вечер</button>
+<button class="th-period"             data-period="night"   type="button" role="tab" aria-selected="false">Ночь</button>
+</div>
+<div class="th-now" id="thNow">14:58</div>
+<button class="th-zoom" id="thZoom" type="button" aria-label="Приблизить">
+<svg class="th-zoom-in" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+<svg class="th-zoom-out" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
+</button>
+</div>
+<div class="timeline-stage">
+<div class="timeline-axis" id="timelineAxis">
+<svg class="timeline-svg" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+<linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
+<stop offset="20%" stop-color="#5CC4A0" stop-opacity=".22"/>
+<stop offset="55%" stop-color="#2FBF9B" stop-opacity=".24"/>
+<stop offset="80%" stop-color="#F0764B" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#7B74D6" stop-opacity=".18"/>
+</linearGradient>
+<linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037"/>
+<stop offset="22%" stop-color="#5CC4A0"/>
+<stop offset="55%" stop-color="#2FBF9B"/>
+<stop offset="78%" stop-color="#F0764B"/>
+<stop offset="100%" stop-color="#7B74D6"/>
+</linearGradient>
+<linearGradient id="eventMarker" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="rgba(255,255,255,.96)"/>
+<stop offset="100%" stop-color="rgba(255,255,255,.82)"/>
+</linearGradient>
+<radialGradient id="scrubberHalo" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".08"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</radialGradient>
+<filter id="moodGlow" x="-10%" y="-50%" width="120%" height="200%">
+<feGaussianBlur stdDeviation="2" result="blur"/>
+<feMerge>
+<feMergeNode in="blur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<filter id="pillShadow" x="-20%" y="-50%" width="140%" height="200%">
+<feGaussianBlur stdDeviation="1.4" in="SourceAlpha"/>
+<feOffset dx="0" dy="1.5"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
+<feMerge>
+<feMergeNode/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<clipPath id="stageClip">
+<rect x="0" y="0" width="700" height="200"/>
+</clipPath>
+</defs>
+
+<rect class="tod-bg" x="0" y="0" width="700" height="200" fill="url(#todGrad)"/>
+
+<g class="tl-grid">
+<line x1="0" y1="50" x2="700" y2="50"/>
+<line x1="0" y1="100" x2="700" y2="100"/>
+<line x1="0" y1="150" x2="700" y2="150"/>
+</g>
+
+<g class="tl-tod-labels" id="tlTodLabels"></g>
+
+<g class="tl-events-top" id="tlEventsTop"></g>
+<g class="tl-events-bottom" id="tlEventsBottom"></g>
+
+<path id="tlMoodArea" d="M0 100 L0 100" fill="url(#moodFill)"/>
+<path id="tlMoodPath" d="M0 100" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
+<g class="tl-mood-dots" id="tlMoodDots"></g>
+
+<g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
+<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="200" fill="url(#scrubberHalo)"/>
+<line class="tl-cursor" x1="0" y1="14" x2="0" y2="186"/>
+<circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
+<circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
+<circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>
+</g>
+</svg>
+
+<div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
+<div class="timeline-scrubber-bubble" id="scrubberBubble">
+<span class="tsb-time" id="tsbTime">14:00</span>
+</div>
+</div>
+<div class="timeline-edge timeline-edge-l">06</div>
+<div class="timeline-edge timeline-edge-c">12</div>
+<div class="timeline-edge timeline-edge-r">24</div>
+</div>
+</section>
+
+<section class="moment-card" id="momentCard" aria-live="polite">
+<div class="moment-head"><div class="moment-time" id="momentTime">—</div><div class="moment-title" id="momentTitle">—</div></div>
+<p class="moment-desc" id="momentDesc">—</p>
+
+<div class="moment-vitals" id="momentVitals">
+<div class="vitals-ring" aria-hidden="true">
+<svg viewBox="0 0 100 100" class="vitals-ring-svg">
+<defs>
+<linearGradient id="ringEnergy" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--good)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+<linearGradient id="ringFocus" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--accent)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+<linearGradient id="ringMood" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="var(--sleep)"/>
+<stop offset="100%" stop-color="var(--accent-light)"/>
+</linearGradient>
+</defs>
+<circle class="vring-track" cx="50" cy="50" r="44"/>
+<circle class="vring-track" cx="50" cy="50" r="34"/>
+<circle class="vring-track" cx="50" cy="50" r="24"/>
+<circle class="vring-fill vring-energy" cx="50" cy="50" r="44" stroke="url(#ringEnergy)"/>
+<circle class="vring-fill vring-focus"  cx="50" cy="50" r="34" stroke="url(#ringFocus)"/>
+<circle class="vring-fill vring-mood"   cx="50" cy="50" r="24" stroke="url(#ringMood)"/>
+</svg>
+<div class="vring-center">
+<div class="vring-num" id="vringNum">—</div>
+<div class="vring-label" id="vringLabel">—</div>
+</div>
+</div>
+
+<div class="vitals-grid">
+<div class="vital" data-key="energy">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 11-12h-7l1-8z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Энергия</span>
+<span class="vital-row"><span class="vital-val" id="vitalEnergy">—</span><span class="vital-delta" id="vitalEnergyDelta"></span></span>
+</span>
+</div>
+<div class="vital" data-key="focus">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Фокус</span>
+<span class="vital-row"><span class="vital-val" id="vitalFocus">—</span><span class="vital-delta" id="vitalFocusDelta"></span></span>
+</span>
+</div>
+<div class="vital" data-key="heart">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Пульс</span>
+<span class="vital-row"><span class="vital-val" id="vitalHeart">—</span><span class="vital-unit">bpm</span><span class="vital-pulse-dot" aria-hidden="true"></span></span>
+</span>
+</div>
+<div class="vital" data-key="load">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M3.5 9.5v5M20.5 9.5v5M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Нагрузка</span>
+<span class="vital-row"><span class="vital-val" id="vitalLoad">—</span><span class="vital-unit">у.е.</span></span>
+</span>
+</div>
+<div class="vital" data-key="hydration">
+<span class="vital-ic" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>
+</span>
+<span class="vital-body">
+<span class="vital-label">Гидратация</span>
+<span class="vital-row"><span class="vital-val" id="vitalHydration">—</span><span class="vital-unit">%</span></span>
+</span>
+</div>
+</div>
+</div>
+
+<div class="moment-next" id="momentNext" hidden>
+<span class="mn-time" id="mnTime">—</span>
+<span class="mn-sep">·</span>
+<span class="mn-text" id="mnText">—</span>
+</div>
+
+<div class="moment-narrative" id="momentNarrative" hidden></div>
+
+<div class="moment-insight" id="momentInsight"></div>
+<div class="moment-actions">
+<button class="btn btn-primary" type="button" id="momentPrimary">Подробнее</button>
+<button class="btn btn-ghost" type="button" id="momentGhost">Изменить</button>
+</div>
+</section>
+
+<section class="dynamics-card">
+<div class="dynamics-head"><div class="dynamics-title">Прогноз до конца дня</div><div class="dynamics-trend" id="dynamicsTrend">к концу ~55</div></div>
+<div class="dynamics-grid">
+<div class="dyn-cell"><div class="dyn-label">Пик был</div><div class="dyn-value" id="dynPeak">18:00</div></div>
+<div class="dyn-cell"><div class="dyn-label">Сейчас</div><div class="dyn-value" id="dynNow">—</div></div>
+<div class="dyn-cell"><div class="dyn-label">К 24:00</div><div class="dyn-value" id="dynEod">~25</div></div>
+</div>
+<div class="dynamics-foot" id="dynamicsFoot">Среда обычно 75</div>
+</section>
+
+<details class="drilldown">
+<summary class="drilldown-summary">
+<span class="drilldown-label">Подробнее</span>
+<span class="drilldown-meta">HRV · Сон · Стресс · Восстановление</span>
+<svg class="drilldown-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</summary>
+<div class="drilldown-body">
+<div class="dd-row"><div class="dd-name">HRV</div><div class="dd-bar"><div class="dd-fill" style="width:85%"></div></div><div class="dd-val">+12</div></div>
+<div class="dd-row"><div class="dd-name">Сон</div><div class="dd-bar"><div class="dd-fill" style="width:60%"></div></div><div class="dd-val">−5</div></div>
+<div class="dd-row"><div class="dd-name">Стресс</div><div class="dd-bar"><div class="dd-fill" style="width:75%"></div></div><div class="dd-val">+8</div></div>
+<div class="dd-row"><div class="dd-name">Восст.</div><div class="dd-bar"><div class="dd-fill" style="width:90%"></div></div><div class="dd-val">+6</div></div>
+<div class="dd-row"><div class="dd-name">Нагрузка</div><div class="dd-bar"><div class="dd-fill" style="width:70%"></div></div><div class="dd-val">380 у.е.</div></div>
+<div class="dd-row"><div class="dd-name">Энергия</div><div class="dd-bar"><div class="dd-fill" style="width:76%"></div></div><div class="dd-val">76%</div></div>
+<button class="btn btn-ghost btn-full" type="button" id="gotoTrend">Смотреть тренд</button>
+</div>
+</details>
+
+<section class="next-event" id="nextEvent">
+<div class="ne-time" id="neTime">16:00</div>
+<div class="ne-body"><div class="ne-title" id="neTitle">Check-in</div><div class="ne-sub" id="neSub">Как ты сейчас?</div></div>
+<button class="btn btn-mini" type="button">Отметить</button>
+</section>
+
+<button class="trend-expand-btn" id="trendExpandBtn" type="button" aria-expanded="false" aria-controls="trendPanel">
+<span class="teb-label">Развернуть тренд за неделю</span>
+<span class="teb-chev" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</span>
+</button>
+
+<section class="trend-panel" id="trendPanel" hidden aria-label="Тренд за неделю">
+<div class="period-tabs" role="tablist" aria-label="Период">
+<button class="period-tab is-active" type="button" role="tab" aria-selected="true" data-period="week">Неделя</button>
+<button class="period-tab" type="button" role="tab" aria-selected="false" data-period="month">Месяц</button>
+<button class="period-tab" type="button" role="tab" aria-selected="false" data-period="year">Год</button>
+</div>
+<section class="card week-chart">
+<div class="card-title">Готовность по дням</div>
+<div class="week-bars">
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:72%"></div></div><div class="wb-day">Пн</div><div class="wb-val">72</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:70%"></div></div><div class="wb-day">Вт</div><div class="wb-val">70</div></div>
+<div class="wb is-today"><div class="wb-track"><div class="wb-fill" style="height:75%"></div></div><div class="wb-day">Ср</div><div class="wb-val">75</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:73%"></div></div><div class="wb-day">Чт</div><div class="wb-val">73</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:76%"></div></div><div class="wb-day">Пт</div><div class="wb-val">76</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:74%"></div></div><div class="wb-day">Сб</div><div class="wb-val">74</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:78%"></div></div><div class="wb-day">Вс</div><div class="wb-val">78</div></div>
+</div>
+<p class="week-foot">Среда обычно 75, сегодня 78 — выше обычного</p>
+</section>
+<div class="trend-compares">
+<div class="cmp-card"><div class="cmp-label">Готовность</div><div class="cmp-val">+6</div><div class="cmp-sub">к прошлой неделе</div></div>
+<div class="cmp-card"><div class="cmp-label">Шаги</div><div class="cmp-val">+12%</div><div class="cmp-sub">к прошлой неделе</div></div>
+<div class="cmp-card"><div class="cmp-label">Сон</div><div class="cmp-val">+15м</div><div class="cmp-sub">к прошлой неделе</div></div>
+</div>
+<section class="card achievements">
+<div class="card-title">Достижения</div>
+<div class="ach-list">
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></span><div class="ach-text"><div class="ach-title">7 дней подряд шаги 8000+</div><div class="ach-sub">Личная серия</div></div></div>
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><div class="ach-text"><div class="ach-title">Готовность 75+ 5 дней из 7</div><div class="ach-sub">Неделя</div></div></div>
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><div class="ach-text"><div class="ach-title">Лучший сон за месяц: 8.2ч</div><div class="ach-sub">12 дней назад</div></div></div>
+</div>
+</section>
+<section class="card patterns-summary" id="patternsSummary" aria-label="Твои паттерны">
+<div class="card-title">Твои паттерны</div>
+<div class="patterns-summary-meta">На основе 30 дней наблюдений</div>
+<div class="patterns-summary-bars" id="patternsSummaryBars"></div>
+<button class="patterns-summary-btn" id="openPatternsModal" type="button">
+<span class="psb-label">Открыть все паттерны</span>
+<span class="psb-count" id="patternsTotalCount">0</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+</section>
+
+<!-- Modal: список паттернов -->
+<div class="modal" id="patternsModal" role="dialog" aria-modal="true" aria-labelledby="patternsModalTitle" hidden>
+<div class="modal-backdrop" data-close-modal></div>
+<div class="modal-sheet">
+<div class="modal-handle" aria-hidden="true"></div>
+<header class="modal-head">
+<div>
+<div class="modal-eyebrow">Личные паттерны</div>
+<h2 class="modal-title" id="patternsModalTitle">Что мы заметили</h2>
+</div>
+<button class="modal-close" type="button" data-close-modal aria-label="Закрыть">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+</header>
+<div class="modal-body">
+<p class="modal-intro">Каждый паттерн — реальная связь между твоими действиями и результатом. Мы показываем силу эффекта, сколько наблюдений и насколько можно доверять.</p>
+<div class="modal-tiers" id="patternsModalTiers"></div>
+<p class="modal-footnote">Если данных мало — мы не делаем вид, что знаем. Ждём, пока накопится.</p>
+</div>
+</div>
+</div>
+
+<!-- Modal: детали одного паттерна -->
+<div class="modal" id="patternDetailModal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+<div class="modal-backdrop" data-close-modal></div>
+<div class="modal-sheet modal-sheet-tall">
+<div class="modal-handle" aria-hidden="true"></div>
+<header class="modal-head">
+<button class="modal-back" type="button" data-open-patterns aria-label="К списку">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+</button>
+<div class="modal-head-title" id="patternDetailTitle">Паттерн</div>
+<button class="modal-close" type="button" data-close-modal aria-label="Закрыть">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+</header>
+<div class="modal-body" id="patternDetailBody"></div>
+</div>
+</div>
+<section class="card goals-card">
+<div class="card-title">Цели</div>
+<div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Шаги 8000/день</div><div class="goal-row-sub">65% дней закрыто</div></div><div class="goal-bar"><div class="goal-fill" style="width:65%"></div></div></div>
+<div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Готовность 80+</div><div class="goal-row-sub">40% дней</div></div><div class="goal-bar"><div class="goal-fill" style="width:40%"></div></div></div>
+</section>
+</section>
+
+</div>
+</section>
+
+</div>
 </body>
 </html>
-
