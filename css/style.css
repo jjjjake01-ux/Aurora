@@ -541,7 +541,6 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   fill:var(--mut);
   letter-spacing:.04em;
   font-variant-numeric:tabular-nums;
-  text-anchor:start;
   pointer-events:none;
 }
 .tl-pill-label{
@@ -565,7 +564,7 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .tl-stack-bg{transition:r .15s var(--ease),fill .2s var(--ease)}
 .tl-event-stack:hover .tl-stack-bg{fill:#fff;stroke-width:2}
 .tl-stack-count{
-  font:800 10px/1 var(--f);
+  font:800 12px/1 var(--f);
   fill:var(--ink);
   font-variant-numeric:tabular-nums;
   pointer-events:none;

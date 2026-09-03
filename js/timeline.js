@@ -193,15 +193,18 @@ let PERIOD_MODE = false;
   const moodY = v => 30 + ((100 - v) / 100) * 120;
   const clampY = y => Math.max(28, Math.min(155, y));
 
-  // Ширина pill-карточки: иконка + 2px + время/подпись
-  const PILL_W = 68;
-  const PILL_H = 28;
+  // Ширина pill-карточки: иконка + время. Лейблы убраны — события в часовом диапазоне
+  // и так очевидны, иначе пилюли склеиваются в стеки.
+  const PILL_W = 44;
+  const PILL_H = 30;
   const PILL_GAP = 8;
-  const PILL_ROW_H = 34;
+  const PILL_ROW_H = 28;
 
   // Минимальный горизонтальный зазор между карточками на стороне (в SVG-юнитах).
   // Если два события ближе — склеиваем в стек (counter "+N").
-  const STACK_THRESHOLD = 50;  // ~45 мин между событиями → стек
+  // PILL_W=44 шире 1 часа (37.5), поэтому плотные часы корректно склеиваются в стек,
+  // а popover разворачивает список.
+  const STACK_THRESHOLD = 50;
 
   // Сгруппировать события по стороне (top/bottom), упаковать в строки и стеки.
   // visualScale = 1.0 в обычном режиме, > 1.0 при зуме — пороги сжаты.
@@ -511,39 +514,37 @@ let PERIOD_MODE = false;
       });
 
       if (!isStack){
-        // === FULL CARD ===
+        // === FULL CARD (compact: icon + time, без лейбла) ===
         const pillX = xCenter - PILL_W/2;
         const pillY = pillTop;
         grp.appendChild(el('rect', {
           x:pillX, y:pillY, width:PILL_W, height:PILL_H, rx:8, ry:8,
           class:'tl-pill-bg'
         }));
+        // Цветная полоска слева
         grp.appendChild(el('rect', {
           x:pillX, y:pillY, width:3, height:PILL_H, rx:1.5, ry:1.5,
           fill: color, opacity:.95
         }));
-        const iconCx = pillX + 13;
-        const iconCy = pillY + PILL_H/2;
+        // Иконка по центру сверху
+        const iconCx = xCenter;
+        const iconCy = pillY + 9;
         grp.appendChild(el('circle', {
-          cx:iconCx, cy:iconCy, r:7.5,
+          cx:iconCx, cy:iconCy, r:6,
           fill: color, class:'tl-pill-icon-bg'
         }));
         grp.appendChild(el('g', {
-          transform:'translate('+(iconCx-5)+' '+(iconCy-5)+') scale(.42)',
+          transform:'translate('+(iconCx-4.5)+' '+(iconCy-4.5)+') scale(.38)',
           class:'tl-pill-icon', style:'stroke:#fff'
         })).innerHTML = EVENT_ICON[lead.icon] || EVENT_ICON.sun;
+        // Время под иконкой
         grp.appendChild(el('text', {
-          x:pillX + 24, y:pillY + 11, class:'tl-pill-time'
+          x:xCenter, y:pillY + PILL_H - 6, class:'tl-pill-time', 'text-anchor':'middle'
         }, fmtTime(lead.start)));
-        const shortLabel = lead.label.length > 9 ? lead.label.slice(0,9)+'…' : lead.label;
-        grp.appendChild(el('text', {
-          x:pillX + 24, y:pillY + PILL_H - 7, class:'tl-pill-label'
-        }, shortLabel));
         grp.addEventListener('click', () => setMomentHour(lead.start, true));
       } else {
-        // === STACK COUNTER "+N" ===
-        // Маленький круглый бейдж с количеством + цветной точкой
-        const r = 10;
+        // === STACK COUNTER "+N" — крупнее, чтобы было видно и понятно «тапни» ===
+        const r = 14;
         const cy = pillTop + PILL_H/2;
         grp.appendChild(el('circle', {
           cx:xCenter, cy, r,
