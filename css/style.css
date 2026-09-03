@@ -762,14 +762,24 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .moment-title{font:700 14px/1.2 var(--f);color:var(--ink);letter-spacing:-.01em}
 .moment-desc{font:500 12.5px/1.4 var(--f);color:var(--ink2);margin-top:-4px}
 
-/* ===== VITALS RING + GRID — moment-card ===== */
+/* ===== MOMENT-VITALS: 2 колонки (узкая кольца / широкая цели) ===== */
 .moment-vitals{
   display:grid;
   grid-template-columns:120px 1fr;
-  gap:16px;
-  align-items:center;
+  gap:14px;
+  align-items:start;
   margin:6px 0 4px;
 }
+.mv-rings{
+  display:flex;align-items:center;justify-content:center;
+  padding-top:4px;
+}
+.mv-goals{
+  display:flex;flex-direction:column;gap:10px;
+  padding:2px 0 2px;
+}
+
+/* Кольца состояния (большие, слева) */
 .vitals-ring{
   position:relative;
   width:120px;height:120px;
@@ -822,7 +832,6 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vring-num.is-warn{color:var(--warn)}
 .vring-num.is-bad{color:var(--bad)}
 
-/* Подписи на дугах: поворачиваем обратно, чтобы текст читался */
 .vring-tag{
   font:700 6.5px/1 var(--f-ui);
   fill:var(--ink2);
@@ -837,8 +846,6 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vring-tag-energy{transform:rotate(90deg)  translate(0,0)}
 .vring-tag-focus {transform:rotate(90deg)  translate(0,0)}
 .vring-tag-mood  {transform:rotate(90deg)  translate(0,0)}
-
-/* Активное кольцо подсвечивает свой тег */
 .vring-fill[data-key="energy"].is-active ~ .vring-tag-energy,
 .vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus,
 .vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{opacity:1}
@@ -846,11 +853,121 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus{fill:#F0764B}
 .vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{fill:#7B74D6}
 
-/* vitals grid */
-.vitals-grid{
+/* ===== GOAL RINGS — маленькие кольца прогресса дня ===== */
+.goal-rings{
   display:grid;
-  grid-template-columns:1fr;
+  grid-template-columns:repeat(4,1fr);
   gap:6px;
+  padding:6px 8px 8px;
+  background:rgba(255,255,255,.5);
+  border:.5px solid var(--line);
+  border-radius:14px;
+}
+.gr-item{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:0;
+}
+.gr-svg{
+  width:40px;height:40px;display:block;
+  overflow:visible;
+}
+.gr-track{
+  fill:none;
+  stroke:rgba(154,143,130,.16);
+  stroke-width:3;
+}
+.gr-fill{
+  fill:none;
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-dasharray:0 999;
+  transition:stroke-dasharray .6s var(--ease);
+  filter:drop-shadow(0 1px 2px rgba(45,40,35,.06));
+}
+.gr-fill-sit{transform-origin:20px 20px}
+.gr-num{
+  position:absolute;
+  top:11px;left:50%;
+  transform:translateX(-50%);
+  font:800 10px/1 var(--f);
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.gr-label{
+  font:600 9px/1 var(--f-ui);
+  color:var(--ink2);
+  text-transform:uppercase;letter-spacing:.04em;
+  white-space:nowrap;
+  margin-top:2px;
+}
+.gr-item.is-done .gr-num{color:var(--good)}
+.gr-item.is-warn .gr-num{color:var(--warn)}
+.gr-item.is-bad  .gr-num{color:var(--bad)}
+.gr-item.is-warn .gr-track{stroke:rgba(201,138,31,.2)}
+.gr-item.is-bad  .gr-track{stroke:rgba(208,101,82,.22)}
+
+/* ===== GOAL CHIPS — «что осталось до цели» ===== */
+.goal-chips{
+  display:flex;flex-direction:column;gap:4px;
+  padding:8px 10px 9px;
+  background:rgba(255,255,255,.45);
+  border:.5px solid var(--line);
+  border-radius:12px;
+}
+.gc-chip{
+  display:flex;align-items:center;gap:7px;
+  font:600 11px/1.3 var(--f);
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.gc-ic{
+  flex-shrink:0;
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:5px;
+  background:var(--accent-bg);
+  color:var(--accent-dark);
+}
+.gc-chip[data-key="active"] .gc-ic{background:rgba(242,160,55,.14);color:#C98A1F}
+.gc-chip[data-key="water"]  .gc-ic{background:rgba(123,168,217,.16);color:#4A7AAB}
+.gc-chip.is-warn .gc-ic{background:rgba(201,138,31,.16);color:#C98A1F}
+.gc-chip.is-bad  .gc-ic{background:rgba(208,101,82,.16);color:#D06552}
+.gc-chip.is-done .gc-ic{background:rgba(47,163,107,.18);color:var(--good)}
+
+/* ===== GOAL SLEEP — countdown до сна ===== */
+.goal-sleep{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 12px;
+  background:linear-gradient(135deg,rgba(123,116,214,.12) 0%,rgba(123,116,214,.04) 100%);
+  border:.5px solid rgba(123,116,214,.28);
+  border-radius:12px;
+  opacity:0;
+  animation:gsRowIn .35s var(--ease) forwards;
+}
+@keyframes gsRowIn{to{opacity:1}}
+.gs-moon{
+  flex-shrink:0;
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#7B74D6,#5CC4A0);
+  color:#fff;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(123,116,214,.3);
+}
+.gs-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.gs-title{
+  font:700 12px/1.3 var(--f);
+  color:var(--ink);
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+.gs-sub{
+  font:500 10.5px/1.3 var(--f-ui);
+  color:var(--ink2);
 }
 .vital{
   display:flex;align-items:flex-start;gap:7px;
@@ -1709,11 +1826,20 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 :root.dark-theme .moment-insight{color:rgba(255,255,255,.45)}
 
 /* DARK: status-strip + next-action */
-:root.dark-theme .status-strip{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08)}
-:root.dark-theme .ss-label{color:rgba(255,255,255,.6)}
-:root.dark-theme .ss-val{color:#fff}
-:root.dark-theme .ss-bar{background:rgba(255,255,255,.08)}
-:root.dark-theme .ss-target{color:rgba(255,255,255,.5)}
+:root.dark-theme .goal-rings{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08)}
+:root.dark-theme .gr-track{stroke:rgba(255,255,255,.12)}
+:root.dark-theme .gr-num{color:#fff}
+:root.dark-theme .gr-label{color:rgba(255,255,255,.6)}
+:root.dark-theme .gr-item.is-warn .gr-track{stroke:rgba(201,138,31,.25)}
+:root.dark-theme .gr-item.is-bad  .gr-track{stroke:rgba(208,101,82,.28)}
+:root.dark-theme .goal-chips{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08)}
+:root.dark-theme .gc-chip{color:#fff}
+:root.dark-theme .gc-ic{background:rgba(47,191,155,.18);color:var(--accent-light)}
+:root.dark-theme .gc-chip[data-key="active"] .gc-ic{background:rgba(242,160,55,.2);color:#F5C037}
+:root.dark-theme .gc-chip[data-key="water"]  .gc-ic{background:rgba(123,168,217,.2);color:#7BA8D9}
+:root.dark-theme .goal-sleep{background:linear-gradient(135deg,rgba(123,116,214,.18) 0%,rgba(123,116,214,.06) 100%);border-color:rgba(123,116,214,.32)}
+:root.dark-theme .gs-title{color:#fff}
+:root.dark-theme .gs-sub{color:rgba(255,255,255,.6)}
 :root.dark-theme .next-action{background:linear-gradient(135deg,rgba(47,191,155,.1) 0%,rgba(47,191,155,.02) 100%);border-color:rgba(47,191,155,.2)}
 :root.dark-theme .next-action:hover{background:linear-gradient(135deg,rgba(47,191,155,.16) 0%,rgba(47,191,155,.04) 100%)}
 :root.dark-theme .next-action.is-warn{background:linear-gradient(135deg,rgba(201,138,31,.16) 0%,rgba(201,138,31,.04) 100%);border-color:rgba(201,138,31,.35)}

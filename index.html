@@ -266,65 +266,129 @@
 <p class="moment-desc" id="momentDesc">—</p>
 
 <div class="moment-vitals" id="momentVitals">
-  <div class="vitals-ring" aria-hidden="true">
-    <svg viewBox="0 0 100 100" class="vitals-ring-svg">
-      <defs>
-        <linearGradient id="ringEnergy" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#5CC4A0"/>
-          <stop offset="100%" stop-color="#2FBF9B"/>
-        </linearGradient>
-        <linearGradient id="ringFocus" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#F2C037"/>
-          <stop offset="100%" stop-color="#F0764B"/>
-        </linearGradient>
-        <linearGradient id="ringMood" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#7B74D6"/>
-          <stop offset="100%" stop-color="#5CC4A0"/>
-        </linearGradient>
-      </defs>
-      <circle class="vring-track" cx="50" cy="50" r="44"/>
-      <circle class="vring-track" cx="50" cy="50" r="34"/>
-      <circle class="vring-track" cx="50" cy="50" r="24"/>
-      <circle class="vring-fill vring-energy" cx="50" cy="50" r="44" stroke="url(#ringEnergy)" data-key="energy"/>
-      <circle class="vring-fill vring-focus"  cx="50" cy="50" r="34" stroke="url(#ringFocus)" data-key="focus"/>
-      <circle class="vring-fill vring-mood"   cx="50" cy="50" r="24" stroke="url(#ringMood)" data-key="mood"/>
-      <text class="vring-tag vring-tag-energy" x="92" y="56" text-anchor="end">Energy</text>
-      <text class="vring-tag vring-tag-focus"  x="92" y="56" text-anchor="end">Focus</text>
-      <text class="vring-tag vring-tag-mood"   x="92" y="56" text-anchor="end">Mood</text>
-    </svg>
-    <div class="vring-center">
-      <div class="vring-num" id="vringNum">—</div>
-      <div class="vring-label" id="vringLabel">MOMENT</div>
+  <div class="mv-rings" aria-label="Состояние сейчас">
+    <div class="vitals-ring" aria-hidden="true">
+      <svg viewBox="0 0 100 100" class="vitals-ring-svg">
+        <defs>
+          <linearGradient id="ringEnergy" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#5CC4A0"/>
+            <stop offset="100%" stop-color="#2FBF9B"/>
+          </linearGradient>
+          <linearGradient id="ringFocus" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F2C037"/>
+            <stop offset="100%" stop-color="#F0764B"/>
+          </linearGradient>
+          <linearGradient id="ringMood" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7B74D6"/>
+            <stop offset="100%" stop-color="#5CC4A0"/>
+          </linearGradient>
+        </defs>
+        <circle class="vring-track" cx="50" cy="50" r="44"/>
+        <circle class="vring-track" cx="50" cy="50" r="34"/>
+        <circle class="vring-track" cx="50" cy="50" r="24"/>
+        <circle class="vring-fill vring-energy" cx="50" cy="50" r="44" stroke="url(#ringEnergy)" data-key="energy"/>
+        <circle class="vring-fill vring-focus"  cx="50" cy="50" r="34" stroke="url(#ringFocus)" data-key="focus"/>
+        <circle class="vring-fill vring-mood"   cx="50" cy="50" r="24" stroke="url(#ringMood)" data-key="mood"/>
+        <text class="vring-tag vring-tag-energy" x="92" y="56" text-anchor="end">Energy</text>
+        <text class="vring-tag vring-tag-focus"  x="92" y="56" text-anchor="end">Focus</text>
+        <text class="vring-tag vring-tag-mood"   x="92" y="56" text-anchor="end">Mood</text>
+      </svg>
+      <div class="vring-center">
+        <div class="vring-num" id="vringNum">—</div>
+        <div class="vring-label" id="vringLabel">MOMENT</div>
+      </div>
     </div>
   </div>
 
-  <div class="vitals-grid">
-    <div class="vital" data-key="heart">
-      <span class="vital-ic" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </span>
-      <span class="vital-body">
-        <span class="vital-label">Пульс</span>
-        <span class="vital-row"><span class="vital-val" id="vitalHeart">—</span><span class="vital-unit">bpm</span><span class="vital-pulse-dot" aria-hidden="true"></span></span>
-      </span>
+  <div class="mv-goals" aria-label="Прогресс дня">
+    <div class="goal-rings" id="goalRings">
+      <div class="gr-item" data-key="steps">
+        <svg viewBox="0 0 40 40" class="gr-svg" aria-hidden="true">
+          <circle class="gr-track" cx="20" cy="20" r="16"/>
+          <circle class="gr-fill" cx="20" cy="20" r="16" id="grStepsFill" stroke="url(#grStepsGrad)" transform="rotate(-90 20 20)"/>
+          <defs>
+            <linearGradient id="grStepsGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#5CC4A0"/>
+              <stop offset="100%" stop-color="#2FBF9B"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="gr-num" id="grStepsNum">—</span>
+        <span class="gr-label">шаги</span>
+      </div>
+      <div class="gr-item" data-key="active">
+        <svg viewBox="0 0 40 40" class="gr-svg" aria-hidden="true">
+          <circle class="gr-track" cx="20" cy="20" r="16"/>
+          <circle class="gr-fill" cx="20" cy="20" r="16" id="grActiveFill" stroke="url(#grActiveGrad)" transform="rotate(-90 20 20)"/>
+          <defs>
+            <linearGradient id="grActiveGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#F5C037"/>
+              <stop offset="100%" stop-color="#F0764B"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="gr-num" id="grActiveNum">—</span>
+        <span class="gr-label">актив</span>
+      </div>
+      <div class="gr-item" data-key="water">
+        <svg viewBox="0 0 40 40" class="gr-svg" aria-hidden="true">
+          <circle class="gr-track" cx="20" cy="20" r="16"/>
+          <circle class="gr-fill" cx="20" cy="20" r="16" id="grWaterFill" stroke="url(#grWaterGrad)" transform="rotate(-90 20 20)"/>
+          <defs>
+            <linearGradient id="grWaterGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7BA8D9"/>
+              <stop offset="100%" stop-color="#5CC4A0"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="gr-num" id="grWaterNum">—</span>
+        <span class="gr-label">вода</span>
+      </div>
+      <div class="gr-item gr-item-warn" data-key="sitting" id="grSitItem">
+        <svg viewBox="0 0 40 40" class="gr-svg" aria-hidden="true">
+          <circle class="gr-track" cx="20" cy="20" r="16"/>
+          <circle class="gr-fill gr-fill-sit" cx="20" cy="20" r="16" id="grSitFill" stroke="url(#grSitGrad)" transform="rotate(-90 20 20)"/>
+          <defs>
+            <linearGradient id="grSitGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2FA36B"/>
+              <stop offset="100%" stop-color="#F2C037"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="gr-num" id="grSitNum">—</span>
+        <span class="gr-label">сидяч</span>
+      </div>
     </div>
-    <div class="vital" data-key="load">
-      <span class="vital-ic" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M3.5 9.5v5M20.5 9.5v5M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3"/></svg>
-      </span>
-      <span class="vital-body">
-        <span class="vital-label">Нагрузка</span>
-        <span class="vital-row"><span class="vital-val" id="vitalLoad">—</span><span class="vital-unit">у.е.</span></span>
-      </span>
+
+    <div class="goal-chips" id="goalChips">
+      <div class="gc-chip" data-key="steps">
+        <span class="gc-ic" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4l3 5-3 5 4 6M9 20l-2-4 4-3-2-4 3-5"/></svg>
+        </span>
+        <span class="gc-text" id="gcSteps">—</span>
+      </div>
+      <div class="gc-chip" data-key="active">
+        <span class="gc-ic" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </span>
+        <span class="gc-text" id="gcActive">—</span>
+      </div>
+      <div class="gc-chip" data-key="water">
+        <span class="gc-ic" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>
+        </span>
+        <span class="gc-text" id="gcWater">—</span>
+      </div>
     </div>
-    <div class="vital" data-key="hydration">
-      <span class="vital-ic" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>
-      </span>
-      <span class="vital-body">
-        <span class="vital-label">Гидратация</span>
-        <span class="vital-row"><span class="vital-val" id="vitalHydration">—</span><span class="vital-unit">%</span></span>
-      </span>
+
+    <div class="goal-sleep" id="goalSleep" hidden>
+      <div class="gs-moon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </div>
+      <div class="gs-body">
+        <div class="gs-title" id="gsTitle">—</div>
+        <div class="gs-sub" id="gsSub">—</div>
+      </div>
     </div>
   </div>
 </div>
@@ -338,49 +402,6 @@
 <div class="moment-narrative" id="momentNarrative" hidden></div>
 
 <div class="moment-insight" id="momentInsight"></div>
-
-<section class="status-strip" id="statusStrip" aria-label="Прогресс дня">
-  <div class="ss-row" data-key="steps">
-    <div class="ss-meta">
-      <span class="ss-label">Шаги</span>
-      <span class="ss-val" id="ssStepsVal">—</span>
-    </div>
-    <div class="ss-bar"><div class="ss-bar-fill" id="ssStepsBar" style="width:0%"></div></div>
-    <span class="ss-target" id="ssStepsTarget">/ 8 000</span>
-  </div>
-  <div class="ss-row" data-key="active">
-    <div class="ss-meta">
-      <span class="ss-label">Активность</span>
-      <span class="ss-val" id="ssActiveVal">—</span>
-    </div>
-    <div class="ss-bar"><div class="ss-bar-fill ss-bar-active" id="ssActiveBar" style="width:0%"></div></div>
-    <span class="ss-target" id="ssActiveTarget">/ 22 мин</span>
-  </div>
-  <div class="ss-row" data-key="water">
-    <div class="ss-meta">
-      <span class="ss-label">Вода</span>
-      <span class="ss-val" id="ssWaterVal">—</span>
-    </div>
-    <div class="ss-bar"><div class="ss-bar-fill ss-bar-water" id="ssWaterBar" style="width:0%"></div></div>
-    <span class="ss-target" id="ssWaterTarget">/ 2.5 L</span>
-  </div>
-  <div class="ss-row ss-row-inverse" data-key="sitting">
-    <div class="ss-meta">
-      <span class="ss-label">Сидячее</span>
-      <span class="ss-val" id="ssSittingVal">—</span>
-    </div>
-    <div class="ss-bar"><div class="ss-bar-fill ss-bar-sit" id="ssSittingBar" style="width:0%"></div></div>
-    <span class="ss-target" id="ssSittingTarget">лимит 6ч</span>
-  </div>
-  <div class="ss-row ss-row-sleep" data-key="sleep" id="ssSleepRow" hidden>
-    <div class="ss-meta">
-      <span class="ss-label">До сна</span>
-      <span class="ss-val" id="ssSleepVal">—</span>
-    </div>
-    <div class="ss-bar"><div class="ss-bar-fill ss-bar-sleep" id="ssSleepBar" style="width:0%"></div></div>
-    <span class="ss-target" id="ssSleepTarget">лечь к 23:00</span>
-  </div>
-</section>
 
 <section class="next-action" id="nextAction" aria-live="polite">
   <div class="na-ic" id="nextActionIc" aria-hidden="true">
