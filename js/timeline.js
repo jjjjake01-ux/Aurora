@@ -765,29 +765,14 @@ let PERIOD_MODE = false;
     }
     if (labEl) labEl.textContent = metrics.statusLabel;
 
-    // Метрики: count-up + дельты
+    // Метрики: count-up (energy/focus/mood теперь на кольцах, в плитках только heart/load/hydration)
     const setVal = (id, v) => {
       const el = document.getElementById(id);
       if (el) countUpTo(el, prev[id] != null ? prev[id] : 0, v, 300);
     };
-    setVal('vitalEnergy',    metrics.energy);
-    setVal('vitalFocus',     metrics.focus);
     setVal('vitalHeart',     metrics.heart);
     setVal('vitalLoad',      metrics.load);
     setVal('vitalHydration', metrics.hydration);
-
-    // Дельта энергии
-    const energyDeltaEl = document.getElementById('vitalEnergyDelta');
-    if (energyDeltaEl){
-      const d = metrics.energyDelta;
-      const arrowSvg = d.dir === 'up'
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
-        : d.dir === 'down'
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>';
-      energyDeltaEl.innerHTML = arrowSvg + '<span>'+(d.val === '0' ? '0' : d.val)+'</span>';
-      energyDeltaEl.className = 'vital-delta ' + (d.dir === 'up' ? 'is-up' : d.dir === 'down' ? 'is-down' : '');
-    }
 
     // Пульс-индикатор (только когда метрика «живая» — пульс > 65 bpm)
     const heartVital = document.querySelector('.vital[data-key="heart"]');
@@ -805,8 +790,6 @@ let PERIOD_MODE = false;
     _vitalsState.h = h;
     _vitalsState.vals = {
       status: metrics.status,
-      vitalEnergy: metrics.energy,
-      vitalFocus: metrics.focus,
       vitalHeart: metrics.heart,
       vitalLoad: metrics.load,
       vitalHydration: metrics.hydration

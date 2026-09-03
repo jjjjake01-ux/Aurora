@@ -766,19 +766,19 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 /* ===== VITALS RING + GRID — moment-card ===== */
 .moment-vitals{
   display:grid;
-  grid-template-columns:96px 1fr;
-  gap:14px;
+  grid-template-columns:120px 1fr;
+  gap:16px;
   align-items:center;
   margin:6px 0 4px;
 }
 .vitals-ring{
   position:relative;
-  width:96px;height:96px;
+  width:120px;height:120px;
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
 .vitals-ring-svg{
-  width:96px;height:96px;
+  width:120px;height:120px;
   transform:rotate(-90deg);
   overflow:visible;
 }
@@ -806,27 +806,52 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   pointer-events:none;
 }
 .vring-num{
-  font:800 22px/1 var(--f);
+  font:800 24px/1 var(--f);
   color:var(--ink);
-  letter-spacing:-.02em;
+  letter-spacing:-.03em;
   font-variant-numeric:tabular-nums;
   transition:color .3s var(--ease);
 }
 .vring-label{
-  font:600 9.5px/1 var(--f-ui);
+  font:700 9px/1 var(--f-ui);
   color:var(--ink2);
-  text-transform:uppercase;letter-spacing:.06em;
-  margin-top:3px;
+  text-transform:uppercase;letter-spacing:.08em;
+  margin-top:4px;
+  opacity:.7;
 }
 .vring-num.is-good{color:var(--good)}
 .vring-num.is-warn{color:var(--warn)}
 .vring-num.is-bad{color:var(--bad)}
 
+/* Подписи на дугах: поворачиваем обратно, чтобы текст читался */
+.vring-tag{
+  font:700 6.5px/1 var(--f-ui);
+  fill:var(--ink2);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  opacity:.65;
+  transition:opacity .25s var(--ease),fill .25s var(--ease);
+  pointer-events:none;
+  transform:rotate(90deg);
+  transform-origin:92px 56px;
+}
+.vring-tag-energy{transform:rotate(90deg)  translate(0,0)}
+.vring-tag-focus {transform:rotate(90deg)  translate(0,0)}
+.vring-tag-mood  {transform:rotate(90deg)  translate(0,0)}
+
+/* Активное кольцо подсвечивает свой тег */
+.vring-fill[data-key="energy"].is-active ~ .vring-tag-energy,
+.vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus,
+.vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{opacity:1}
+.vring-fill[data-key="energy"].is-active ~ .vring-tag-energy{fill:#2FBF9B}
+.vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus{fill:#F0764B}
+.vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{fill:#7B74D6}
+
 /* vitals grid */
 .vitals-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px 10px;
+  grid-template-columns:1fr;
+  gap:6px;
 }
 .vital{
   display:flex;align-items:flex-start;gap:7px;
