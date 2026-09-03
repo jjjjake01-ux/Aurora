@@ -1004,9 +1004,28 @@
     if (!el) return;
     const mood = moodAt(hoursNow());
     const r = Math.round(mood.v);
-    if (r >= 75) el.textContent = 'Готовность ' + r + ' — день будет сильным';
-    else if (r >= 60) el.textContent = 'Готовность ' + r + ' — день в норме';
-    else el.textContent = 'Готовность ' + r + ' — береги ресурс';
+    let phrase;
+    if (r >= 75) phrase = 'день будет сильным';
+    else if (r >= 60) phrase = 'день в норме';
+    else phrase = 'береги ресурс';
+    el.textContent = phrase;
+
+    // Синхронизируем hero-trend с реальным значением
+    const num = document.getElementById('heroTrendNum');
+    if (num) num.textContent = r;
+    const delta = document.getElementById('heroTrendDelta');
+    if (delta){
+      const d = +6; // TODO: реальный delta vs прошлая неделя
+      delta.textContent = (d >= 0 ? '↑ +' : '↓ ') + d;
+      delta.classList.toggle('is-down', d < 0);
+    }
+    const foot = document.getElementById('heroTrendFoot');
+    if (foot){
+      const avg = 72;
+      if (r > avg) foot.textContent = 'Норма ' + avg + ' · сегодня выше';
+      else if (r === avg) foot.textContent = 'Норма ' + avg + ' · в норме';
+      else foot.textContent = 'Норма ' + avg + ' · сегодня ниже';
+    }
   }
   function setupNowStrip(){
     const t = document.getElementById('nowTime');
@@ -1074,9 +1093,62 @@
     setupScrubber();
     setupZoomButton();
     setupMascotInteraction();
-    setupPageIndicator();
+    setupTrendPanel();
 
     setInterval(tick, 30*1000);
+  }
+
+  function setupTrendPanel(){
+    const btn = document.getElementById('trendExpandBtn');
+    const panel = document.getElementById('trendPanel');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      if (isOpen){
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.querySelector('.teb-label').textContent = 'Развернуть тренд за неделю';
+      } else {
+        panel.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.teb-label').textContent = 'Свернуть тренд';
+        // Плавный скролл к раскрытой панели
+        setTimeout(() => {
+          panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, 50);
+      }
+    });
+
+    // Период-табы внутри панели
+    panel.querySelectorAll('.period-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        panel.querySelectorAll('.period-tab').forEach(t => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('is-active');
+        tab.setAttribute('aria-selected', 'true');
+        const period = tab.dataset.period;
+        // Тут в реале — подгрузка данных. Пока обновим заголовок недели.
+        const title = panel.querySelector('.week-chart .card-title');
+        if (title){
+          const map = { week:'Готовность по дням', month:'Готовность по неделям', year:'Готовность по месяцам' };
+          title.textContent = map[period] || title.textContent;
+        }
+      });
+    });
+
+    // Hero-trend клик → открывает/фокусирует панель тренда
+    const heroTrend = document.getElementById('heroTrend');
+    if (heroTrend){
+      heroTrend.addEventListener('click', () => {
+        const b = document.getElementById('trendExpandBtn');
+        if (!b) return;
+        if (b.getAttribute('aria-expanded') !== 'true') b.click();
+        else b.scrollIntoView({ behavior:'smooth', block:'center' });
+      });
+    }
   }
 
   function setupZoomButton(){

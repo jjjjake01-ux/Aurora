@@ -23,6 +23,19 @@
 <div class="hero-meta"><span class="hero-meta-dot"></span><span class="hero-meta-text" id="heroDate">—</span></div>
 <h1 class="hero-title"><span class="hero-title-ic" id="heroGreetIcon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="heroGreetText">Добрый день</span></h1>
 <p class="hero-subline" id="heroSubline">Загружаем день…</p>
+
+<div class="hero-trend" id="heroTrend">
+<svg class="hero-trend-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+<defs><linearGradient id="heroSparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".32"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4 L100 28 L0 28 Z" fill="url(#heroSparkGrad)"/>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="100" cy="4" r="2.2" fill="var(--accent)" stroke="#fff" stroke-width="1.2"/>
+</svg>
+<div class="hero-trend-info">
+<div class="hero-trend-num"><span id="heroTrendNum">78</span><span class="hero-trend-delta" id="heroTrendDelta">↑ +6</span></div>
+<div class="hero-trend-foot" id="heroTrendFoot">Норма 72 · сегодня выше</div>
+</div>
+</div>
 </div>
 <div class="mascot-wrap" id="mascotWrap" aria-label="Маскот-компаньон">
 <svg class="mascot" id="mascotSvg" viewBox="0 0 120 120" aria-hidden="true">
@@ -273,32 +286,21 @@
 <button class="btn btn-mini" type="button">Отметить</button>
 </section>
 
-</div>
-</section>
+<button class="trend-expand-btn" id="trendExpandBtn" type="button" aria-expanded="false" aria-controls="trendPanel">
+<span class="teb-label">Развернуть тренд за неделю</span>
+<span class="teb-chev" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</span>
+</button>
 
-<section class="snap-section snap-trend" data-section="trend" data-section-label="Тренд">
-<div class="card-stack">
+<section class="trend-panel" id="trendPanel" hidden aria-label="Тренд за неделю">
 <div class="period-tabs" role="tablist" aria-label="Период">
 <button class="period-tab is-active" type="button" role="tab" aria-selected="true" data-period="week">Неделя</button>
 <button class="period-tab" type="button" role="tab" aria-selected="false" data-period="month">Месяц</button>
 <button class="period-tab" type="button" role="tab" aria-selected="false" data-period="year">Год</button>
 </div>
-<div class="trend-hero">
-<div class="trend-hero-label">Готовность за неделю</div>
-<div class="trend-hero-row"><div class="trend-hero-num">78</div><div class="trend-hero-delta">↑ +6</div></div>
-<svg class="trend-spark" viewBox="0 0 280 60" preserveAspectRatio="none" aria-hidden="true">
-<defs><linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
-<line x1="0" y1="15" x2="280" y2="15" stroke="var(--accent-soft)" stroke-width="0.5" stroke-dasharray="2 3"/>
-<line x1="0" y1="30" x2="280" y2="30" stroke="var(--accent-soft)" stroke-width="0.5" stroke-dasharray="2 3"/>
-<line x1="0" y1="45" x2="280" y2="45" stroke="var(--accent-soft)" stroke-width="0.5" stroke-dasharray="2 3"/>
-<path d="M0 42 L40 38 L80 35 L120 38 L160 25 L200 28 L240 12 L280 8 L280 55 L0 55 Z" fill="url(#sparkGrad)"/>
-<path d="M0 42 L40 38 L80 35 L120 38 L160 25 L200 28 L240 12 L280 8" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="280" cy="8" r="4" fill="var(--accent)" stroke="#fff" stroke-width="1.5"/>
-</svg>
-<div class="trend-hero-foot">Твоя норма 72 · сегодня выше</div>
-</div>
 <section class="card week-chart">
-<div class="card-title">Неделя</div>
+<div class="card-title">Готовность по дням</div>
 <div class="week-bars">
 <div class="wb"><div class="wb-track"><div class="wb-fill" style="height:72%"></div></div><div class="wb-day">Пн</div><div class="wb-val">72</div></div>
 <div class="wb"><div class="wb-track"><div class="wb-fill" style="height:70%"></div></div><div class="wb-day">Вт</div><div class="wb-val">70</div></div>
@@ -332,13 +334,10 @@
 <div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Шаги 8000/день</div><div class="goal-row-sub">65% дней закрыто</div></div><div class="goal-bar"><div class="goal-fill" style="width:65%"></div></div></div>
 <div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Готовность 80+</div><div class="goal-row-sub">40% дней</div></div><div class="goal-bar"><div class="goal-fill" style="width:40%"></div></div></div>
 </section>
-</div>
 </section>
 
-<nav class="page-indicator" aria-label="Страницы">
-<button class="pi-dot is-active" type="button" data-target="today" aria-label="Сегодня"></button>
-<button class="pi-dot" type="button" data-target="trend" aria-label="Тренд"></button>
-</nav>
+</div>
+</section>
 
 </div>
 </body>
