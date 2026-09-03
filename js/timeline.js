@@ -452,8 +452,129 @@
   }
 
   // ============================================================
-  // MASCOT
+  // MASCOT — premium multi-state character
   // ============================================================
+  const MASCOT_SPEECH = {
+    morning_happy:  'Доброе утро!',
+    morning_calm:   'Чай с лимоном…',
+    morning_sad:    'Не выспался…',
+    day_happy:      'Отличный день!',
+    day_calm:       'Продуктивно иду',
+    day_tired:      'Нужен перерыв',
+    day_sad:        'Сил нет…',
+    evening_happy:  'Пик формы!',
+    evening_calm:   'Хороший вечер',
+    evening_tired:  'Устал сегодня',
+    evening_sad:    'Хочется спать',
+    night_happy:    'Время спать!',
+    night_calm:     'Спокойной ночи',
+    night_tired:    'Совсем нет сил',
+    night_sad:      'Тяжёлый день'
+  };
+
+  // Items held in arms depending on time+mood
+  const HELD_ITEMS = {
+    morning: { good:'☕', load:'💧', bad:'💧' },   // cup
+    day:     { good:'📱', load:'🎧', bad:'📓' },   // phone / headphones / notebook
+    evening: { good:'📖', load:'🛁', bad:'🛋️' },   // book / bath / sofa
+    night:   { good:'🌙', load:'🛏️', bad:'🛏️' }    // moon / bed
+  };
+
+  const MASCOT_EMOJI = {
+    good:'♥', load:'!', bad:'~', heart:'♥', drop:'~'
+  };
+
+  let particleTicker = 0;
+
+  function setMascotItem(timeMood, moodKey){
+    const item = document.getElementById('mItem');
+    if (!item) return;
+    const t = timeMood.split('-')[0];
+    const m = timeMood.split('-')[1];
+    const group = HELD_ITEMS[t];
+    if (!group) return;
+    let char = group.good;
+    if (moodKey === 'bad' || moodKey === 'warn') char = group.bad;
+    else if (moodKey === 'load') char = group.load;
+    item.innerHTML =
+      '<text x="0" y="0" font-size="14" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">' + char + '</text>';
+    item.setAttribute('transform', 'translate(60 88)');
+  }
+
+  function setMascotParticles(timeMood, moodKey){
+    const wrap = document.getElementById('mParticles');
+    if (!wrap) return;
+    const isGood = moodKey === 'good';
+    const isBad = moodKey === 'bad';
+    if (!isGood && !isBad) {
+      wrap.innerHTML = '';
+      return;
+    }
+    // Генерируем 3 частицы
+    wrap.innerHTML = '';
+    for (let i=0; i<3; i++){
+      const cx = 40 + i*20 + (Math.random()-0.5)*8;
+      const cy = 50 + (Math.random()-0.5)*8;
+      const fill = isGood ? '#FF6B95' : '#7BA8D9';
+      const r = isGood ? 2.2 : 1.8;
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', r);
+      c.setAttribute('fill', fill);
+      c.style.animationDelay = (i*0.6) + 's';
+      wrap.appendChild(c);
+    }
+  }
+
+  function setMascotBrows(moodPose, timePose){
+    const l = document.querySelector('.m-brow-l');
+    const r = document.querySelector('.m-brow-r');
+    if (!l || !r) return;
+    if (moodPose === 'happy'){
+      l.setAttribute('d', 'M34 38 Q42 32 50 36');
+      r.setAttribute('d', 'M70 36 Q78 32 86 38');
+    } else if (moodPose === 'calm'){
+      l.setAttribute('d', 'M34 39 L50 39');
+      r.setAttribute('d', 'M70 39 L86 39');
+    } else if (moodPose === 'neutral'){
+      l.setAttribute('d', 'M34 40 L50 38');
+      r.setAttribute('d', 'M70 38 L86 40');
+    } else if (moodPose === 'tired'){
+      l.setAttribute('d', 'M34 38 Q42 42 50 40');
+      r.setAttribute('d', 'M70 40 Q78 42 86 38');
+    } else { // sad
+      l.setAttribute('d', 'M34 36 Q42 41 50 40');
+      r.setAttribute('d', 'M70 40 Q78 41 86 36');
+    }
+  }
+
+  function setMascotBlush(moodKey){
+    const blushes = document.querySelectorAll('.m-blush');
+    blushes.forEach(b => {
+      if (moodKey === 'good'){ b.setAttribute('opacity', '0.85'); b.setAttribute('rx', '9'); }
+      else if (moodKey === 'warn'){ b.setAttribute('opacity', '0.6'); b.setAttribute('rx', '8'); }
+      else if (moodKey === 'bad'){ b.setAttribute('opacity', '0.2'); b.setAttribute('rx', '5'); }
+      else { b.setAttribute('opacity', '0.5'); b.setAttribute('rx', '7'); }
+    });
+  }
+
+  function setMascotSpeech(timeMood){
+    const speech = document.getElementById('mSpeech');
+    const text = document.getElementById('mSpeechText');
+    if (!speech || !text) return;
+    text.textContent = MASCOT_SPEECH[timeMood] || '';
+  }
+
+  function showSpeech(){
+    const speech = document.getElementById('mSpeech');
+    if (speech) speech.classList.add('is-visible');
+  }
+  function hideSpeech(){
+    const speech = document.getElementById('mSpeech');
+    if (speech) speech.classList.remove('is-visible');
+  }
+
   function updateMascot(h){
     const wrap = document.getElementById('mascotWrap');
     if (!wrap) return;
@@ -473,25 +594,98 @@
     else if (v >= 35) moodPose = 'tired';
     else moodPose = 'sad';
 
-    wrap.setAttribute('data-pose', timePose + '-' + moodPose);
+    const timeMood = timePose + '_' + moodPose;
+    wrap.setAttribute('data-pose', timeMood);
     wrap.setAttribute('data-mood', moodState(v));
 
-    const pupils = document.querySelectorAll('.mascot-pupil');
+    // 1. Зрачки следят за scrubber
+    const pupils = document.querySelectorAll('.m-pupil');
     const nowX = xFromHour(Math.min(h, DAY_END));
     const dx = (nowX - 350) / 350;
+    const dy = (Math.sin(h) * 0.5); // лёгкое движение по Y
     pupils.forEach((p, i) => {
       const cxAttr = i === 0 ? 46 : 78;
       p.setAttribute('cx', String(cxAttr + dx * 2.2));
+      p.setAttribute('cy', String(52 + dy));
     });
 
-    const smile = document.getElementById('mascotSmile');
-    if (smile){
-      if (moodPose === 'happy') smile.setAttribute('d', 'M46 70 Q60 86 74 70');
-      else if (moodPose === 'calm') smile.setAttribute('d', 'M48 73 Q60 80 72 73');
-      else if (moodPose === 'neutral') smile.setAttribute('d', 'M50 75 L70 75');
-      else if (moodPose === 'tired') smile.setAttribute('d', 'M50 78 Q60 73 70 78');
-      else smile.setAttribute('d', 'M50 80 Q60 70 70 80');
+    // 2. Голова наклоняется в сторону scrubber
+    const headTilt = dx * 4; // -4..4 градуса
+    wrap.style.setProperty('--head-tilt', headTilt + 'deg');
+    const svg = wrap.querySelector('svg');
+    if (svg){
+      svg.style.transform = `rotate(${headTilt}deg)`;
+      svg.style.transformOrigin = '60px 90px';
     }
+
+    // 3. Улыбка/рот — много форм
+    const smile = document.getElementById('mSmile');
+    const mouthFill = document.getElementById('mMouthFill');
+    if (smile && mouthFill){
+      if (moodPose === 'happy'){
+        smile.setAttribute('d', 'M44 70 Q60 88 76 70');
+        smile.setAttribute('opacity', '1');
+        mouthFill.setAttribute('d', 'M48 71 Q60 84 72 71');
+        mouthFill.setAttribute('opacity', '0.4');
+      } else if (moodPose === 'calm'){
+        smile.setAttribute('d', 'M46 73 Q60 81 74 73');
+        smile.setAttribute('opacity', '1');
+        mouthFill.setAttribute('d', 'M50 74 Q60 78 70 74');
+        mouthFill.setAttribute('opacity', '0.25');
+      } else if (moodPose === 'neutral'){
+        smile.setAttribute('d', 'M50 75 L70 75');
+        smile.setAttribute('opacity', '1');
+        mouthFill.setAttribute('opacity', '0');
+      } else if (moodPose === 'tired'){
+        smile.setAttribute('d', 'M48 79 Q60 75 72 79');
+        smile.setAttribute('opacity', '1');
+        mouthFill.setAttribute('opacity', '0');
+      } else { // sad
+        smile.setAttribute('d', 'M48 82 Q60 74 72 82');
+        smile.setAttribute('opacity', '0.85');
+        mouthFill.setAttribute('opacity', '0');
+      }
+    }
+
+    // 4. Брови
+    setMascotBrows(moodPose, timePose);
+
+    // 5. Blush
+    setMascotBlush(moodState(v));
+
+    // 6. Held item (чашка/книга/телефон)
+    setMascotItem(timeMood, moodState(v));
+
+    // 7. Particles (сердечки/капли)
+    particleTicker++;
+    if (particleTicker % 6 === 0){
+      setMascotParticles(timeMood, moodState(v));
+    }
+
+    // 8. Speech
+    setMascotSpeech(timeMood);
+
+    // 9. Zzz visibility
+    const zzz = document.getElementById('mZzz');
+    if (zzz) zzz.setAttribute('opacity', timePose === 'night' || moodState(v) === 'bad' ? '1' : '0');
+  }
+
+  // Инициализация клика по маскоту — показывает speech
+  function setupMascotInteraction(){
+    const wrap = document.getElementById('mascotWrap');
+    if (!wrap) return;
+    let hideTimer;
+    wrap.addEventListener('click', () => {
+      showSpeech();
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hideSpeech, 2400);
+    });
+    // Авто-шоу speech каждые 12с на 2.5с
+    setInterval(() => {
+      showSpeech();
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hideSpeech, 2500);
+    }, 12000);
   }
 
   // ============================================================
@@ -635,6 +829,7 @@
     setMomentHour(startH, true);
     renderNextEvent(startH);
     setupScrubber();
+    setupMascotInteraction();
     setupPageIndicator();
 
     setInterval(tick, 30*1000);

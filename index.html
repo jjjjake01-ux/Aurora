@@ -29,32 +29,94 @@
 <defs>
 <radialGradient id="mascotGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="var(--accent-light)" stop-opacity=".5"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></radialGradient>
 <linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent-light)"/><stop offset="100%" stop-color="var(--accent-dark)"/></linearGradient>
+<linearGradient id="mascotBelly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4F7EE"/><stop offset="100%" stop-color="#C8EEDC"/></linearGradient>
+<radialGradient id="blushGrad" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#FF8AA0" stop-opacity="0.8"/><stop offset="100%" stop-color="#FF8AA0" stop-opacity="0"/></radialGradient>
+<filter id="softShadow"><feGaussianBlur stdDeviation="0.8"/></filter>
 </defs>
-<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)"/>
-<ellipse cx="60" cy="108" rx="28" ry="4" fill="rgba(45,40,35,.06)"/>
-<g id="mascotPose">
-<ellipse cx="60" cy="100" rx="9" ry="6" fill="var(--accent)"/>
-<ellipse cx="44" cy="100" rx="9" ry="6" fill="var(--accent)"/>
-<circle cx="60" cy="60" r="38" fill="url(#mascotBody)"/>
-<ellipse cx="60" cy="74" rx="22" ry="18" fill="#D4F0E4"/>
-<ellipse cx="26" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(-15 26 62)"/>
-<ellipse cx="94" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(15 94 62)"/>
-<g id="mascotEyes">
-<ellipse cx="44" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
-<ellipse cx="76" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
-<ellipse class="mascot-pupil" cx="46" cy="52" rx="6" ry="8" fill="#2D3B35"/>
-<ellipse class="mascot-pupil" cx="78" cy="52" rx="6" ry="8" fill="#2D3B35"/>
-<circle cx="48" cy="48" r="3" fill="#FFFFFF"/>
-<circle cx="80" cy="48" r="3" fill="#FFFFFF"/>
+
+<!-- Aura glow -->
+<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)" class="m-aura"/>
+
+<!-- Floating particles (сердечки при хорошем, капли при тяжёлом) -->
+<g class="m-particles" id="mParticles"></g>
+
+<!-- Ground shadow -->
+<ellipse cx="60" cy="108" rx="28" ry="4" fill="rgba(45,40,35,.06)" class="m-shadow"/>
+
+<!-- Feet -->
+<g class="m-feet">
+<ellipse cx="60" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-l"/>
+<ellipse cx="44" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-r"/>
 </g>
-<path id="mascotSmile" d="M46 72 Q60 84 74 72" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-<path d="M50 72 Q60 80 70 72" fill="#E85A7A" opacity="0.3"/>
-<ellipse cx="30" cy="68" rx="8" ry="5" fill="#F4A4B0" opacity="0.6"/>
-<ellipse cx="90" cy="68" rx="8" ry="5" fill="#F4A4B0" opacity="0.6"/>
-<path d="M34 40 Q42 34 50 38" stroke="#2D3B35" stroke-width="2" fill="none" stroke-linecap="round"/>
-<path d="M70 38 Q78 34 86 40" stroke="#2D3B35" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+<!-- Held item (позади тела) -->
+<g class="m-item" id="mItem"></g>
+
+<!-- Body (с idle-дыханием) -->
+<g class="m-body-wrap">
+<circle cx="60" cy="60" r="38" fill="url(#mascotBody)" class="m-body"/>
+<ellipse cx="60" cy="74" rx="22" ry="18" fill="url(#mascotBelly)" class="m-belly"/>
+</g>
+
+<!-- Arms (позиция рук меняется) -->
+<g class="m-arms" id="mArms">
+<ellipse class="m-arm m-arm-l" cx="26" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(-15 26 62)"/>
+<ellipse class="m-arm m-arm-r" cx="94" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(15 94 62)"/>
+</g>
+
+<!-- Ears (на макушке, шевелятся) -->
+<g class="m-ears" id="mEars">
+<ellipse class="m-ear m-ear-l" cx="36" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(-25 36 22)"/>
+<ellipse class="m-ear m-ear-r" cx="84" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(25 84 22)"/>
+</g>
+
+<!-- Hair tuft (хохолок) -->
+<g class="m-tuft">
+<path d="M58 22 Q60 14 62 22" stroke="var(--accent-dark)" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Cheeks (blush, intensity меняется) -->
+<ellipse class="m-blush m-blush-l" cx="30" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+<ellipse class="m-blush m-blush-r" cx="90" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+
+<!-- Eyes (4 состояния) -->
+<g class="m-eyes" id="mEyes">
+<ellipse class="m-eye-white m-eye-l" cx="44" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-eye-white m-eye-r" cx="76" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-pupil m-pupil-l" cx="46" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<ellipse class="m-pupil m-pupil-r" cx="78" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<circle class="m-shine m-shine-l" cx="48" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine m-shine-r" cx="80" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine-mini m-shine-l" cx="39" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+<circle class="m-shine-mini m-shine-r" cx="71" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+</g>
+
+<!-- Eyebrows (выражение меняется) -->
+<g class="m-brows" id="mBrows">
+<path class="m-brow m-brow-l" d="M34 40 Q42 34 50 38" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-brow m-brow-r" d="M70 38 Q78 34 86 40" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Smile (много форм) -->
+<path class="m-smile" id="mSmile" d="M46 70 Q60 86 74 70" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-mouth-fill" id="mMouthFill" d="M50 72 Q60 80 70 72" fill="#E85A7A" opacity="0.3"/>
+
+<!-- Cheek freckles (веснушки) -->
+<circle class="m-freckle" cx="30" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+<circle class="m-freckle" cx="90" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+
+<!-- Zzz bubbles (для sleepy state) -->
+<g class="m-zzz" id="mZzz" opacity="0">
+<text x="78" y="20" font-size="9" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="84" y="14" font-size="11" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="92" y="9" font-size="14" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">Z</text>
 </g>
 </svg>
+
+<!-- Speech bubble (появляется при клике) -->
+<div class="m-speech" id="mSpeech" aria-live="polite">
+  <span class="m-speech-text" id="mSpeechText">Привет!</span>
+</div>
 </div>
 </header>
 
@@ -263,83 +325,9 @@
 </div>
 </section>
 
-<section class="snap-section snap-sleep" data-section="sleep" data-section-label="Сон">
-<div class="card-stack">
-<section class="sleep-hero">
-<div class="sleep-hero-label">Прошлая ночь</div>
-<div class="sleep-hero-row">
-<div class="sleep-hero-time">7ч 12м</div>
-<div class="sleep-hero-meta">
-<div class="sleep-quality">
-<svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--accent-soft)" stroke-width="5"/><circle cx="32" cy="32" r="28" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="39" transform="rotate(-90 32 32)"/></svg>
-<div class="sleep-quality-text"><div class="sleep-quality-num">78%</div><div class="sleep-quality-lbl">качество</div></div>
-</div>
-<div class="sleep-grade">Хорошо</div>
-</div>
-</div>
-</section>
-<section class="card sleep-stages">
-<div class="card-title">Фазы сна</div>
-<div class="stages-wrap" aria-label="Гистограмма фаз сна">
-<div class="stages-times"><span>22:45</span><span>00:30</span><span>03:00</span><span>05:30</span></div>
-<div class="stages-track" aria-label="Гистограмма фаз сна">
-<div class="stg stg-deep"  style="left:0%;  width:24%"></div>
-<div class="stg stg-light" style="left:24%; width:26%"></div>
-<div class="stg stg-rem"   style="left:50%; width:25%"></div>
-<div class="stg stg-light" style="left:75%; width:25%"></div>
-</div>
-</div>
-<div class="stages-legend">
-<span class="lg"><i class="dot dot-deep"></i>Глубокий 1ч 45м (24%)</span>
-<span class="lg"><i class="dot dot-rem"></i>REM 1ч 50м (25%)</span>
-<span class="lg"><i class="dot dot-light"></i>Лёгкий 3ч 37м (51%)</span>
-</div>
-</section>
-<div class="sleep-metrics">
-<div class="sm-cell"><div class="sm-label">Засыпание</div><div class="sm-val">22:45</div></div>
-<div class="sm-cell"><div class="sm-label">Пробуждения</div><div class="sm-val">1 раз</div></div>
-<div class="sm-cell"><div class="sm-label">До сна</div><div class="sm-val">12 мин</div></div>
-<div class="sm-cell"><div class="sm-label">Эффективность</div><div class="sm-val">92%</div></div>
-</div>
-<section class="card sleep-regularity">
-<div class="card-title">Регулярность</div>
-<div class="reg-bars">
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:78%"></div><div class="rb-val">78</div></div><div class="rb-day">Пн</div></div>
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:72%"></div><div class="rb-val">72</div></div><div class="rb-day">Вт</div></div>
-<div class="rb is-today"><div class="rb-track"><div class="rb-fill" style="height:78%"></div><div class="rb-val">78</div></div><div class="rb-day">Ср</div></div>
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:65%"></div><div class="rb-val">65</div></div><div class="rb-day">Чт</div></div>
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:80%"></div><div class="rb-val">80</div></div><div class="rb-day">Пт</div></div>
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:85%"></div><div class="rb-val">85</div></div><div class="rb-day">Сб</div></div>
-<div class="rb"><div class="rb-track"><div class="rb-fill" style="height:70%"></div><div class="rb-val">70</div></div><div class="rb-day">Вс</div></div>
-</div>
-<p class="reg-foot">Ложишься в 23:00 ±30м — отличная регулярность</p>
-</section>
-<section class="card sleep-impacts">
-<div class="card-title">Что на это влияет</div>
-<ul class="impact-list">
-<li class="impact"><span class="impact-ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><span class="impact-text"><b>Кофе после 15:00</b> → засыпание +25 мин (4 раза подтверждено)</span></li>
-<li class="impact"><span class="impact-ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M3.5 9.5v5M20.5 9.5v5M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3"/></svg></span><span class="impact-text"><b>Тренировка до 18:00</b> → глубокий сон +20%</span></li>
-<li class="impact"><span class="impact-ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span class="impact-text"><b>Экран в кровати</b> → REM −15%</span></li>
-</ul>
-</section>
-<section class="card sleep-reco">
-<div class="card-title">Рекомендации</div>
-<ul class="reco-list">
-<li class="reco">Ложись до 23:00 → завтра готовность +8</li>
-<li class="reco">Ужин за 3ч до сна</li>
-</ul>
-</section>
-<section class="card sleep-routine">
-<div class="routine-head"><div class="routine-title">Вечерняя рутина</div><div class="routine-sub">5 минут · дыхание и тишина</div></div>
-<button class="btn btn-primary btn-full" type="button">Запустить рутину расслабления</button>
-</section>
-</div>
-</section>
-
 <nav class="page-indicator" aria-label="Страницы">
 <button class="pi-dot is-active" type="button" data-target="today" aria-label="Сегодня"></button>
 <button class="pi-dot" type="button" data-target="trend" aria-label="Тренд"></button>
-<button class="pi-dot" type="button" data-target="sleep" aria-label="Сон"></button>
 </nav>
 
 </div>
