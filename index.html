@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Atlas Health — Сегодня</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/patterns.js" defer></script>
+<script src="js/timeline.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<div class="app">
+
+<section class="snap-section snap-today" data-section="today" data-section-label="Сегодня">
+<button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" aria-label="Переключить тему">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+<div class="hero-stack">
+
+<header class="hero">
+<div class="hero-greeting">
+<div class="hero-meta"><span class="hero-meta-dot"></span><span class="hero-meta-text" id="heroDate">—</span></div>
+<h1 class="hero-title"><span class="hero-title-ic" id="heroGreetIcon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span><span id="heroGreetText">Добрый день</span></h1>
+<p class="hero-subline" id="heroSubline">Загружаем день…</p>
+
+<div class="hero-trend" id="heroTrend">
+<svg class="hero-trend-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true">
+<defs><linearGradient id="heroSparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity=".32"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4 L100 28 L0 28 Z" fill="url(#heroSparkGrad)"/>
+<path d="M0 20 L14 18 L28 16 L42 17 L57 12 L71 11 L85 6 L100 4" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="100" cy="4" r="2.2" fill="var(--accent)" stroke="#fff" stroke-width="1.2"/>
+</svg>
+<div class="hero-trend-info">
+<div class="hero-trend-num"><span id="heroTrendNum">78</span><span class="hero-trend-delta" id="heroTrendDelta">↑ +6</span></div>
+<div class="hero-trend-foot" id="heroTrendFoot">Норма 72 · сегодня выше</div>
+</div>
+</div>
+
+<button class="hero-signal" id="heroSignal" type="button" aria-label="Главный сигнал дня">
+<span class="hero-signal-ic" id="heroSignalIc" aria-hidden="true"></span>
+<span class="hero-signal-text" id="heroSignalText">Загружаем…</span>
+<span class="hero-signal-chev" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</span>
+</button>
+</div>
+<div class="mascot-wrap" id="mascotWrap" aria-label="Маскот-компаньон">
+<svg class="mascot" id="mascotSvg" viewBox="0 0 120 120" aria-hidden="true">
+<defs>
+<radialGradient id="mascotGlow" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="currentColor" stop-opacity=".5"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></radialGradient>
+<linearGradient id="mascotBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--m-color-light)"/><stop offset="100%" stop-color="var(--m-color-dark)"/></linearGradient>
+<linearGradient id="mascotBelly" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E4F7EE"/><stop offset="100%" stop-color="#C8EEDC"/></linearGradient>
+<radialGradient id="blushGrad" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#FF8AA0" stop-opacity="0.8"/><stop offset="100%" stop-color="#FF8AA0" stop-opacity="0"/></radialGradient>
+<filter id="softShadow"><feGaussianBlur stdDeviation="0.8"/></filter>
+</defs>
+
+<!-- Aura glow (использует currentColor = --m-color через CSS) -->
+<circle cx="60" cy="60" r="56" fill="url(#mascotGlow)" class="m-aura" style="color:var(--m-color)"/>
+
+<!-- Floating particles (сердечки при хорошем, капли при тяжёлом) -->
+<g class="m-particles" id="mParticles"></g>
+
+<!-- Ground shadow -->
+<ellipse cx="60" cy="108" rx="28" ry="4" fill="rgba(45,40,35,.06)" class="m-shadow"/>
+
+<!-- Feet -->
+<g class="m-feet">
+<ellipse cx="60" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-l"/>
+<ellipse cx="44" cy="100" rx="9" ry="6" fill="var(--accent)" class="m-foot-r"/>
+</g>
+
+<!-- Held item (позади тела) -->
+<g class="m-item" id="mItem"></g>
+
+<!-- Body (с idle-дыханием) -->
+<g class="m-body-wrap">
+<circle cx="60" cy="60" r="38" fill="url(#mascotBody)" class="m-body"/>
+<ellipse cx="60" cy="74" rx="22" ry="18" fill="url(#mascotBelly)" class="m-belly"/>
+</g>
+
+<!-- Arms (позиция рук меняется) -->
+<g class="m-arms" id="mArms">
+<ellipse class="m-arm m-arm-l" cx="26" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(-15 26 62)"/>
+<ellipse class="m-arm m-arm-r" cx="94" cy="62" rx="8" ry="11" fill="var(--accent)" transform="rotate(15 94 62)"/>
+</g>
+
+<!-- Ears (на макушке, шевелятся) -->
+<g class="m-ears" id="mEars">
+<ellipse class="m-ear m-ear-l" cx="36" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(-25 36 22)"/>
+<ellipse class="m-ear m-ear-r" cx="84" cy="22" rx="6" ry="8" fill="var(--accent-light)" transform="rotate(25 84 22)"/>
+</g>
+
+<!-- Hair tuft (хохолок) -->
+<g class="m-tuft">
+<path d="M58 22 Q60 14 62 22" stroke="var(--accent-dark)" stroke-width="2" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Cheeks (blush, intensity меняется) -->
+<ellipse class="m-blush m-blush-l" cx="30" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+<ellipse class="m-blush m-blush-r" cx="90" cy="68" rx="8" ry="5" fill="url(#blushGrad)" opacity="0.6"/>
+
+<!-- Eyes (4 состояния) -->
+<g class="m-eyes" id="mEyes">
+<ellipse class="m-eye-white m-eye-l" cx="44" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-eye-white m-eye-r" cx="76" cy="50" rx="10" ry="13" fill="#FFFFFF"/>
+<ellipse class="m-pupil m-pupil-l" cx="46" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<ellipse class="m-pupil m-pupil-r" cx="78" cy="52" rx="6" ry="8" fill="#2D3B35"/>
+<circle class="m-shine m-shine-l" cx="48" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine m-shine-r" cx="80" cy="48" r="3" fill="#FFFFFF"/>
+<circle class="m-shine-mini m-shine-l" cx="39" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+<circle class="m-shine-mini m-shine-r" cx="71" cy="57" r="1.8" fill="#FFFFFF" opacity="0.7"/>
+</g>
+
+<!-- Eyebrows (выражение меняется) -->
+<g class="m-brows" id="mBrows">
+<path class="m-brow m-brow-l" d="M34 40 Q42 34 50 38" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-brow m-brow-r" d="M70 38 Q78 34 86 40" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- Smile (много форм) -->
+<path class="m-smile" id="mSmile" d="M46 70 Q60 86 74 70" stroke="#2D3B35" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path class="m-mouth-fill" id="mMouthFill" d="M50 72 Q60 80 70 72" fill="#E85A7A" opacity="0.3"/>
+
+<!-- Cheek freckles (веснушки) -->
+<circle class="m-freckle" cx="30" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+<circle class="m-freckle" cx="90" cy="64" r="1.2" fill="#D47A5A" opacity="0.4"/>
+
+<!-- Zzz bubbles (для sleepy state) -->
+<g class="m-zzz" id="mZzz" opacity="0">
+<text x="78" y="20" font-size="9" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="84" y="14" font-size="11" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">z</text>
+<text x="92" y="9" font-size="14" font-weight="700" fill="var(--accent-dark)" font-family="Manrope,sans-serif">Z</text>
+</g>
+</svg>
+
+<!-- Speech bubble (появляется при клике) -->
+<div class="m-speech" id="mSpeech" aria-live="polite">
+  <span class="m-speech-text" id="mSpeechText">Привет!</span>
+</div>
+</div>
+</header>
+
+<div class="now-strip" id="nowStrip" aria-live="polite">
+<span class="now-dot" aria-hidden="true"></span>
+<span class="now-time" id="nowTime">—</span>
+<span class="now-sep">·</span>
+<span class="now-text" id="nowText">шагов 4 200 из 8 000</span>
+</div>
+
+<section class="timeline" aria-label="Лента дня">
+<div class="timeline-head">
+<button class="th-period" data-period="day" type="button">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<span>День</span>
+</button>
+<div class="th-now" id="thNow">14:58</div>
+<button class="th-zoom" id="thZoom" type="button" aria-label="Приблизить">
+<svg class="th-zoom-in" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+<svg class="th-zoom-out" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
+</button>
+</div>
+<div class="timeline-stage">
+<div class="timeline-axis" id="timelineAxis">
+<svg class="timeline-svg" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+<linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
+<stop offset="20%" stop-color="#5CC4A0" stop-opacity=".22"/>
+<stop offset="55%" stop-color="#2FBF9B" stop-opacity=".24"/>
+<stop offset="80%" stop-color="#F0764B" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#7B74D6" stop-opacity=".18"/>
+</linearGradient>
+<linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037"/>
+<stop offset="22%" stop-color="#5CC4A0"/>
+<stop offset="55%" stop-color="#2FBF9B"/>
+<stop offset="78%" stop-color="#F0764B"/>
+<stop offset="100%" stop-color="#7B74D6"/>
+</linearGradient>
+<linearGradient id="eventMarker" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="rgba(255,255,255,.96)"/>
+<stop offset="100%" stop-color="rgba(255,255,255,.82)"/>
+</linearGradient>
+<radialGradient id="scrubberHalo" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".08"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</radialGradient>
+<filter id="moodGlow" x="-10%" y="-50%" width="120%" height="200%">
+<feGaussianBlur stdDeviation="2" result="blur"/>
+<feMerge>
+<feMergeNode in="blur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<filter id="pillShadow" x="-20%" y="-50%" width="140%" height="200%">
+<feGaussianBlur stdDeviation="1.4" in="SourceAlpha"/>
+<feOffset dx="0" dy="1.5"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
+<feMerge>
+<feMergeNode/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<clipPath id="stageClip">
+<rect x="0" y="0" width="700" height="200"/>
+</clipPath>
+</defs>
+
+<rect class="tod-bg" x="0" y="0" width="700" height="200" fill="url(#todGrad)"/>
+
+<g class="tl-grid">
+<line x1="0" y1="50" x2="700" y2="50"/>
+<line x1="0" y1="100" x2="700" y2="100"/>
+<line x1="0" y1="150" x2="700" y2="150"/>
+</g>
+
+<g class="tl-tod-labels" id="tlTodLabels"></g>
+
+<g class="tl-events-top" id="tlEventsTop"></g>
+<g class="tl-events-bottom" id="tlEventsBottom"></g>
+
+<path id="tlMoodArea" d="M0 100 L0 100" fill="url(#moodFill)"/>
+<path id="tlMoodPath" d="M0 100" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
+<g class="tl-mood-dots" id="tlMoodDots"></g>
+
+<g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
+<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="200" fill="url(#scrubberHalo)"/>
+<line class="tl-cursor" x1="0" y1="14" x2="0" y2="186"/>
+<circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
+<circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
+<circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>
+</g>
+</svg>
+
+<div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
+<div class="timeline-scrubber-bubble" id="scrubberBubble">
+<span class="tsb-time" id="tsbTime">14:00</span>
+</div>
+</div>
+<div class="timeline-edge timeline-edge-l">06</div>
+<div class="timeline-edge timeline-edge-c">12</div>
+<div class="timeline-edge timeline-edge-r">24</div>
+</div>
+</section>
+
+<section class="moment-card" id="momentCard" aria-live="polite">
+<!-- Заголовок: время + событие -->
+<div class="moment-head">
+  <div class="moment-time-wrap">
+    <div class="moment-time" id="momentTime">—</div>
+    <div class="moment-event-dot" id="momentEventDot" aria-hidden="true"></div>
+  </div>
+  <div class="moment-title" id="momentTitle">—</div>
+</div>
+
+<!-- Контекст: что происходит в этот момент -->
+<p class="moment-desc" id="momentDesc">—</p>
+
+<!-- Метрики с интерпретацией: цифра + смысл -->
+<div class="moment-metrics" id="momentMetrics">
+  <!-- Будет заполнено JS:.metric × N -->
+</div>
+
+<!-- Инсайт: паттерн или рекомендация -->
+<div class="moment-insight" id="momentInsight">
+  <span class="mi-icon" id="miIcon" aria-hidden="true"></span>
+  <span class="mi-text" id="miText">—</span>
+</div>
+
+<!-- Действие: одна главная кнопка -->
+<div class="moment-actions">
+  <button class="btn btn-primary" type="button" id="momentPrimary">
+    <span class="btn-icon" id="momentPrimaryIcon" aria-hidden="true"></span>
+    <span id="momentPrimaryText">Подробнее</span>
+  </button>
+</div>
+</section>
+
+<section class="dynamics-card">
+<div class="dynamics-head"><div class="dynamics-title">Динамика дня</div><div class="dynamics-trend" id="dynamicsTrend">+3 от вчера</div></div>
+<div class="dynamics-grid">
+<div class="dyn-cell"><div class="dyn-label">С утра</div><div class="dyn-value">+16</div></div>
+<div class="dyn-cell"><div class="dyn-label">Пик</div><div class="dyn-value">18:00</div></div>
+<div class="dyn-cell"><div class="dyn-label">К вечеру</div><div class="dyn-value">~55</div></div>
+</div>
+<div class="dynamics-foot" id="dynamicsFoot">Среда обычно 75</div>
+</section>
+
+<details class="drilldown">
+<summary class="drilldown-summary">
+<span class="drilldown-label">Подробнее</span>
+<span class="drilldown-meta">HRV · Сон · Стресс · Восстановление</span>
+<svg class="drilldown-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</summary>
+<div class="drilldown-body">
+<div class="dd-row"><div class="dd-name">HRV</div><div class="dd-bar"><div class="dd-fill" style="width:85%"></div></div><div class="dd-val">+12</div></div>
+<div class="dd-row"><div class="dd-name">Сон</div><div class="dd-bar"><div class="dd-fill" style="width:60%"></div></div><div class="dd-val">−5</div></div>
+<div class="dd-row"><div class="dd-name">Стресс</div><div class="dd-bar"><div class="dd-fill" style="width:75%"></div></div><div class="dd-val">+8</div></div>
+<div class="dd-row"><div class="dd-name">Восст.</div><div class="dd-bar"><div class="dd-fill" style="width:90%"></div></div><div class="dd-val">+6</div></div>
+<div class="dd-row"><div class="dd-name">Нагрузка</div><div class="dd-bar"><div class="dd-fill" style="width:70%"></div></div><div class="dd-val">380 у.е.</div></div>
+<div class="dd-row"><div class="dd-name">Энергия</div><div class="dd-bar"><div class="dd-fill" style="width:76%"></div></div><div class="dd-val">76%</div></div>
+<button class="btn btn-ghost btn-full" type="button" id="gotoTrend">Смотреть тренд</button>
+</div>
+</details>
+
+<section class="next-event" id="nextEvent">
+<div class="ne-time" id="neTime">16:00</div>
+<div class="ne-body"><div class="ne-title" id="neTitle">Check-in</div><div class="ne-sub" id="neSub">Как ты сейчас?</div></div>
+<button class="btn btn-mini" type="button">Отметить</button>
+</section>
+
+<button class="trend-expand-btn" id="trendExpandBtn" type="button" aria-expanded="false" aria-controls="trendPanel">
+<span class="teb-label">Развернуть тренд за неделю</span>
+<span class="teb-chev" aria-hidden="true">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</span>
+</button>
+
+<section class="trend-panel" id="trendPanel" hidden aria-label="Тренд за неделю">
+<div class="period-tabs" role="tablist" aria-label="Период">
+<button class="period-tab is-active" type="button" role="tab" aria-selected="true" data-period="week">Неделя</button>
+<button class="period-tab" type="button" role="tab" aria-selected="false" data-period="month">Месяц</button>
+<button class="period-tab" type="button" role="tab" aria-selected="false" data-period="year">Год</button>
+</div>
+<section class="card week-chart">
+<div class="card-title">Готовность по дням</div>
+<div class="week-bars">
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:72%"></div></div><div class="wb-day">Пн</div><div class="wb-val">72</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:70%"></div></div><div class="wb-day">Вт</div><div class="wb-val">70</div></div>
+<div class="wb is-today"><div class="wb-track"><div class="wb-fill" style="height:75%"></div></div><div class="wb-day">Ср</div><div class="wb-val">75</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:73%"></div></div><div class="wb-day">Чт</div><div class="wb-val">73</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:76%"></div></div><div class="wb-day">Пт</div><div class="wb-val">76</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:74%"></div></div><div class="wb-day">Сб</div><div class="wb-val">74</div></div>
+<div class="wb"><div class="wb-track"><div class="wb-fill" style="height:78%"></div></div><div class="wb-day">Вс</div><div class="wb-val">78</div></div>
+</div>
+<p class="week-foot">Среда обычно 75, сегодня 78 — выше обычного</p>
+</section>
+<div class="trend-compares">
+<div class="cmp-card"><div class="cmp-label">Готовность</div><div class="cmp-val">+6</div><div class="cmp-sub">к прошлой неделе</div></div>
+<div class="cmp-card"><div class="cmp-label">Шаги</div><div class="cmp-val">+12%</div><div class="cmp-sub">к прошлой неделе</div></div>
+<div class="cmp-card"><div class="cmp-label">Сон</div><div class="cmp-val">+15м</div><div class="cmp-sub">к прошлой неделе</div></div>
+</div>
+<section class="card achievements">
+<div class="card-title">Достижения</div>
+<div class="ach-list">
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></span><div class="ach-text"><div class="ach-title">7 дней подряд шаги 8000+</div><div class="ach-sub">Личная серия</div></div></div>
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><div class="ach-text"><div class="ach-title">Готовность 75+ 5 дней из 7</div><div class="ach-sub">Неделя</div></div></div>
+<div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><div class="ach-text"><div class="ach-title">Лучший сон за месяц: 8.2ч</div><div class="ach-sub">12 дней назад</div></div></div>
+</div>
+</section>
+<section class="card patterns-summary" id="patternsSummary" aria-label="Твои паттерны">
+<div class="card-title">Твои паттерны</div>
+<div class="patterns-summary-meta">На основе 30 дней наблюдений</div>
+<div class="patterns-summary-bars" id="patternsSummaryBars"></div>
+<button class="patterns-summary-btn" id="openPatternsModal" type="button">
+<span class="psb-label">Открыть все паттерны</span>
+<span class="psb-count" id="patternsTotalCount">0</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+</section>
+
+<!-- Modal: список паттернов -->
+<div class="modal" id="patternsModal" role="dialog" aria-modal="true" aria-labelledby="patternsModalTitle" hidden>
+<div class="modal-backdrop" data-close-modal></div>
+<div class="modal-sheet">
+<div class="modal-handle" aria-hidden="true"></div>
+<header class="modal-head">
+<div>
+<div class="modal-eyebrow">Личные паттерны</div>
+<h2 class="modal-title" id="patternsModalTitle">Что мы заметили</h2>
+</div>
+<button class="modal-close" type="button" data-close-modal aria-label="Закрыть">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+</header>
+<div class="modal-body">
+<p class="modal-intro">Каждый паттерн — реальная связь между твоими действиями и результатом. Мы показываем силу эффекта, сколько наблюдений и насколько можно доверять.</p>
+<div class="modal-tiers" id="patternsModalTiers"></div>
+<p class="modal-footnote">Если данных мало — мы не делаем вид, что знаем. Ждём, пока накопится.</p>
+</div>
+</div>
+</div>
+
+<!-- Modal: детали одного паттерна -->
+<div class="modal" id="patternDetailModal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+<div class="modal-backdrop" data-close-modal></div>
+<div class="modal-sheet modal-sheet-tall">
+<div class="modal-handle" aria-hidden="true"></div>
+<header class="modal-head">
+<button class="modal-back" type="button" data-open-patterns aria-label="К списку">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+</button>
+<div class="modal-head-title" id="patternDetailTitle">Паттерн</div>
+<button class="modal-close" type="button" data-close-modal aria-label="Закрыть">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+</header>
+<div class="modal-body" id="patternDetailBody"></div>
+</div>
+</div>
+<section class="card goals-card">
+<div class="card-title">Цели</div>
+<div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Шаги 8000/день</div><div class="goal-row-sub">65% дней закрыто</div></div><div class="goal-bar"><div class="goal-fill" style="width:65%"></div></div></div>
+<div class="goal-row"><div class="goal-row-text"><div class="goal-row-title">Готовность 80+</div><div class="goal-row-sub">40% дней</div></div><div class="goal-bar"><div class="goal-fill" style="width:40%"></div></div></div>
+</section>
+</section>
+
+</div>
+</section>
+
+</div>
+</body>
+</html>

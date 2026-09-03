@@ -606,3 +606,605 @@ function updateMascotIllustration(containerId, score) {
     container.classList.remove('show');
   }
 }
+
+// ===== NATURAL LANGUAGE TASK PARSER =====
+function parseTaskInput(input) {
+  const text = input.trim().toLowerCase();
+  if (!text) return null;
+
+  const now = new Date();
+  let taskName = '';
+  let targetTime = null;
+  let duration = null;
+
+  // Pattern: "в 18:00" or "в 18.00"
+  const timeAtMatch = text.match(/в\s+(\d{1,2})[:\.](\d{2})/);
+  if (timeAtMatch) {
+    const hours = parseInt(timeAtMatch[1]);
+    const minutes = parseInt(timeAtMatch[2]);
+    targetTime = new Date(now);
+    targetTime.setHours(hours, minutes, 0, 0);
+    if (targetTime <= now) targetTime.setDate(targetTime.getDate() + 1);
+    taskName = text.replace(timeAtMatch[0], '').trim();
+  }
+
+  // Pattern: "через X минут" or "через X мин"
+  const inMinutesMatch = text.match(/через\s+(\d+)\s*мин[а-я]*/);
+  if (inMinutesMatch) {
+    const mins = parseInt(inMinutesMatch[1]);
+    targetTime = new Date(now.getTime() + mins * 60000);
+    taskName = text.replace(inMinutesMatch[0], '').trim();
+  }
+
+  // Pattern: "через X час" or "через X часов"
+  const inHoursMatch = text.match(/через\s+(\d+)\s*час[а-я]*/);
+  if (inHoursMatch) {
+    const hrs = parseInt(inHoursMatch[1]);
+    targetTime = new Date(now.getTime() + hrs * 3600000);
+    taskName = text.replace(inHoursMatch[0], '').trim();
+  }
+
+  // Pattern: "на X минут" or "на X мин" (duration)
+  const durationMatch = text.match(/на\s+(\d+)\s*мин[а-я]*/);
+  if (durationMatch) {
+    duration = parseInt(durationMatch[1]);
+    taskName = text.replace(durationMatch[0], '').trim();
+  }
+
+  // Clean up task name
+  taskName = taskName
+    .replace(/^(приготовить|сделать|пойти|почистить|помыть|убрать|выпить|съесть|позвонить|написать)\s*/, '$1 ')
+    .replace(/^[^\wа-яё]+/i, '')
+    .replace(/[^\wа-яё]+$/i, '');
+
+  if (!taskName) {
+    // Fallback: use whole text as task name, first word as verb
+    taskName = text.replace(/^(в|через|на)\s+.*$/, '').trim() || text.split(' ').slice(0, 3).join(' ');
+  }
+
+  // Capitalize first letter
+  taskName = taskName.charAt(0).toUpperCase() + taskName.slice(1);
+
+  return {
+    name: taskName,
+    targetTime: targetTime,
+    duration: duration,
+    createdAt: now
+  };
+}
+
+// ===== TIMER SYSTEM =====
+let timers = [];
+
+function createTimer(task) {
+  const timer = {
+    id: Date.now(),
+    name: task.name,
+    targetTime: task.targetTime,
+    duration: task.duration,
+    createdAt: task.createdAt,
+    active: true
+  };
+  timers.push(timer);
+  renderTimers();
+  renderDayFlow();
+  return timer;
+}
+
+function cancelTimer(id) {
+  timers = timers.filter(t => t.id !== id);
+  renderTimers();
+  renderDayFlow();
+}
+
+function renderTimers() {
+  const container = document.getElementById('activeTimers');
+  if (!container) return;
+
+  const activeTimers = timers.filter(t => t.active);
+
+  if (activeTimers.length === 0) {
+    container.innerHTML = '<div class="no-timers">Нет активных таймеров</div>';
+    return;
+  }
+
+  container.innerHTML = activeTimers.map(timer => {
+    const now = new Date();
+    const diff = timer.targetTime - now;
+    const isUrgent = diff > 0 && diff < 5 * 60000;
+    const isCountdown = diff > 0 && diff < 15 * 60000;
+    const targetStr = formatTimeOfDay(timer.targetTime);
+    const timeStr = isCountdown ? formatTimeRemaining(diff) : `в ${targetStr}`;
+
+    return `
+      <div class="timer-item${isUrgent ? ' urgent' : ''}${isCountdown ? ' counting' : ''}" id="timer-${timer.id}">
+        <div class="timer-info">
+          <div class="timer-name">${timer.name}</div>
+          <div class="timer-target">${timer.duration ? 'на ' + timer.duration + ' мин · ' : ''}${isCountdown ? 'осталось' : 'напомнит в'} ${targetStr}</div>
+        </div>
+        <div class="timer-value" data-target="${timer.targetTime.getTime()}">${timeStr}</div>
+        <button class="timer-cancel" onclick="cancelTimer(${timer.id})" aria-label="Удалить таймер">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatTimeRemaining(diff) {
+  if (diff <= 0) return 'Сейчас!';
+  const mins = Math.floor(diff / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  if (mins >= 60) {
+    const hrs = Math.floor(mins / 60);
+    return `${hrs}ч ${mins % 60}м`;
+  }
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatTimeOfDay(date) {
+  return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+
+function updateTimers() {
+  const now = new Date();
+  let changed = false;
+
+  timers.forEach(timer => {
+    if (!timer.active) return;
+    const diff = timer.targetTime - now;
+    if (diff <= 0) {
+      timer.active = false;
+      triggerNotification(timer.name);
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    renderTimers();
+    timers = timers.filter(t => t.active);
+    return;
+  }
+
+  // Update displayed times only for countdown timers (within 15 min)
+  document.querySelectorAll('.timer-value[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const diff = target - now.getTime();
+    const isCountdown = diff > 0 && diff < 15 * 60000;
+    if (isCountdown) {
+      el.textContent = formatTimeRemaining(diff);
+    }
+  });
+
+  // Check if any timer entered countdown window — re-render if needed
+  const hasNewCountdown = timers.some(t => {
+    const diff = t.targetTime - now;
+    return diff > 0 && diff < 15 * 60000;
+  });
+  if (hasNewCountdown) {
+    const countingEls = document.querySelectorAll('.timer-item.counting');
+    if (countingEls.length === 0) renderTimers();
+  }
+}
+
+function triggerNotification(taskName) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Atlas Health', {
+      body: `Время: ${taskName}`,
+      icon: '🍅'
+    });
+  }
+}
+
+// Request notification permission on load
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+// ===== POMODORO =====
+let pomodoro = {
+  timeLeft: 25 * 60,
+  totalTime: 25 * 60,
+  isRunning: false,
+  isBreak: false,
+  cycles: 0,
+  sessionsCompleted: 0,
+  interval: null,
+  settings: {
+    work: 25,
+    break: 5,
+    longBreak: 15,
+    cyclesBeforeLong: 4
+  }
+};
+
+function togglePomodoroSettings() {
+  const panel = document.getElementById('pomodoroSettings');
+  if (!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function adjustPomodoroSetting(key, delta) {
+  const input = document.getElementById('ps' + key.charAt(0).toUpperCase() + key.slice(1));
+  if (!input) return;
+  let val = parseInt(input.value) + delta;
+  const min = parseInt(input.min);
+  const max = parseInt(input.max);
+  val = Math.max(min, Math.min(max, val));
+  input.value = val;
+  updatePomodoroSetting(key, val);
+}
+
+function updatePomodoroSetting(key, value) {
+  const val = Math.max(1, Math.min(60, parseInt(value) || 1));
+  pomodoro.settings[key] = val;
+  // If timer is not running, update display
+  if (!pomodoro.isRunning) {
+    if (pomodoro.isBreak) {
+      pomodoro.timeLeft = (pomodoro.sessionsCompleted % pomodoro.settings.cyclesBeforeLong === 0 ? pomodoro.settings.longBreak : pomodoro.settings.break) * 60;
+    } else {
+      pomodoro.timeLeft = pomodoro.settings.work * 60;
+    }
+    pomodoro.totalTime = pomodoro.timeLeft;
+    updatePomodoroDisplay();
+  }
+}
+
+function startPomodoro() {
+  if (pomodoro.isRunning) {
+    // Pause
+    clearInterval(pomodoro.interval);
+    pomodoro.isRunning = false;
+    document.getElementById('pomodoroStart').innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+      Продолжить
+    `;
+    document.getElementById('pomodoroStatus').textContent = 'Пауза';
+    return;
+  }
+
+  pomodoro.isRunning = true;
+  pomodoroSessionStart = new Date();
+  document.getElementById('pomodoroStart').innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    Пауза
+  `;
+  document.getElementById('pomodoroStatus').textContent = pomodoro.isBreak ? 'Перерыв' : 'Работа...';
+
+  pomodoro.interval = setInterval(() => {
+    pomodoro.timeLeft--;
+    updatePomodoroDisplay();
+
+    if (pomodoro.timeLeft <= 0) {
+      clearInterval(pomodoro.interval);
+      pomodoro.isRunning = false;
+
+      if (!pomodoro.isBreak) {
+        pomodoro.cycles++;
+        document.getElementById('pomodoroCount').textContent = pomodoro.cycles;
+      }
+
+      pomodoro.isBreak = !pomodoro.isBreak;
+      if (pomodoro.isBreak) {
+        pomodoro.sessionsCompleted++;
+        const isLongBreak = pomodoro.sessionsCompleted % pomodoro.settings.cyclesBeforeLong === 0;
+        pomodoro.timeLeft = (isLongBreak ? pomodoro.settings.longBreak : pomodoro.settings.break) * 60;
+      } else {
+        pomodoro.timeLeft = pomodoro.settings.work * 60;
+      }
+      pomodoro.totalTime = pomodoro.timeLeft;
+
+      // Auto-add completed session to day flow
+      addPomodoroToDayFlow();
+
+      document.getElementById('pomodoroStart').innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+        Старт
+      `;
+      document.getElementById('pomodoroStatus').textContent = pomodoro.isBreak
+        ? 'Время отдыхать!'
+        : 'Готов к работе';
+
+      updatePomodoroDisplay();
+
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Помодоро', {
+          body: pomodoro.isBreak ? 'Время отдыхать!' : 'Время работать!'
+        });
+      }
+    }
+  }, 1000);
+}
+
+function resetPomodoro() {
+  clearInterval(pomodoro.interval);
+  pomodoro.isRunning = false;
+  pomodoro.isBreak = false;
+  pomodoroSessionStart = null;
+  pomodoro.timeLeft = pomodoro.settings.work * 60;
+  pomodoro.totalTime = pomodoro.settings.work * 60;
+  pomodoro.sessionsCompleted = 0;
+  document.getElementById('pomodoroStart').innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+    Старт
+  `;
+  document.getElementById('pomodoroStatus').textContent = 'Готов к работе';
+  updatePomodoroDisplay();
+}
+
+function updatePomodoroDisplay() {
+  const mins = Math.floor(pomodoro.timeLeft / 60);
+  const secs = pomodoro.timeLeft % 60;
+  document.getElementById('pomodoroTime').textContent =
+    `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// ===== DAY FLOW (100% DYNAMIC) =====
+const DAY_START = 6 * 60;
+const DAY_END = 24 * 60;
+const DAY_TOTAL = DAY_END - DAY_START;
+
+let dayEvents = [];
+let pomodoroSessionStart = null;
+
+function collectDayEvents() {
+  dayEvents = [];
+  const now = new Date();
+
+  // 1. Collect from timers (chat tasks with target times)
+  timers.forEach(timer => {
+    if (!timer.active || !timer.targetTime) return;
+    const h = timer.targetTime.getHours();
+    const m = timer.targetTime.getMinutes();
+    const startMin = h * 60 + m;
+    const duration = timer.duration || 30;
+
+    dayEvents.push({
+      id: 'timer-' + timer.id,
+      name: timer.name,
+      start: startMin,
+      end: startMin + duration,
+      type: 'task',
+      done: false
+    });
+  });
+
+  // 3. Collect from pomodoro (completed sessions)
+  pomodoroSessions.forEach(session => {
+    dayEvents.push({
+      id: 'pomo-' + session.id,
+      name: session.isBreak ? '☕ Перерыв' : '🍅 Фокус',
+      start: session.startMin,
+      end: session.endMin,
+      type: session.isBreak ? 'break' : 'pomodoro',
+      done: true
+    });
+  });
+
+  // 4. Current pomodoro session (if running)
+  if (pomodoro.isRunning && pomodoroSessionStart) {
+    const currentMin = now.getHours() * 60 + now.getMinutes();
+    const elapsed = (now.getTime() - pomodoroSessionStart.getTime()) / 60000;
+    const totalDuration = (pomodoro.isBreak ? pomodoro.settings.break : pomodoro.settings.work);
+    dayEvents.push({
+      id: 'pomo-active',
+      name: pomodoro.isBreak ? '☕ Перерыв' : '🍅 Фокус',
+      start: currentMin - elapsed,
+      end: currentMin - elapsed + totalDuration,
+      type: pomodoro.isBreak ? 'break' : 'pomodoro',
+      done: false
+    });
+  }
+
+  // Sort by start time
+  dayEvents.sort((a, b) => a.start - b.start);
+}
+
+let pomodoroSessions = [];
+
+function addPomodoroToDayFlow() {
+  const now = new Date();
+  const currentMin = now.getHours() * 60 + now.getMinutes();
+  const duration = pomodoro.isBreak ? pomodoro.settings.break : pomodoro.settings.work;
+
+  pomodoroSessions.push({
+    id: Date.now(),
+    startMin: currentMin - duration,
+    endMin: currentMin,
+    isBreak: pomodoro.isBreak
+  });
+
+  collectDayEvents();
+  renderDayFlow();
+}
+
+function renderDayFlow() {
+  collectDayEvents();
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const clampedMinutes = Math.max(DAY_START, Math.min(DAY_END, currentMinutes));
+
+  // Calculate time stats
+  let focusMinutes = 0;
+  let taskMinutes = 0;
+
+  dayEvents.forEach(e => {
+    const dur = Math.max(0, e.end - e.start);
+    if (e.type === 'pomodoro') focusMinutes += dur;
+    else if (e.type === 'break') focusMinutes += dur * 0.5;
+    else taskMinutes += dur;
+  });
+
+  const occupiedMinutes = focusMinutes + taskMinutes;
+  const freeMinutes = Math.max(0, DAY_TOTAL - occupiedMinutes);
+
+  // Update summary
+  const dfsSpent = document.getElementById('dfsSpent');
+  const dfsFree = document.getElementById('dfsFree');
+  if (dfsSpent) dfsSpent.textContent = formatHoursMinutes(occupiedMinutes);
+  if (dfsFree) dfsFree.textContent = formatHoursMinutes(freeMinutes);
+
+  // Render timeline blocks (clean, no text)
+  const track = document.getElementById('dftTrack');
+  if (!track) return;
+
+  track.querySelectorAll('.dft-block, .dft-freezone').forEach(el => el.remove());
+
+  const sortedEvents = [...dayEvents].filter(e => e.end > DAY_START && e.start < DAY_END);
+  let lastEnd = DAY_START;
+
+  sortedEvents.forEach(event => {
+    const eventStart = Math.max(DAY_START, event.start);
+    const eventEnd = Math.min(DAY_END, event.end);
+
+    if (eventStart > lastEnd) {
+      const freeDuration = eventStart - lastEnd;
+      const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
+      const freeWidth = (freeDuration / DAY_TOTAL) * 100;
+
+      if (freeWidth > 0.3) {
+        const freeEl = document.createElement('div');
+        freeEl.className = 'dft-freezone';
+        freeEl.style.left = freeLeft + '%';
+        freeEl.style.width = freeWidth + '%';
+        track.appendChild(freeEl);
+      }
+    }
+
+    const blockLeft = ((eventStart - DAY_START) / DAY_TOTAL) * 100;
+    const blockWidth = ((eventEnd - eventStart) / DAY_TOTAL) * 100;
+
+    if (blockWidth > 0.2) {
+      const blockEl = document.createElement('div');
+      blockEl.className = 'dft-block';
+      blockEl.style.left = blockLeft + '%';
+      blockEl.style.width = Math.max(blockWidth, 1) + '%';
+
+      if (event.type === 'pomodoro') blockEl.classList.add('pomodoro-block');
+      else if (event.type === 'break') blockEl.classList.add('break-block');
+      else if (event.type === 'workout') blockEl.classList.add('workout-block');
+      else blockEl.classList.add('task-block');
+
+      track.appendChild(blockEl);
+    }
+
+    lastEnd = Math.max(lastEnd, eventEnd);
+  });
+
+  if (lastEnd < DAY_END) {
+    const freeDuration = DAY_END - lastEnd;
+    const freeLeft = ((lastEnd - DAY_START) / DAY_TOTAL) * 100;
+    const freeEl = document.createElement('div');
+    freeEl.className = 'dft-freezone';
+    freeEl.style.left = freeLeft + '%';
+    freeEl.style.width = (freeDuration / DAY_TOTAL) * 100 + '%';
+    track.appendChild(freeEl);
+  }
+
+  // Update now indicator
+  const nowEl = document.getElementById('dftNow');
+  if (nowEl) {
+    const nowPercent = ((clampedMinutes - DAY_START) / DAY_TOTAL) * 100;
+    nowEl.style.left = nowPercent + '%';
+  }
+
+  // Render task list
+  renderTaskList(sortedEvents, currentMinutes);
+}
+
+function renderTaskList(events, currentMinutes) {
+  const container = document.getElementById('dayflowTasks');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (events.length === 0) {
+    container.innerHTML = '<div class="dftask-empty">Нет задач на сегодня</div>';
+    return;
+  }
+
+  events.forEach(event => {
+    const isPast = event.end < currentMinutes;
+    const startH = Math.floor(event.start / 60);
+    const startM = event.start % 60;
+    const endH = Math.floor(event.end / 60);
+    const endM = event.end % 60;
+    const duration = event.end - event.start;
+
+    const timeStr = `${startH}:${startM.toString().padStart(2, '0')}–${endH}:${endM.toString().padStart(2, '0')}`;
+
+    const item = document.createElement('div');
+    item.className = `dftask-item${isPast ? ' past' : ''}`;
+
+    item.innerHTML = `
+      <div class="dftask-color ${event.type}"></div>
+      <div class="dftask-info">
+        <div class="dftask-name">${event.name}</div>
+        <div class="dftask-time">${timeStr}</div>
+      </div>
+      <div class="dftask-dur">${formatHoursMinutes(duration)}</div>
+    `;
+
+    container.appendChild(item);
+  });
+}
+
+function formatHoursMinutes(minutes) {
+  if (minutes <= 0) return '0м';
+  const hrs = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  if (hrs === 0) return `${mins}м`;
+  if (mins === 0) return `${hrs}ч`;
+  return `${hrs}ч ${mins}м`;
+}
+
+// ===== CHAT HANDLER =====
+function handleChatSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+
+  // Add user message
+  addChatMessage(text, 'user');
+
+  // Parse and create timer
+  const task = parseTaskInput(text);
+
+  if (task && task.targetTime) {
+    createTimer(task);
+    const targetStr = formatTimeOfDay(task.targetTime);
+    const durStr = task.duration ? ` на ${task.duration} мин` : '';
+    addChatMessage(`✓ «${task.name}» установлен на ${targetStr}${durStr}`, 'system success');
+  } else if (task) {
+    addChatMessage(`✓ «${task.name}» добавлено (без таймера)`, 'system success');
+  } else {
+    addChatMessage('Не понял задачу. Попробуй: «Почистить зубы в 18:00» или «Через 30 минут выйти»', 'system');
+  }
+}
+
+function addChatMessage(text, type) {
+  const container = document.getElementById('chatMessages');
+  if (!container) return;
+
+  // Remove hint if present
+  const hint = container.querySelector('.chat-hint');
+  if (hint) hint.remove();
+
+  const msg = document.createElement('div');
+  msg.className = `chat-msg ${type}`;
+  msg.textContent = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  renderTimers();
+  renderDayFlow();
+  setInterval(updateTimers, 1000);
+  setInterval(renderDayFlow, 60000);
+});
