@@ -140,7 +140,7 @@
 </div>
 <div class="timeline-stage">
 <div class="timeline-axis" id="timelineAxis">
-<svg class="timeline-svg" viewBox="0 0 700 180" preserveAspectRatio="none" aria-hidden="true">
+<svg class="timeline-svg" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
 <defs>
 <linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
 <stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
@@ -177,12 +177,21 @@
 <feMergeNode in="SourceGraphic"/>
 </feMerge>
 </filter>
+<filter id="pillShadow" x="-20%" y="-50%" width="140%" height="200%">
+<feGaussianBlur stdDeviation="1.4" in="SourceAlpha"/>
+<feOffset dx="0" dy="1.5"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
+<feMerge>
+<feMergeNode/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
 <clipPath id="stageClip">
-<rect x="0" y="0" width="700" height="180"/>
+<rect x="0" y="0" width="700" height="200"/>
 </clipPath>
 </defs>
 
-<rect class="tod-bg" x="0" y="0" width="700" height="180" fill="url(#todGrad)"/>
+<rect class="tod-bg" x="0" y="0" width="700" height="200" fill="url(#todGrad)"/>
 
 <g class="tl-grid">
 <line x1="0" y1="50" x2="700" y2="50"/>
@@ -200,8 +209,8 @@
 <g class="tl-mood-dots" id="tlMoodDots"></g>
 
 <g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
-<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="180" fill="url(#scrubberHalo)"/>
-<line class="tl-cursor" x1="0" y1="14" x2="0" y2="166"/>
+<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="200" fill="url(#scrubberHalo)"/>
+<line class="tl-cursor" x1="0" y1="14" x2="0" y2="186"/>
 <circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
 <circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
 <circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>

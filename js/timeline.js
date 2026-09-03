@@ -93,29 +93,39 @@
   const moodY = v => 30 + ((100 - v) / 100) * 120;
   const clampY = y => Math.max(28, Math.min(155, y));
 
+  // Ширина pill-карточки: иконка + 2px + время/подпись
+  const PILL_W = 68;
+  const PILL_H = 28;
+  const PILL_GAP = 8;
+  const PILL_ROW_H = 34;
+
   // Сгруппировать события по стороне (top/bottom) и упаковать в строки
   function packEvents(){
     const tops = EVENTS.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
     const bots = EVENTS.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
 
-    // 1-проходная упаковка в 2 строки (на стороне)
     function pack(list, side){
       const rows = [];
       list.forEach(ev => {
-        const w = 64; // примерная ширина pill
+        const left  = ev.x - PILL_W/2;
+        const right = ev.x + PILL_W/2;
         let placed = false;
         for (let r=0; r<rows.length; r++){
-          const last = rows[r][rows[r].length-1];
-          if (ev.x - last.x >= w + 6){
-            rows[r].push(ev);
+          const lastRight = rows[r].lastRight;
+          if (left - lastRight >= PILL_GAP){
             ev.row = r;
+            rows[r].lastRight = right;
+            rows[r].push(ev);
             placed = true;
             break;
           }
         }
         if (!placed){
-          rows.push([ev]);
-          ev.row = rows.length-1;
+          ev.row = rows.length;
+          list.lastRightInit = right;
+          const row = [ev];
+          row.lastRight = right;
+          rows.push(row);
         }
       });
       return { list, rows };
@@ -307,48 +317,75 @@
   function renderEvents(svg){
     const packed = packEvents();
 
-    // Helper: рендерит pill
+    // Helper: рендерит премиальную pill-карточку
     function renderPill(g, ev, side){
       const grp = el('g', { class:'tl-event tl-event-'+side, 'data-event-id':ev.id, 'data-event-start':ev.start });
-      const isBlock = !!ev.end;
       const xCenter = ev.x;
-
-      // Для top: pill идёт выше кривой (Y=20-50)
-      // Для bottom: pill идёт ниже кривой (Y=130-160)
-      // Используем row для многострочной упаковки
-      const rowOffset = (ev.row || 0) * 18;
-      const yPill = side === 'top' ? 18 + rowOffset : 130 + rowOffset;
-
-      // Метка: вертикальный «стебель» от pill к кривой
       const mood = moodAt(ev.start);
+      const color = STATE_COLORS[mood.state] || STATE_COLORS.good;
       const moodYVal = clampY(moodY(mood.v));
+
+      // Раскладка по строкам: top — сверху от y=14, bottom — снизу
+      const rowOffset = (ev.row || 0) * PILL_ROW_H;
+      const pillTop  = side === 'top' ? 6 + rowOffset : 140 + rowOffset;
+      const pillX    = xCenter - PILL_W/2;
+      const pillY    = side === 'top' ? pillTop : pillTop;
+      const anchorY  = side === 'top' ? pillY + PILL_H : pillY;
+
+      // Стебель от pill к кривой (с цветом состояния)
       grp.appendChild(el('line', {
-        x1:xCenter, y1:yPill + (side==='top' ? 14 : -14),
+        x1:xCenter, y1:anchorY,
         x2:xCenter, y2:moodYVal,
-        stroke: STATE_COLORS[mood.state] || STATE_COLORS.good,
-        'stroke-width':.5, opacity:.4, 'stroke-dasharray':'1 2'
+        stroke: color,
+        'stroke-width':.7, opacity:.35,
+        class:'tl-pill-stem'
       }));
 
       // Точка привязки к кривой
       grp.appendChild(el('circle', {
-        cx:xCenter, cy:moodYVal, r:2.5,
-        fill:'#fff', stroke: STATE_COLORS[mood.state] || STATE_COLORS.good, 'stroke-width':1.5
+        cx:xCenter, cy:moodYVal, r:3,
+        fill:'#fff', stroke: color, 'stroke-width':1.6,
+        class:'tl-pill-anchor'
       }));
 
-      // Сам pill — крошечная круглая иконка события (вместо текста)
-      const cy = yPill + (side==='top' ? 7 : -7);
+      // ===== Сама карточка =====
+      // Фон (мягкий прямоугольник с тенью)
+      grp.appendChild(el('rect', {
+        x:pillX, y:pillY, width:PILL_W, height:PILL_H, rx:8, ry:8,
+        class:'tl-pill-bg'
+      }));
+
+      // Цветной акцент-полоска слева
+      grp.appendChild(el('rect', {
+        x:pillX, y:pillY, width:3, height:PILL_H, rx:1.5, ry:1.5,
+        fill: color, opacity:.95
+      }));
+
+      // Иконка в цветном кружке
+      const iconCx = pillX + 13;
+      const iconCy = pillY + PILL_H/2;
       grp.appendChild(el('circle', {
-        cx:xCenter, cy:cy, r:8,
-        fill:'url(#eventMarker)', stroke:'rgba(0,0,0,.06)', 'stroke-width':.5
+        cx:iconCx, cy:iconCy, r:7.5,
+        fill: color, class:'tl-pill-icon-bg'
       }));
+      grp.appendChild(el('g', {
+        transform:'translate('+(iconCx-5)+' '+(iconCy-5)+') scale(.42)',
+        class:'tl-pill-icon',
+        style:'stroke:#fff'
+      })).innerHTML = EVENT_ICON[ev.icon] || EVENT_ICON.sun;
 
-      // Иконка внутри pill (используем foreignObject нельзя в SVG path, поэтому накладываем text)
+      // Время (сверху, муют)
       grp.appendChild(el('text', {
-        x:xCenter, y:cy + 3,
-        'font-size':9, 'font-weight':600, fill: STATE_COLORS[mood.state] || STATE_COLORS.good,
-        'text-anchor':'middle', 'font-family':'Manrope,sans-serif',
-        style:'pointer-events:none;letter-spacing:.02em'
-      }, ev.icon.charAt(0).toUpperCase()));
+        x:pillX + 24, y:pillY + 11,
+        class:'tl-pill-time'
+      }, fmtTime(ev.start)));
+
+      // Подпись (снизу, ink)
+      const shortLabel = ev.label.length > 9 ? ev.label.slice(0, 9) + '…' : ev.label;
+      grp.appendChild(el('text', {
+        x:pillX + 24, y:pillY + PILL_H - 7,
+        class:'tl-pill-label'
+      }, shortLabel));
 
       grp.addEventListener('click', () => setMomentHour(ev.start, true));
       g.appendChild(grp);
