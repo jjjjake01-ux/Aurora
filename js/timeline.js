@@ -280,11 +280,138 @@
     const eTo = metricAt('energy', h);
     const eFrom = metricAt('energy', Math.max(DAY_START, h-0.5));
     const s     = metricAt('steps', h);
-    const deltas = [
-      { label:'Энергия', from:eFrom, to:eTo, lag:'сейчас', suffix:'%', bar:eTo },
-      { label:'Шаги',    from:Math.max(0,s-800), to:s, lag:'сегодня', suffix:'', bar:Math.min(100,Math.round(s/90)) }
-    ];
-    return { event, deltas, insight: makeInsight(event, h) };
+    const moodVal = moodAt(h).v;
+    
+    // Метрики с интерпретацией (цифра + смысл + что делать)
+    const metrics = [];
+    
+    // Энергия
+    const energyDelta = eTo - eFrom;
+    let energyMeaning = '';
+    let energyType = 'neutral';
+    if (eTo >= 75) {
+      energyMeaning = 'Высокий уровень · можно брать сложные задачи';
+      energyType = 'good';
+    } else if (eTo >= 60) {
+      energyMeaning = 'Норма · работайте в обычном ритме';
+      energyType = 'neutral';
+    } else if (eTo >= 45) {
+      energyMeaning = 'Спад · сделайте перерыв или лёгкую активность';
+      energyType = 'warn';
+    } else {
+      energyMeaning = 'Низкий · отдых или сон优先';
+      energyType = 'bad';
+    }
+    metrics.push({
+      label: 'Энергия',
+      value: eTo,
+      suffix: '%',
+      meaning: energyMeaning,
+      meaningType: energyType
+    });
+    
+    // Шаги
+    const stepsGoal = 8000;
+    const stepsPct = Math.round((s / stepsGoal) * 100);
+    let stepsMeaning = '';
+    let stepsType = 'neutral';
+    if (stepsPct >= 100) {
+      stepsMeaning = 'Цель достигнута · отлично!';
+      stepsType = 'good';
+    } else if (stepsPct >= 70) {
+      stepsMeaning = 'В графике · ещё '+(stepsGoal-s)+' шагов до цели';
+      stepsType = 'neutral';
+    } else if (stepsPct >= 40) {
+      stepsMeaning = 'Маловато · прогулка в 15:30 поможет';
+      stepsType = 'warn';
+    } else {
+      stepsMeaning = 'Низкая активность · встаньте из-за стола';
+      stepsType = 'bad';
+    }
+    metrics.push({
+      label: 'Шаги',
+      value: s.toLocaleString('ru-RU'),
+      suffix: '',
+      meaning: stepsMeaning,
+      meaningType: stepsType
+    });
+    
+    // Настроение/состояние (если есть данные)
+    if (moodVal !== undefined) {
+      let moodText = '';
+      let moodType = 'neutral';
+      if (moodVal >= 80) {
+        moodText = 'Отличное состояние';
+        moodType = 'good';
+      } else if (moodVal >= 65) {
+        moodText = 'Хорошее настроение';
+        moodType = 'neutral';
+      } else if (moodVal >= 50) {
+        moodText = 'Есть усталость';
+        moodType = 'warn';
+      } else {
+        moodText = 'Требуется отдых';
+        moodType = 'bad';
+      }
+      metrics.push({
+        label: 'Состояние',
+        value: moodVal,
+        suffix: '',
+        meaning: moodText,
+        meaningType: moodType
+      });
+    }
+    
+    // Инсайт с типом
+    const insightData = makeInsightWithMeta(event, h, metrics);
+    
+    return { event, metrics, insight: insightData.text, insightType: insightData.type };
+  }
+  
+  function makeInsightWithMeta(event, h, metrics){
+    // 1) Контекстный insight из patterns.js
+    if (window.AtlasPatterns){
+      const hist = window.AtlasPatterns.getHistory();
+      const today = hist[hist.length - 1];
+      const last  = hist[hist.length - 2] || today;
+      const ctx = window.AtlasPatterns.contextualInsight(
+        h, last ? last.sleep : null,
+        today ? today.steps : 0,
+        today ? today.caffeine : 0
+      );
+      if (ctx) return { text: ctx.text, type: ctx.type || 'pattern' };
+    }
+    
+    // 2) Event-based insights с типами
+    if (event){
+      if (event.id === 'meal-l')
+        return { text: 'Плотный обед с углеводами — к 15:00 возможен спад. Прогулка в 15:30 вернёт тонус.', type: 'tip' };
+      if (event.id === 'workout')
+        return { text: 'Силовая снизит стресс через 1-2ч. Пик восстановления — к 16:00.', type: 'pattern' };
+      if (event.id === 'checkin')
+        return { text: 'Хороший момент проверить самочувствие. Запись займёт 10 секунд.', type: 'tip' };
+      if (event.id === 'sleep-am')
+        return { text: 'Сон 7ч 12м, качество 78%. Восстановление хорошее — день будет сильным.', type: 'success' };
+      if (event.id === 'meal-d')
+        return { text: 'Лёгкий ужин за 3ч до сна улучшит качество отдыха.', type: 'tip' };
+      if (event.id === 'sleep-pm')
+        return { text: 'Ложись до 23:00 — завтра готовность +8.', type: 'alert' };
+      if (event.id === 'wake')
+        return { text: 'Подъём. Готовность высокая. Тренируйся в полную силу.', type: 'success' };
+    }
+    
+    // 3) Time-based insights
+    if (h >= 20) return { text: 'Вечер. Лучшее время для расслабления. Рутина в 21:00 улучшит сон.', type: 'tip' };
+    if (h >= 14 && h <= 16) {
+      // Проверка на пост-обеденный спад
+      const energy = metricAt('energy', h);
+      if (energy < 55) {
+        return { text: 'Пост-обеденный спад. 10-минутная прогулка вернёт фокус.', type: 'alert' };
+      }
+    }
+    if (h >= 12) return { text: 'Середина дня. Активность на пике — берите сложные задачи.', type: 'pattern' };
+    if (h >= 8)  return { text: 'Утро. Набирай темп постепенно.', type: 'tip' };
+    return { text: 'Раннее утро. Тело ещё восстанавливается.', type: 'neutral' };
   }
 
   function makeInsight(event, h){
@@ -595,42 +722,110 @@
 
   function renderMoment(h){
     const m = momentFor(h);
+    const cardEl = document.getElementById('momentCard');
     const timeEl = document.getElementById('momentTime');
+    const eventDotEl = document.getElementById('momentEventDot');
     const titleEl = document.getElementById('momentTitle');
     const descEl = document.getElementById('momentDesc');
-    const insightEl = document.getElementById('momentInsight');
-    const deltasEl = document.getElementById('momentDeltas');
+    const metricsEl = document.getElementById('momentMetrics');
+    const miIconEl = document.getElementById('miIcon');
+    const miTextEl = document.getElementById('miText');
+    const primaryBtn = document.getElementById('momentPrimary');
+    const primaryIconEl = document.getElementById('momentPrimaryIcon');
+    const primaryTextEl = document.getElementById('momentPrimaryText');
 
+    // Время
     if (timeEl) timeEl.textContent = fmtTime(h);
-    if (titleEl) titleEl.textContent = m.event ? m.event.label : 'Сейчас';
+    
+    // Событие: показываем точку если есть событие рядом
+    if (cardEl){
+      cardEl.classList.toggle('has-event', !!m.event);
+    }
+    
+    // Заголовок
+    if (titleEl) titleEl.textContent = m.event ? m.event.label : 'Текущий момент';
+    
+    // Описание контекста
     if (descEl) descEl.textContent = describeEvent(m.event, h);
 
-    if (deltasEl){
-      deltasEl.innerHTML = '';
-      m.deltas.forEach(d => {
-        const dir = d.to > d.from ? 'up' : (d.to < d.from ? 'down' : 'flat');
-        const arrow = dir === 'up' ? '↑' : (dir === 'down' ? '↓' : '—');
-        const fromTxt = d.from === d.to ? '' : '<span class="dc-from">'+d.from+d.suffix+'</span><span class="dc-arrow"> '+arrow+'</span>';
+    // Метрики с интерпретацией (цифра + смысл)
+    if (metricsEl){
+      metricsEl.innerHTML = '';
+      m.metrics.forEach(metric => {
+        const meaningClass = metric.meaningType || 'neutral';
         const html =
-          '<div class="dc">'+
-            '<div class="dc-label">'+d.label+'</div>'+
-            '<div class="dc-row">'+fromTxt+'<span class="dc-to '+dir+'">'+d.to+d.suffix+'</span></div>'+
-            '<div class="dc-bar"><div class="dc-bar-fill" style="width:'+Math.max(6,Math.min(100,d.bar))+'%"></div></div>'+
-            '<div class="dc-lag">'+d.lag+'</div>'+
+          '<div class="mm-item">'+
+            '<div class="mm-label">'+metric.label+'</div>'+
+            '<div class="mm-value-row">'+
+              '<div class="mm-value">'+metric.value+metric.suffix+'</div>'+
+              '<div class="mm-meaning '+meaningClass+'">'+metric.meaning+'</div>'+
+            '</div>'+
           '</div>';
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
-        deltasEl.appendChild(tmp.firstChild);
+        metricsEl.appendChild(tmp.firstChild);
       });
     }
 
-    if (insightEl){
-      insightEl.innerHTML =
-        '<span class="mi-ic">'+
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>'+
-        '</span>'+
-        '<span>'+m.insight+'</span>';
+    // Инсайт с иконкой
+    if (miIconEl && miTextEl){
+      const iconSvg = getInsightIcon(m.insightType);
+      miIconEl.innerHTML = iconSvg;
+      miTextEl.textContent = m.insight;
     }
+    
+    // Кнопка действия
+    if (primaryBtn && primaryIconEl && primaryTextEl){
+      const action = getMomentAction(m.event, h);
+      primaryIconEl.innerHTML = action.icon;
+      primaryTextEl.textContent = action.text;
+      primaryBtn.onclick = action.handler;
+    }
+  }
+  
+  function getInsightIcon(type){
+    // Иконки для разных типов инсайтов
+    const icons = {
+      pattern: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+      tip: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26C17.81 13.47 19 11.38 19 9a7 7 0 0 0-7-7z"/></svg>',
+      alert: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      default: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>'
+    };
+    return icons[type] || icons.default;
+  }
+  
+  function getMomentAction(event, h){
+    // Действие зависит от контекста
+    if (event){
+      if (event.id === 'checkin'){
+        return {
+          text: 'Отметить состояние',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+          handler: () => { console.log('Check-in clicked'); }
+        };
+      }
+      if (event.id.indexOf('meal') === 0){
+        return {
+          text: 'Записать приём пищи',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v8a4 4 0 0 0 8 0V2"/><path d="M7 2v20"/><path d="M16 11h2a3 3 0 0 1 0 6h-2v-6z"/><path d="M16 17v5"/></svg>',
+          handler: () => { console.log('Meal log clicked'); }
+        };
+      }
+      if (event.id === 'workout'){
+        return {
+          text: 'Начать тренировку',
+          icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"/><path d="M3.5 9.5v5M20.5 9.5v5M9.5 3.5v3M14.5 3.5v3M9.5 17.5v3M14.5 17.5v3"/></svg>',
+          handler: () => { console.log('Workout started'); }
+        };
+      }
+    }
+    // По умолчанию
+    return {
+      text: 'Подробнее о моменте',
+      icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+      handler: () => { console.log('Details clicked'); }
+    };
   }
 
   function renderNextEvent(h){

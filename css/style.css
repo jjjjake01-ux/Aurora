@@ -717,36 +717,127 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 :root.dark-theme .tl-stack-close{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
 :root.dark-theme .tl-stack-close:hover{background:rgba(255,255,255,.16)}
 
-/* MOMENT CARD */
+/* MOMENT CARD — привязан к Timeline */
 .moment-card{
   border-radius:var(--r-lg);
-  background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.7) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.85) 100%);
   border:.5px solid var(--accent-line);
-  padding:14px 14px 12px;
-  display:flex;flex-direction:column;gap:10px;
-  margin-bottom:12px;
+  padding:16px 16px 14px;
+  display:flex;flex-direction:column;gap:12px;
+  margin-bottom:14px;
   position:relative;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);
 }
-.moment-head{display:flex;align-items:baseline;gap:10px}
-.moment-time{font:800 20px/1 var(--f);color:var(--accent-dark);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.moment-title{font:700 14px/1.2 var(--f);color:var(--ink);letter-spacing:-.01em}
-.moment-desc{font:500 12.5px/1.4 var(--f);color:var(--ink2);margin-top:-4px}
-.moment-deltas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.dc{background:rgba(255,255,255,.7);border:.5px solid var(--accent-line);border-radius:12px;padding:8px 10px 9px;display:flex;flex-direction:column;gap:3px;min-width:0}
-.dc-label{font:600 9.5px/1 var(--f-ui);color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dc-row{display:flex;align-items:baseline;gap:3px;flex-wrap:wrap}
-.dc-from{font:500 10.5px/1 var(--f);color:var(--mut);font-variant-numeric:tabular-nums}
-.dc-arrow{font:700 10.5px/1 var(--f);color:var(--mut)}
-.dc-to{font:800 14px/1 var(--f);color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.dc-to.up{color:var(--good)}
-.dc-to.down{color:var(--bad)}
-.dc-to.flat{color:var(--ink2)}
-.dc-bar{height:3px;border-radius:2px;background:var(--accent-bg);overflow:hidden;margin-top:2px}
-.dc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent-light),var(--accent));transition:width .3s var(--ease)}
-.dc-lag{font:500 9px/1 var(--f-ui);color:var(--mut)}
-.moment-insight{display:flex;gap:8px;padding:10px 12px;background:var(--accent-bg);border:.5px solid var(--accent-line);border-radius:12px;font:500 12.5px/1.45 var(--f);color:var(--ink)}
-.mi-ic{flex-shrink:0;color:var(--accent);margin-top:1px}
+.moment-card.is-active{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(47,191,155,.12),0 2px 8px rgba(47,191,155,.08);
+  border-color:var(--accent);
+}
+
+/* Заголовок: время + событие */
+.moment-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.moment-time-wrap{display:flex;align-items:center;gap:8px}
+.moment-time{
+  font:800 22px/1 var(--f);
+  color:var(--accent-dark);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+}
+.moment-event-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 0 4px var(--accent-line);
+  flex-shrink:0;
+  opacity:0;
+  transform:scale(.6);
+  transition:opacity .2s var(--ease),transform .2s var(--ease);
+}
+.moment-card.has-event .moment-event-dot{opacity:1;transform:scale(1)}
+
+.moment-title{
+  font:700 14px/1.2 var(--f);
+  color:var(--ink);
+  letter-spacing:-.01em;
+  flex:1;
+  min-width:0;
+}
+
+/* Контекст: что происходит */
+.moment-desc{
+  font:500 13px/1.5 var(--f);
+  color:var(--ink2);
+  margin-top:-2px;
+}
+
+/* Метрики с интерпретацией */
+.moment-metrics{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.mm-item{
+  background:rgba(255,255,255,.8);
+  border:.5px solid var(--line);
+  border-radius:12px;
+  padding:10px 11px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+.mm-label{
+  font:600 9px/1 var(--f-ui);
+  color:var(--ink2);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mm-value-row{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.mm-value{
+  font:800 16px/1 var(--f);
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
+}
+.mm-meaning{
+  font:500 11px/1.3 var(--f);
+  color:var(--ink2);
+  flex:1;
+  min-width:0;
+}
+.mm-meaning.good{color:var(--good)}
+.mm-meaning.warn{color:var(--warn)}
+.mm-meaning.bad{color:var(--bad)}
+
+/* Инсайт: паттерн или рекомендация */
+.moment-insight{
+  display:flex;
+  gap:9px;
+  padding:11px 12px;
+  background:var(--accent-bg);
+  border:.5px solid var(--accent-line);
+  border-radius:12px;
+  font:500 12.5px/1.45 var(--f);
+  color:var(--ink);
+}
+.mi-icon{
+  flex-shrink:0;
+  width:18px;height:18px;
+  color:var(--accent);
+  margin-top:1px;
+}
+.mi-text{flex:1;line-height:1.4}
+
+/* Действия */
 .moment-actions{display:flex;gap:8px}
+.btn-icon{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center}
 
 /* BUTTONS */
 .btn{height:38px;border-radius:12px;font:700 13px var(--f);letter-spacing:-.01em;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s var(--ease),box-shadow .15s var(--ease)}

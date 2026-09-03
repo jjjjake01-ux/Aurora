@@ -252,13 +252,35 @@
 </section>
 
 <section class="moment-card" id="momentCard" aria-live="polite">
-<div class="moment-head"><div class="moment-time" id="momentTime">—</div><div class="moment-title" id="momentTitle">—</div></div>
+<!-- Заголовок: время + событие -->
+<div class="moment-head">
+  <div class="moment-time-wrap">
+    <div class="moment-time" id="momentTime">—</div>
+    <div class="moment-event-dot" id="momentEventDot" aria-hidden="true"></div>
+  </div>
+  <div class="moment-title" id="momentTitle">—</div>
+</div>
+
+<!-- Контекст: что происходит в этот момент -->
 <p class="moment-desc" id="momentDesc">—</p>
-<div class="moment-deltas" id="momentDeltas"></div>
-<div class="moment-insight" id="momentInsight"></div>
+
+<!-- Метрики с интерпретацией: цифра + смысл -->
+<div class="moment-metrics" id="momentMetrics">
+  <!-- Будет заполнено JS:.metric × N -->
+</div>
+
+<!-- Инсайт: паттерн или рекомендация -->
+<div class="moment-insight" id="momentInsight">
+  <span class="mi-icon" id="miIcon" aria-hidden="true"></span>
+  <span class="mi-text" id="miText">—</span>
+</div>
+
+<!-- Действие: одна главная кнопка -->
 <div class="moment-actions">
-<button class="btn btn-primary" type="button" id="momentPrimary">Подробнее</button>
-<button class="btn btn-ghost" type="button" id="momentGhost">Изменить</button>
+  <button class="btn btn-primary" type="button" id="momentPrimary">
+    <span class="btn-icon" id="momentPrimaryIcon" aria-hidden="true"></span>
+    <span id="momentPrimaryText">Подробнее</span>
+  </button>
 </div>
 </section>
 
