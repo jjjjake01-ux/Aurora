@@ -340,7 +340,7 @@
 <div class="moment-insight" id="momentInsight"></div>
 
 <section class="status-strip" id="statusStrip" aria-label="Прогресс дня">
-  <div class="ss-row">
+  <div class="ss-row" data-key="steps">
     <div class="ss-meta">
       <span class="ss-label">Шаги</span>
       <span class="ss-val" id="ssStepsVal">—</span>
@@ -348,13 +348,37 @@
     <div class="ss-bar"><div class="ss-bar-fill" id="ssStepsBar" style="width:0%"></div></div>
     <span class="ss-target" id="ssStepsTarget">/ 8 000</span>
   </div>
-  <div class="ss-row">
+  <div class="ss-row" data-key="active">
+    <div class="ss-meta">
+      <span class="ss-label">Активность</span>
+      <span class="ss-val" id="ssActiveVal">—</span>
+    </div>
+    <div class="ss-bar"><div class="ss-bar-fill ss-bar-active" id="ssActiveBar" style="width:0%"></div></div>
+    <span class="ss-target" id="ssActiveTarget">/ 22 мин</span>
+  </div>
+  <div class="ss-row" data-key="water">
     <div class="ss-meta">
       <span class="ss-label">Вода</span>
       <span class="ss-val" id="ssWaterVal">—</span>
     </div>
     <div class="ss-bar"><div class="ss-bar-fill ss-bar-water" id="ssWaterBar" style="width:0%"></div></div>
     <span class="ss-target" id="ssWaterTarget">/ 2.5 L</span>
+  </div>
+  <div class="ss-row ss-row-inverse" data-key="sitting">
+    <div class="ss-meta">
+      <span class="ss-label">Сидячее</span>
+      <span class="ss-val" id="ssSittingVal">—</span>
+    </div>
+    <div class="ss-bar"><div class="ss-bar-fill ss-bar-sit" id="ssSittingBar" style="width:0%"></div></div>
+    <span class="ss-target" id="ssSittingTarget">лимит 6ч</span>
+  </div>
+  <div class="ss-row ss-row-sleep" data-key="sleep" id="ssSleepRow" hidden>
+    <div class="ss-meta">
+      <span class="ss-label">До сна</span>
+      <span class="ss-val" id="ssSleepVal">—</span>
+    </div>
+    <div class="ss-bar"><div class="ss-bar-fill ss-bar-sleep" id="ssSleepBar" style="width:0%"></div></div>
+    <span class="ss-target" id="ssSleepTarget">лечь к 23:00</span>
   </div>
 </section>
 

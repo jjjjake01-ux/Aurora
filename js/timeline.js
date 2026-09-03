@@ -803,28 +803,81 @@ let PERIOD_MODE = false;
     };
   }
 
-  // ===== STATUS STRIP — дневные цели =====
+  // ===== STATUS STRIP — дневные цели (шаги/активность/вода/сидячее/сон) =====
   function renderStatusStrip(metrics){
-    const stepsVal = document.getElementById('ssStepsVal');
-    const stepsBar = document.getElementById('ssStepsBar');
-    const stepsTarget = document.getElementById('ssStepsTarget');
-    const waterVal = document.getElementById('ssWaterVal');
-    const waterBar = document.getElementById('ssWaterBar');
-
-    // Шаги: цель 8 000 (можно вынести в настройки позже)
+    // 1) Шаги: цель 8 000
     const stepsGoal = 8000;
     const stepsPct = Math.min(100, Math.round((metrics.steps / stepsGoal) * 100));
-    if (stepsVal) stepsVal.textContent = metrics.steps.toLocaleString('ru-RU');
-    if (stepsBar) stepsBar.style.width = stepsPct + '%';
-    if (stepsTarget) stepsTarget.textContent = '/ ' + stepsGoal.toLocaleString('ru-RU');
+    const stepsValEl = document.getElementById('ssStepsVal');
+    const stepsBarEl = document.getElementById('ssStepsBar');
+    const stepsTargetEl = document.getElementById('ssStepsTarget');
+    if (stepsValEl) stepsValEl.textContent = metrics.steps.toLocaleString('ru-RU');
+    if (stepsBarEl) stepsBarEl.style.width = stepsPct + '%';
+    if (stepsTargetEl) stepsTargetEl.textContent = '/ ' + stepsGoal.toLocaleString('ru-RU');
 
-    // Вода: цель 2.5L = 2500мл. hydration — %, конвертируем в мл для читаемости.
+    // 2) Активные минуты: цель 22 (WHO)
+    const activeGoal = 22;
+    const activePct = Math.min(100, Math.round((metrics.activeMin / activeGoal) * 100));
+    const activeValEl = document.getElementById('ssActiveVal');
+    const activeBarEl = document.getElementById('ssActiveBar');
+    const activeTargetEl = document.getElementById('ssActiveTarget');
+    if (activeValEl) activeValEl.textContent = metrics.activeMin + ' мин';
+    if (activeBarEl) activeBarEl.style.width = activePct + '%';
+    if (activeTargetEl) activeTargetEl.textContent = '/ ' + activeGoal + ' мин';
+
+    // 3) Вода: цель 2.5L (hydration в %, конвертируем в литры)
     const waterGoalMl = 2500;
     const waterMl = Math.round((metrics.hydration / 100) * waterGoalMl);
-    const waterL = (waterMl / 1000).toFixed(1).replace('.', '.');
+    const waterL = (waterMl / 1000).toFixed(1);
     const waterPct = Math.min(100, metrics.hydration);
-    if (waterVal) waterVal.textContent = waterL + ' L';
-    if (waterBar) waterBar.style.width = waterPct + '%';
+    const waterValEl = document.getElementById('ssWaterVal');
+    const waterBarEl = document.getElementById('ssWaterBar');
+    if (waterValEl) waterValEl.textContent = waterL + ' L';
+    if (waterBarEl) waterBarEl.style.width = waterPct + '%';
+
+    // 4) Сидячее время: лимит 6ч. Прогресс инвертирован — больше = хуже.
+    const SIT_LIMIT = 6;
+    const sitH = metrics.sitting;
+    const sitPct = Math.min(100, Math.round((sitH / SIT_LIMIT) * 100));
+    const sitValEl = document.getElementById('ssSittingVal');
+    const sitBarEl = document.getElementById('ssSittingBar');
+    const sitRowEl = document.querySelector('.ss-row[data-key="sitting"]');
+    const h = Math.floor(sitH);
+    const m = Math.round((sitH - h) * 60);
+    if (sitValEl) sitValEl.textContent = h + 'ч ' + (m < 10 ? '0' : '') + m + 'м';
+    if (sitBarEl) sitBarEl.style.width = sitPct + '%';
+    if (sitBarEl){
+      sitBarEl.classList.remove('is-warn','is-bad');
+      if (sitH > 5) sitBarEl.classList.add('is-bad');
+      else if (sitH > 4) sitBarEl.classList.add('is-warn');
+    }
+    if (sitRowEl){
+      sitRowEl.classList.remove('is-good','is-warn','is-bad');
+      if (sitH > 5) sitRowEl.classList.add('is-bad');
+      else if (sitH > 4) sitRowEl.classList.add('is-warn');
+      else sitRowEl.classList.add('is-good');
+    }
+
+    // 5) Сон: countdown до 23:00, появляется только после 19:00
+    const sleepRowEl = document.getElementById('ssSleepRow');
+    if (sleepRowEl){
+      if (metrics.sleepMin != null && metrics.sleepMin > 0){
+        sleepRowEl.hidden = false;
+        const sleepValEl = document.getElementById('ssSleepVal');
+        const sleepBarEl = document.getElementById('ssSleepBar');
+        const sleepTargetEl = document.getElementById('ssSleepTarget');
+        const sh = Math.floor(metrics.sleepMin / 60);
+        const sm = metrics.sleepMin % 60;
+        if (sleepValEl) sleepValEl.textContent = sh + 'ч ' + (sm < 10 ? '0' : '') + sm + 'м';
+        // Прогресс: меньше времени до сна = больше заполнено
+        const sleepTotal = 4 * 60; // 4 часа = максимум, потом 100%
+        const sleepPct = Math.min(100, Math.round((1 - metrics.sleepMin / sleepTotal) * 100));
+        if (sleepBarEl) sleepBarEl.style.width = Math.max(8, sleepPct) + '%';
+        if (sleepTargetEl) sleepTargetEl.textContent = 'лечь к 23:00';
+      } else {
+        sleepRowEl.hidden = true;
+      }
+    }
   }
 
   // ===== NEXT ACTION — тренер говорит, что делать =====

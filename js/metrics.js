@@ -134,6 +134,28 @@
     return Math.round(sit * 10) / 10;
   }
 
+  // Активные минуты: тренировка (60 мин в 12) + прогулка (30 мин в 17) + шаги-бонус
+  // Цель WHO: 22 мин/день
+  function activeAt(h){
+    if (h < 6) return 0;
+    let act = 0;
+    if (h >= 13) act += 60;  // тренировка 12-13
+    if (h >= 17.5) act += 30; // прогулка 17-17:30
+    // Бонус за шаги: > 6000/8000 → +5 мин, > 7000 → +10 мин
+    const steps = stepsAt(h);
+    if (steps > 7000) act += 10;
+    else if (steps > 6000) act += 5;
+    return Math.round(act);
+  }
+
+  // До сна: часов осталось до цели (23:00). Возвращает null если до сна ещё далеко (> 4ч).
+  function sleepCountdown(h){
+    const SLEEP_TARGET = 23;
+    if (h < 19) return null; // пока не вечер — не показываем
+    if (h >= SLEEP_TARGET) return null; // уже пора / поздно
+    return Math.round((SLEEP_TARGET - h) * 60);
+  }
+
   // Настроение (0-100) — берём из timeline.js если есть, иначе симулируем
   // Эта версия — fallback, реальное значение передаётся снаружи
   function defaultMoodAt(h){
@@ -238,6 +260,8 @@
       caffeine: caffeineAt(hClamped),
       steps: stepsAt(hClamped),
       sitting: sittingAt(hClamped),
+      activeMin: activeAt(hClamped),
+      sleepMin: sleepCountdown(hClamped),
       status: status,
       statusLabel: statusLabel(status, hClamped, nextEvent),
       energyDelta: delta(prevEnergy, energy),
@@ -259,7 +283,7 @@
     metricsAt,
     withNarrative,
     energyAt, focusAt, heartAt, loadAt,
-    hydrationAt, caffeineAt, stepsAt, sittingAt,
+    hydrationAt, caffeineAt, stepsAt, sittingAt, activeAt, sleepCountdown,
     defaultMoodAt, overallStatus, statusLabel
   };
 })();

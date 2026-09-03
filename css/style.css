@@ -1004,10 +1004,10 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .mi-ic{flex-shrink:0;color:var(--mut);margin-top:2px;opacity:.7}
 .mi-ic svg{width:12px;height:12px}
 
-/* ===== STATUS STRIP — дневные цели (шаги + вода), 2 строки бара ===== */
+/* ===== STATUS STRIP — дневные цели (шаги / активность / вода / сидячее / сон) ===== */
 .status-strip{
-  display:flex;flex-direction:column;gap:8px;
-  padding:10px 12px 11px;
+  display:flex;flex-direction:column;gap:6px;
+  padding:9px 11px 10px;
   background:rgba(255,255,255,.5);
   border:.5px solid var(--line);
   border-radius:14px;
@@ -1015,28 +1015,27 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 }
 .ss-row{
   display:grid;
-  grid-template-columns:auto 1fr auto;
+  grid-template-columns:64px 1fr auto;
   align-items:center;
-  gap:10px;
+  gap:9px;
   font-variant-numeric:tabular-nums;
 }
 .ss-meta{
-  display:inline-flex;align-items:baseline;gap:6px;
-  min-width:74px;
+  display:inline-flex;align-items:baseline;gap:4px;
 }
 .ss-label{
-  font:600 11px/1 var(--f-ui);
+  font:600 10px/1 var(--f-ui);
   color:var(--ink2);
-  text-transform:uppercase;letter-spacing:.05em;
+  text-transform:uppercase;letter-spacing:.04em;
 }
 .ss-val{
-  font:800 12.5px/1 var(--f);
+  font:800 11.5px/1 var(--f);
   color:var(--ink);
   letter-spacing:-.01em;
   font-variant-numeric:tabular-nums;
 }
 .ss-bar{
-  height:6px;
+  height:5px;
   background:rgba(154,143,130,.14);
   border-radius:3px;
   overflow:hidden;
@@ -1046,15 +1045,31 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   height:100%;
   background:linear-gradient(90deg,var(--accent-light),var(--accent));
   border-radius:3px;
-  transition:width .5s var(--ease);
+  transition:width .5s var(--ease),background .3s var(--ease);
 }
 .ss-bar-water{background:linear-gradient(90deg,#7BA8D9,#5CC4A0)}
+.ss-bar-active{background:linear-gradient(90deg,#F5C037,#F0764B)}
+.ss-bar-sit{background:linear-gradient(90deg,var(--good),#F2C037)}
+.ss-bar-sit.is-warn{background:linear-gradient(90deg,#F5C037,#F0764B)}
+.ss-bar-sit.is-bad{background:linear-gradient(90deg,#F0764B,#D06552)}
+.ss-bar-sleep{background:linear-gradient(90deg,#7B74D6,#5CC4A0)}
 .ss-target{
-  font:600 10.5px/1 var(--f-ui);
+  font:600 9.5px/1 var(--f-ui);
   color:var(--mut);
   font-variant-numeric:tabular-nums;
   white-space:nowrap;
+  letter-spacing:.02em;
 }
+
+/* Inverse-bar: сидячее время — чем больше заполнено, тем хуже. Бар слева = плохо, справа = ок. */
+.ss-row-inverse .ss-bar-fill{transform-origin:right center}
+.ss-row-inverse.is-good .ss-bar-sit{background:linear-gradient(90deg,var(--good),#5CC4A0)}
+.ss-row-inverse.is-warn .ss-val{color:var(--warn)}
+.ss-row-inverse.is-bad  .ss-val{color:var(--bad)}
+
+/* Sleep row — фиолетовый, появляется после 19:00 */
+.ss-row-sleep{opacity:0;animation:ssRowIn .3s var(--ease) forwards}
+@keyframes ssRowIn{to{opacity:1}}
 
 /* ===== NEXT ACTION — карточка-тренер ===== */
 .next-action{
