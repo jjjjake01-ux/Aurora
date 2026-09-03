@@ -756,7 +756,6 @@ let PERIOD_MODE = false;
 
     // Центр кольца — общий статус
     const numEl = document.getElementById('vringNum');
-    const labEl = document.getElementById('vringLabel');
     if (numEl){
       countUpTo(numEl, prev.status != null ? prev.status : 0, metrics.status, 350);
       numEl.classList.remove('is-good','is-warn','is-bad');
@@ -764,8 +763,6 @@ let PERIOD_MODE = false;
       else if (metrics.status >= 50) numEl.classList.add('is-warn');
       else numEl.classList.add('is-bad');
     }
-    if (labEl) labEl.textContent = metrics.statusLabel;
-
     // Метрики: count-up (energy/focus/mood теперь на кольцах, в плитках только heart/load/hydration)
     // Плитки (пульс/нагрузка/гидратация) убраны из момент-card —
     // теперь живут в drilldown «Подробнее» (HRV/Сон/Стресс/Восстановление/Нагрузка/Энергия).

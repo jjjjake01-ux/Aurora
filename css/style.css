@@ -771,7 +771,8 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   margin:6px 0 4px;
 }
 .mv-rings{
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:6px;
   padding-top:4px;
 }
 .mv-goals{
@@ -852,6 +853,26 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vring-fill[data-key="energy"].is-active ~ .vring-tag-energy{fill:#2FBF9B}
 .vring-fill[data-key="focus"].is-active  ~ .vring-tag-focus{fill:#F0764B}
 .vring-fill[data-key="mood"].is-active   ~ .vring-tag-mood{fill:#7B74D6}
+
+/* Легенда под кольцом: что означают цвета */
+.vring-legend{
+  display:flex;align-items:center;justify-content:center;
+  gap:5px;
+  margin-top:6px;
+  font:600 9.5px/1 var(--f-ui);
+  color:var(--ink2);
+  text-transform:uppercase;letter-spacing:.04em;
+  white-space:nowrap;
+}
+.vrl-item{display:inline-flex;align-items:center;gap:4px}
+.vrl-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  display:inline-block;
+}
+.vrl-item[data-key="energy"] .vrl-dot{background:#2FBF9B}
+.vrl-item[data-key="focus"]  .vrl-dot{background:#F0764B}
+.vrl-item[data-key="mood"]   .vrl-dot{background:#7B74D6}
+.vrl-sep{color:var(--mut);opacity:.5}
 
 /* ===== GOAL RINGS — маленькие кольца прогресса дня ===== */
 .goal-rings{
