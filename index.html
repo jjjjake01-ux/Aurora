@@ -6,7 +6,8 @@
 <title>Atlas Health — Сегодня</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<script src="js/patterns.js" defer></script>
+<script src="js/micro-actions.js" defer></script>
+ <script src="js/patterns.js" defer></script>
 <script src="js/metrics.js" defer></script>
 <script src="js/timeline.js" defer></script>
 <script src="js/main.js" defer></script>
@@ -149,12 +150,7 @@
 </div>
 </header>
 
-<div class="now-strip" id="nowStrip" aria-live="polite">
-<span class="now-dot" aria-hidden="true"></span>
-<span class="now-time" id="nowTime">—</span>
-<span class="now-sep">·</span>
-<span class="now-text" id="nowText">шагов 4 200 из 8 000</span>
-</div>
+ <div class="micro-action-card" id="microActionCard" aria-live="polite"></div>
 
 <section class="timeline" aria-label="Лента дня">
 <div class="timeline-head">

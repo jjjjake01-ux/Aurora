@@ -379,23 +379,68 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .m-zzz text:nth-child(2){animation-delay:.4s}
 .m-zzz text:nth-child(3){animation-delay:.8s}
 
-/* NOW STRIP */
-.now-strip{
-  display:flex;align-items:center;gap:8px;
-  padding:11px 0 13px;
-  border-top:.5px solid var(--accent-line);
-  border-bottom:.5px solid var(--accent-line);
-  font:600 12px/1.2 var(--f-ui);
-  color:var(--ink2);
-  letter-spacing:-.005em;
-  margin-bottom:12px;
-  font-variant-numeric:tabular-nums;
+/* MICRO ACTION CARD */
+.micro-action-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-lg);
+  margin-bottom: 12px;
+  transition: all 0.3s var(--ease);
 }
-.now-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--accent-light),var(--accent));box-shadow:0 0 0 0 var(--accent-glow);animation:nowPulse 2.2s ease-in-out infinite;flex-shrink:0}
-@keyframes nowPulse{0%{box-shadow:0 0 0 0 var(--accent-glow)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
-.now-time{font-weight:700;color:var(--ink)}
-.now-sep{color:var(--mut);opacity:.6}
-.now-text{color:var(--ink2)}
+
+.micro-action-card.is-done {
+  opacity: 0.6;
+  transform: scale(0.98);
+}
+
+.mac-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  border-radius: var(--r-md);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.mac-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.mac-text {
+  font: 600 14px/1.3 var(--f-ui);
+  color: var(--ink);
+}
+
+.mac-sub {
+  font: 400 11px/1.2 var(--f-ui);
+  color: var(--ink2);
+  margin-top: 2px;
+}
+
+.mac-btn {
+  padding: 8px 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-full);
+  font: 600 12px/1 var(--f-ui);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  flex-shrink: 0;
+}
+
+.mac-btn:hover {
+  background: var(--accent-dark);
+  transform: scale(1.02);
+}
 
 /* TIMELINE V4 — Apple/Whoop/Oura ultra premium */
 .timeline{
@@ -1832,10 +1877,9 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 :root.dark-theme .snap-trend .hero-stack{background:linear-gradient(160deg,#26221D 0%,rgba(242,160,55,.06) 100%)}
 :root.dark-theme .hero-title{color:#fff}
 :root.dark-theme .hero-subline{color:rgba(255,255,255,.65)}
-:root.dark-theme .now-time{color:#fff}
-:root.dark-theme .now-text{color:rgba(255,255,255,.6)}
-:root.dark-theme .now-strip{border-color:rgba(255,255,255,.08)}
 :root.dark-theme .timeline{background:rgba(47,191,155,.06);border-color:rgba(47,191,155,.18)}
+:root.dark-theme .micro-action-card{background:rgba(47,191,155,.1);border-color:rgba(47,191,155,.2)}
+:root.dark-theme .mac-text{color:#fff}
 :root.dark-theme .timeline-mood{background:rgba(255,255,255,.06);color:var(--accent-light)}
 :root.dark-theme .tl-mood-labels text.mood-peak{fill:var(--accent-light)}
 :root.dark-theme .tl-events text{fill:#fff}
