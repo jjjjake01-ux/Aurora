@@ -288,6 +288,19 @@
   }
 
   function makeInsight(event, h){
+    // 1) Контекстный insight из patterns.js (на основе реальных наблюдений)
+    if (window.AtlasPatterns){
+      const hist = window.AtlasPatterns.getHistory();
+      const today = hist[hist.length - 1];
+      const last  = hist[hist.length - 2] || today;
+      const ctx = window.AtlasPatterns.contextualInsight(
+        h, last ? last.sleep : null,
+        today ? today.steps : 0,
+        today ? today.caffeine : 0
+      );
+      if (ctx) return ctx.text;
+    }
+    // 2) Fallback — event-based insights
     if (event){
       if (event.id === 'meal-l')  return 'Плотный обед с углеводами — к 15:00 возможен спад. Прогулка в 15:30 вернёт тонус.';
       if (event.id === 'workout') return 'Силовая снизит стресс через 1-2ч. Пик восстановления — к 16:00.';
@@ -1094,8 +1107,52 @@
     setupZoomButton();
     setupMascotInteraction();
     setupTrendPanel();
+    renderPatterns();
 
     setInterval(tick, 30*1000);
+  }
+
+  // ============== PATTERNS (honest correlations) ==============
+  function renderPatterns(){
+    if (!window.AtlasPatterns) return;
+    const card = document.getElementById('patternsCard');
+    if (!card) return;
+    const all = window.AtlasPatterns.analyze();
+
+    ['confirmed','observed','insufficient'].forEach(tier => {
+      const list = card.querySelector(`[data-list="${tier}"]`);
+      const count = card.querySelector(`[data-count="${tier}"]`);
+      const items = all.filter(p => p.tier === tier);
+      if (count) count.textContent = items.length;
+      if (!list) return;
+      if (items.length === 0){
+        list.innerHTML = '<div class="pattern-empty">Нет паттернов в этой категории</div>';
+        return;
+      }
+      list.innerHTML = items.map(p => {
+        const color = tier === 'confirmed' ? '#2FA36B'
+                    : tier === 'observed'  ? '#C98A1F'
+                    : '#9A8F82';
+        const strength = Math.round(p.effect * 100);
+        const conf     = Math.round(p.confidence * 100);
+        return `
+          <div class="pattern-item">
+            <div class="pattern-ic">${window.AtlasPatterns.iconSvg(p.icon, color)}</div>
+            <div class="pattern-body">
+              <div class="pattern-title">${p.title}</div>
+              <div class="pattern-sub">${p.sub}</div>
+              <div class="pattern-meta">
+                <span>n=${p.n}</span>
+                <span>·</span>
+                <span>эффект ${strength}%</span>
+                <div class="pattern-bar"><div class="pattern-bar-fill" style="width:${conf}%"></div></div>
+              </div>
+              <div class="pattern-action">${p.action}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    });
   }
 
   function setupTrendPanel(){

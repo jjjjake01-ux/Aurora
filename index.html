@@ -6,6 +6,7 @@
 <title>Atlas Health — Сегодня</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script src="js/patterns.js" defer></script>
 <script src="js/timeline.js" defer></script>
 <script src="js/main.js" defer></script>
 </head>
@@ -325,9 +326,21 @@
 <div class="ach"><span class="ach-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span><div class="ach-text"><div class="ach-title">Лучший сон за месяц: 8.2ч</div><div class="ach-sub">12 дней назад</div></div></div>
 </div>
 </section>
-<section class="card insight-card">
-<span class="insight-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.74V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.26A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg></span>
-<div class="insight-body"><div class="insight-label">Персональный паттерн</div><p class="insight-text">Тренировка в первой половине дня улучшает твой сон на 12% — 3 раза подтверждено за последний месяц.</p></div>
+<section class="card patterns-card" id="patternsCard" aria-label="Персональные паттерны">
+<div class="card-title">Твои паттерны</div>
+<div class="patterns-meta">На основе наблюдений за 30 дней. Честно: показываем силу и количество данных.</div>
+<div class="patterns-tier" data-tier="confirmed">
+<div class="patterns-tier-head"><span class="patterns-tier-dot" aria-hidden="true"></span><span class="patterns-tier-label">Подтверждено</span><span class="patterns-tier-count" data-count="confirmed">0</span></div>
+<div class="patterns-list" data-list="confirmed"></div>
+</div>
+<div class="patterns-tier" data-tier="observed">
+<div class="patterns-tier-head"><span class="patterns-tier-dot" aria-hidden="true"></span><span class="patterns-tier-label">Замечено</span><span class="patterns-tier-count" data-count="observed">0</span></div>
+<div class="patterns-list" data-list="observed"></div>
+</div>
+<div class="patterns-tier" data-tier="insufficient">
+<div class="patterns-tier-head"><span class="patterns-tier-dot" aria-hidden="true"></span><span class="patterns-tier-label">Мало данных</span><span class="patterns-tier-count" data-count="insufficient">0</span></div>
+<div class="patterns-list" data-list="insufficient"></div>
+</div>
 </section>
 <section class="card goals-card">
 <div class="card-title">Цели</div>
