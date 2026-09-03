@@ -82,6 +82,37 @@
     const h = DAY_START + t*(DAY_END-DAY_START);
     return Math.max(DAY_START, Math.min(DAY_END, h));
   };
+
+  // === ZOOM STATE (pinch-to-zoom на шкале) ===
+  // zoom = 1.0 → весь день (6-24), zoom = 4.0 → 4.5ч
+  // zoomCenter — час, который остаётся в центре экрана при зуме
+  let ZOOM = 1.0;
+  let ZOOM_CENTER = 12;
+  function applyZoom(){
+    const svg = document.querySelector('.timeline-svg');
+    if (!svg) return;
+    // Видимая ширина в SVG-юнитах = SVG_W / zoom
+    const visW = SVG_W / ZOOM;
+    const cx = xFromHour(ZOOM_CENTER);
+    const vbX = cx - visW/2;
+    svg.setAttribute('viewBox', `${vbX} 0 ${visW} 200`);
+  }
+  function setZoom(zoom, centerHour){
+    ZOOM = Math.max(1, Math.min(6, zoom));
+    if (centerHour != null) ZOOM_CENTER = Math.max(DAY_START, Math.min(DAY_END, centerHour));
+    applyZoom();
+    // Перепаковываем и перерисовываем события с учётом нового масштаба
+    const svg = document.querySelector('.timeline-svg');
+    if (svg){
+      const gTop = document.getElementById('tlEventsTopInner');
+      const gBot = document.getElementById('tlEventsBottomInner');
+      if (gTop) gTop.innerHTML = '';
+      if (gBot) gBot.innerHTML = '';
+      renderEvents(svg, ZOOM);
+    }
+    const axis = document.getElementById('timelineAxis');
+    if (axis) axis.classList.toggle('is-zoomed', ZOOM > 1.05);
+  }
   const el = (n, a, t) => {
     const e = document.createElementNS(SVG_NS, n);
     if (a) for (const k in a) e.setAttribute(k, a[k]);
@@ -99,39 +130,73 @@
   const PILL_GAP = 8;
   const PILL_ROW_H = 34;
 
-  // Сгруппировать события по стороне (top/bottom) и упаковать в строки
-  function packEvents(){
-    const tops = EVENTS.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
-    const bots = EVENTS.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
+  // Минимальный горизонтальный зазор между карточками на стороне (в SVG-юнитах).
+  // Если два события ближе — склеиваем в стек (counter "+N").
+  const STACK_THRESHOLD = 50;  // ~45 мин между событиями → стек
 
-    function pack(list, side){
+  // Сгруппировать события по стороне (top/bottom), упаковать в строки и стеки.
+  // visualScale = 1.0 в обычном режиме, > 1.0 при зуме — пороги сжаты.
+  function packEvents(visualScale){
+    visualScale = visualScale || 1;
+    const stackThreshold = STACK_THRESHOLD / visualScale; // при зуме порог меньше
+    function pack(list){
+      // 1) Сортируем по X
+      const sorted = list.slice().sort((a,b) => a.x - b.x);
+      // 2) Группируем в стеки
+      const stacks = [];
+      let cur = null;
+      sorted.forEach(ev => {
+        if (!cur || (ev.x - cur.lastX) < stackThreshold){
+          if (!cur){ cur = { items: [], lastX: ev.x }; stacks.push(cur); }
+          ev.stack = cur.items.length;
+          cur.items.push(ev);
+          cur.lastX = ev.x;
+        } else {
+          cur = { items: [ev], lastX: ev.x };
+          ev.stack = 0;
+          stacks.push(cur);
+        }
+      });
+      // 3) Bounding box каждого стека
+      const packItems = stacks.map(s => {
+        const xMin = s.items[0].x;
+        const xMax = s.items[s.items.length-1].x;
+        const xCenter = (xMin + xMax) / 2;
+        const w = Math.max(PILL_W, xMax - xMin + PILL_W);
+        return { x:xCenter, w, stack:s, items:s.items };
+      });
+      // 4) Pack по строкам
       const rows = [];
-      list.forEach(ev => {
-        const left  = ev.x - PILL_W/2;
-        const right = ev.x + PILL_W/2;
+      packItems.forEach(p => {
+        const left  = p.x - p.w/2;
+        const right = p.x + p.w/2;
         let placed = false;
         for (let r=0; r<rows.length; r++){
           const lastRight = rows[r].lastRight;
           if (left - lastRight >= PILL_GAP){
-            ev.row = r;
+            p.row = r;
             rows[r].lastRight = right;
-            rows[r].push(ev);
+            rows[r].push(p);
             placed = true;
             break;
           }
         }
         if (!placed){
-          ev.row = rows.length;
-          list.lastRightInit = right;
-          const row = [ev];
+          p.row = rows.length;
+          const row = [p];
           row.lastRight = right;
           rows.push(row);
         }
       });
-      return { list, rows };
+      packItems.forEach(p => {
+        p.items.forEach(ev => { ev.row = p.row; });
+      });
+      return { list, stacks, packItems, rows };
     }
 
-    return { top: pack(tops, 'top'), bottom: pack(bots, 'bottom') };
+    const tops = EVENTS.filter(e => e.side === 'top').map(e => ({...e, x: xFromHour(e.start)}));
+    const bots = EVENTS.filter(e => e.side === 'bottom').map(e => ({...e, x: xFromHour(e.start)}));
+    return { top: pack(tops), bottom: pack(bots) };
   }
 
   function greetingForHour(h){
@@ -314,89 +379,174 @@
     svg.appendChild(g);
   }
 
-  function renderEvents(svg){
-    const packed = packEvents();
+  function renderEvents(svg, visualScale){
+    const packed = packEvents(visualScale || 1);
 
-    // Helper: рендерит премиальную pill-карточку
-    function renderPill(g, ev, side){
-      const grp = el('g', { class:'tl-event tl-event-'+side, 'data-event-id':ev.id, 'data-event-start':ev.start });
-      const xCenter = ev.x;
-      const mood = moodAt(ev.start);
+    // Helper: одна видимая «единица» — либо full card, либо stack counter.
+    // packItem = { x, w, row, items:[ev, ev, ...], stack }
+    function renderUnit(g, packItem, side){
+      const items = packItem.items;
+      const isStack = items.length > 1;
+      const lead = items[0];
+      const xCenter = packItem.x;
+      const mood = moodAt(lead.start);
       const color = STATE_COLORS[mood.state] || STATE_COLORS.good;
       const moodYVal = clampY(moodY(mood.v));
 
-      // Раскладка по строкам: top — сверху от y=14, bottom — снизу
-      const rowOffset = (ev.row || 0) * PILL_ROW_H;
+      const rowOffset = (packItem.row || 0) * PILL_ROW_H;
       const pillTop  = side === 'top' ? 6 + rowOffset : 140 + rowOffset;
-      const pillX    = xCenter - PILL_W/2;
-      const pillY    = side === 'top' ? pillTop : pillTop;
-      const anchorY  = side === 'top' ? pillY + PILL_H : pillY;
+      const anchorY  = side === 'top' ? pillTop + PILL_H : pillTop;
 
-      // Стебель от pill к кривой (с цветом состояния)
-      grp.appendChild(el('line', {
-        x1:xCenter, y1:anchorY,
-        x2:xCenter, y2:moodYVal,
-        stroke: color,
-        'stroke-width':.7, opacity:.35,
-        class:'tl-pill-stem'
-      }));
+      const grp = el('g', {
+        class:'tl-event tl-event-'+side + (isStack ? ' tl-event-stack' : ''),
+        'data-stack-size': items.length,
+        'data-event-id': lead.id
+      });
 
-      // Точка привязки к кривой
-      grp.appendChild(el('circle', {
-        cx:xCenter, cy:moodYVal, r:3,
-        fill:'#fff', stroke: color, 'stroke-width':1.6,
-        class:'tl-pill-anchor'
-      }));
+      // Стебли: по одному на каждое событие в стеке
+      items.forEach((it, i) => {
+        const xStem = packItem.x - (packItem.w - PILL_W)/2 + (i / Math.max(1, items.length - 1)) * (packItem.w - 4);
+        const yStem = side === 'top' ? anchorY : anchorY;
+        grp.appendChild(el('line', {
+          x1:xStem, y1:yStem, x2:xStem, y2:moodYVal,
+          stroke: STATE_COLORS[moodAt(it.start).state] || color,
+          'stroke-width':.6, opacity:.3,
+          class:'tl-pill-stem'
+        }));
+        // Маленькая точка привязки (для стеков)
+        grp.appendChild(el('circle', {
+          cx:xStem, cy:moodYVal, r:2,
+          fill:'#fff', stroke: STATE_COLORS[moodAt(it.start).state] || color, 'stroke-width':1
+        }));
+      });
 
-      // ===== Сама карточка =====
-      // Фон (мягкий прямоугольник с тенью)
-      grp.appendChild(el('rect', {
-        x:pillX, y:pillY, width:PILL_W, height:PILL_H, rx:8, ry:8,
-        class:'tl-pill-bg'
-      }));
+      if (!isStack){
+        // === FULL CARD ===
+        const pillX = xCenter - PILL_W/2;
+        const pillY = pillTop;
+        grp.appendChild(el('rect', {
+          x:pillX, y:pillY, width:PILL_W, height:PILL_H, rx:8, ry:8,
+          class:'tl-pill-bg'
+        }));
+        grp.appendChild(el('rect', {
+          x:pillX, y:pillY, width:3, height:PILL_H, rx:1.5, ry:1.5,
+          fill: color, opacity:.95
+        }));
+        const iconCx = pillX + 13;
+        const iconCy = pillY + PILL_H/2;
+        grp.appendChild(el('circle', {
+          cx:iconCx, cy:iconCy, r:7.5,
+          fill: color, class:'tl-pill-icon-bg'
+        }));
+        grp.appendChild(el('g', {
+          transform:'translate('+(iconCx-5)+' '+(iconCy-5)+') scale(.42)',
+          class:'tl-pill-icon', style:'stroke:#fff'
+        })).innerHTML = EVENT_ICON[lead.icon] || EVENT_ICON.sun;
+        grp.appendChild(el('text', {
+          x:pillX + 24, y:pillY + 11, class:'tl-pill-time'
+        }, fmtTime(lead.start)));
+        const shortLabel = lead.label.length > 9 ? lead.label.slice(0,9)+'…' : lead.label;
+        grp.appendChild(el('text', {
+          x:pillX + 24, y:pillY + PILL_H - 7, class:'tl-pill-label'
+        }, shortLabel));
+        grp.addEventListener('click', () => setMomentHour(lead.start, true));
+      } else {
+        // === STACK COUNTER "+N" ===
+        // Маленький круглый бейдж с количеством + цветной точкой
+        const r = 10;
+        const cy = pillTop + PILL_H/2;
+        grp.appendChild(el('circle', {
+          cx:xCenter, cy, r,
+          fill:'#fff', stroke: color, 'stroke-width':1.6,
+          class:'tl-stack-bg', filter:'url(#pillShadow)'
+        }));
+        // Полоска акцента сверху
+        grp.appendChild(el('rect', {
+          x:xCenter - r, y:cy - r, width:r*2, height:3, rx:1.5, ry:1.5,
+          fill: color, opacity:.95
+        }));
+        grp.appendChild(el('text', {
+          x:xCenter, y:cy + 4,
+          class:'tl-stack-count', 'text-anchor':'middle'
+        }, '+'+items.length));
+        grp.addEventListener('click', () => openStackPopover(items, xCenter, pillTop, side));
+      }
 
-      // Цветной акцент-полоска слева
-      grp.appendChild(el('rect', {
-        x:pillX, y:pillY, width:3, height:PILL_H, rx:1.5, ry:1.5,
-        fill: color, opacity:.95
-      }));
-
-      // Иконка в цветном кружке
-      const iconCx = pillX + 13;
-      const iconCy = pillY + PILL_H/2;
-      grp.appendChild(el('circle', {
-        cx:iconCx, cy:iconCy, r:7.5,
-        fill: color, class:'tl-pill-icon-bg'
-      }));
-      grp.appendChild(el('g', {
-        transform:'translate('+(iconCx-5)+' '+(iconCy-5)+') scale(.42)',
-        class:'tl-pill-icon',
-        style:'stroke:#fff'
-      })).innerHTML = EVENT_ICON[ev.icon] || EVENT_ICON.sun;
-
-      // Время (сверху, муют)
-      grp.appendChild(el('text', {
-        x:pillX + 24, y:pillY + 11,
-        class:'tl-pill-time'
-      }, fmtTime(ev.start)));
-
-      // Подпись (снизу, ink)
-      const shortLabel = ev.label.length > 9 ? ev.label.slice(0, 9) + '…' : ev.label;
-      grp.appendChild(el('text', {
-        x:pillX + 24, y:pillY + PILL_H - 7,
-        class:'tl-pill-label'
-      }, shortLabel));
-
-      grp.addEventListener('click', () => setMomentHour(ev.start, true));
       g.appendChild(grp);
     }
 
+    // ====== POPOVER для раскрытия стека ======
+    let popover = null;
+    function openStackPopover(items, xSvg, ySvg, side){
+      // Закрыть предыдущий
+      if (popover){ popover.remove(); popover = null; }
+      const axisEl = document.getElementById('timelineAxis');
+      if (!axisEl) return;
+      const rect = axisEl.getBoundingClientRect();
+      const scale = rect.width / SVG_W;
+      const leftPx = xSvg * scale;
+      const topPx  = ySvg * (rect.height / 200);
+
+      popover = document.createElement('div');
+      popover.className = 'tl-stack-popover';
+      popover.style.left = leftPx + 'px';
+      popover.style.top  = (side === 'top' ? (topPx + 22) : (topPx - 8)) + 'px';
+      popover.style.transform = side === 'top' ? 'translateX(-50%)' : 'translate(-50%, -100%)';
+
+      const arrow = document.createElement('div');
+      arrow.className = 'tl-stack-popover-arrow';
+      popover.appendChild(arrow);
+
+      items.forEach((it, i) => {
+        const mood = moodAt(it.start);
+        const color = STATE_COLORS[mood.state] || STATE_COLORS.good;
+        const row = document.createElement('button');
+        row.className = 'tl-stack-row';
+        row.type = 'button';
+        row.innerHTML =
+          '<span class="tl-stack-row-time">'+fmtTime(it.start)+'</span>'+
+          '<span class="tl-stack-row-icon" style="background:'+color+'">'+
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+              (EVENT_ICON[it.icon] || EVENT_ICON.sun)+
+            '</svg>'+
+          '</span>'+
+          '<span class="tl-stack-row-label">'+it.label+'</span>';
+        row.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setMomentHour(it.start, true);
+          if (popover){ popover.remove(); popover = null; }
+        });
+        popover.appendChild(row);
+      });
+
+      const close = document.createElement('button');
+      close.className = 'tl-stack-close';
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Закрыть');
+      close.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+      close.addEventListener('click', () => { popover.remove(); popover = null; });
+      popover.appendChild(close);
+
+      document.querySelector('.timeline-stage').appendChild(popover);
+      // Закрытие по клику вне
+      setTimeout(() => {
+        const onDoc = (e) => {
+          if (popover && !popover.contains(e.target)){
+            popover.remove(); popover = null;
+            document.removeEventListener('click', onDoc);
+          }
+        };
+        document.addEventListener('click', onDoc);
+      }, 0);
+    }
+
+    // Рендерим одиночные элементы и стеки
     const gTop = el('g', { id:'tlEventsTopInner' });
-    packed.top.list.forEach(ev => renderPill(gTop, ev, 'top'));
+    packed.top.packItems.forEach(p => renderUnit(gTop, p, 'top'));
     svg.appendChild(gTop);
 
     const gBot = el('g', { id:'tlEventsBottomInner' });
-    packed.bottom.list.forEach(ev => renderPill(gBot, ev, 'bottom'));
+    packed.bottom.packItems.forEach(p => renderUnit(gBot, p, 'bottom'));
     svg.appendChild(gBot);
   }
 
@@ -740,11 +890,17 @@
     const axis  = document.getElementById('timelineAxis');
     if (!track || !axis) return;
     let dragging = false;
+    let lastTap = 0;
 
     function pickHour(e){
       const rect = axis.getBoundingClientRect();
       const cx = (e.touches ? e.touches[0].clientX : e.clientX);
-      const xInSvg = (cx - rect.left) * (SVG_W / rect.width);
+      // Учитываем zoomed viewBox
+      const svg = document.querySelector('.timeline-svg');
+      const vb = svg ? svg.viewBox.baseVal : { x:0, width:SVG_W };
+      const visW = vb.width;
+      const vbX  = vb.x;
+      const xInSvg = vbX + (cx - rect.left) * (visW / rect.width);
       const rawHour = hourFromX(xInSvg);
       // Magnetic snap к ближайшему событию (если близко)
       for (const ev of EVENTS){
@@ -753,11 +909,38 @@
       return rawHour;
     }
     function onDown(e){
+      // Double-tap / double-click → zoom toggle
+      const now = Date.now();
+      if (e.touches ? e.touches.length === 1 : true){
+        if (now - lastTap < 280){
+          toggleZoomAt(e);
+          lastTap = 0;
+          e.preventDefault();
+          return;
+        }
+        lastTap = now;
+      }
       dragging = true;
       const s = document.getElementById('tlScrubber');
       if (s) s.classList.add('is-dragging');
       setMomentHour(pickHour(e), true);
       e.preventDefault();
+    }
+    function toggleZoomAt(e){
+      const rect = axis.getBoundingClientRect();
+      const cx = (e.touches ? e.touches[0].clientX : e.clientX);
+      const svg = document.querySelector('.timeline-svg');
+      const vb = svg ? svg.viewBox.baseVal : { x:0, width:SVG_W };
+      const visW = vb.width;
+      const vbX  = vb.x;
+      const xInSvg = vbX + (cx - rect.left) * (visW / rect.width);
+      const h = hourFromX(xInSvg);
+      if (ZOOM > 1.05){
+        setZoom(1, 12);
+      } else {
+        setZoom(3.5, h);
+        setMomentHour(h, true);
+      }
     }
     function onMove(e){
       if (!dragging) return;
@@ -769,6 +952,22 @@
       const s = document.getElementById('tlScrubber');
       if (s) s.classList.remove('is-dragging');
     }
+    // Wheel-zoom (desktop)
+    axis.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = axis.getBoundingClientRect();
+      const svg = document.querySelector('.timeline-svg');
+      const vb = svg ? svg.viewBox.baseVal : { x:0, width:SVG_W };
+      const visW = vb.width;
+      const vbX  = vb.x;
+      const xInSvg = vbX + (e.clientX - rect.left) * (visW / rect.width);
+      const h = hourFromX(xInSvg);
+      const delta = e.deltaY > 0 ? -0.6 : 0.6;
+      const newZoom = Math.max(1, Math.min(6, ZOOM + delta));
+      setZoom(newZoom, h);
+      if (newZoom > 1) setMomentHour(h, true);
+    }, { passive:false });
+
     track.addEventListener('mousedown', onDown);
     track.addEventListener('touchstart', onDown, {passive:false});
     window.addEventListener('mousemove', onMove);
@@ -865,7 +1064,7 @@
       renderMoodPath(svg);
       renderMoodDots(svg);
       renderTodLabels(svg);
-      renderEvents(svg);
+      renderEvents(svg, 1);
     }
 
     const nowH = hoursNow();
@@ -873,10 +1072,29 @@
     setMomentHour(startH, true);
     renderNextEvent(startH);
     setupScrubber();
+    setupZoomButton();
     setupMascotInteraction();
     setupPageIndicator();
 
     setInterval(tick, 30*1000);
+  }
+
+  function setupZoomButton(){
+    const btn = document.getElementById('thZoom');
+    const axis = document.getElementById('timelineAxis');
+    if (!btn || !axis) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (ZOOM > 1.05){
+        setZoom(1, 12);
+        axis.classList.remove('is-zoomed');
+      } else {
+        const nowH = hoursNow();
+        setZoom(3.5, nowH);
+        axis.classList.add('is-zoomed');
+        setMomentHour(nowH, true);
+      }
+    });
   }
 
   if (document.readyState === 'loading'){
