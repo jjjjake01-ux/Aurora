@@ -158,10 +158,13 @@
 
 <section class="timeline" aria-label="Лента дня">
 <div class="timeline-head">
-<button class="th-period" data-period="day" type="button">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-<span>День</span>
-</button>
+<div class="th-periods" role="tablist" aria-label="Период дня">
+<button class="th-period is-active" data-period="day"   type="button" role="tab" aria-selected="true">День</button>
+<button class="th-period"             data-period="morning" type="button" role="tab" aria-selected="false">Утро</button>
+<button class="th-period"             data-period="daypart" type="button" role="tab" aria-selected="false">День</button>
+<button class="th-period"             data-period="evening" type="button" role="tab" aria-selected="false">Вечер</button>
+<button class="th-period"             data-period="night"   type="button" role="tab" aria-selected="false">Ночь</button>
+</div>
 <div class="th-now" id="thNow">14:58</div>
 <button class="th-zoom" id="thZoom" type="button" aria-label="Приблизить">
 <svg class="th-zoom-in" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>

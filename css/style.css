@@ -398,21 +398,41 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   justify-content:space-between;
   padding:0 4px 8px;
 }
+/* TIMELINE HEAD: группа чипов периодов (Утро/День/Вечер/Ночь) */
+.th-periods{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  padding:3px;
+  background:rgba(154,143,130,.08);
+  border-radius:var(--r-full);
+}
 .th-period{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  padding:5px 10px;
-  background:rgba(47,191,155,.08);
-  border:.5px solid rgba(47,163,107,.22);
+  justify-content:center;
+  height:26px;
+  padding:0 10px;
+  background:transparent;
+  border:none;
   border-radius:var(--r-full);
-  color:var(--accent-dark);
+  color:var(--ink2);
   font:700 11.5px/1 var(--f);
   letter-spacing:-.01em;
   cursor:pointer;
-  transition:background .15s var(--ease);
+  transition:background .15s var(--ease),color .15s var(--ease);
+  white-space:nowrap;
 }
-.th-period:hover{background:rgba(47,191,155,.14)}
+.th-period:hover{color:var(--ink)}
+.th-period.is-active{
+  background:#fff;
+  color:var(--accent-dark);
+  box-shadow:0 1px 2px rgba(45,40,35,.06), 0 1px 0 rgba(255,255,255,.6) inset;
+}
+.timeline-axis.is-zoomed .th-period[data-period="day"]{
+  /* В режиме zoom "День" неактивна — выходим из зума через кнопку zoom-out */
+  opacity:.5;
+}
 .th-period svg{color:var(--accent)}
 .th-now{
   font:800 16px/1 var(--f);
@@ -697,7 +717,10 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .timeline-edge-r{right:0;bottom:-2px}
 
 /* DARK THEME */
-:root.dark-theme .th-period{background:rgba(47,191,155,.12);border-color:rgba(47,191,155,.28);color:var(--accent-light)}
+:root.dark-theme .th-periods{background:rgba(255,255,255,.06)}
+:root.dark-theme .th-period{color:rgba(255,255,255,.55)}
+:root.dark-theme .th-period:hover{color:#fff}
+:root.dark-theme .th-period.is-active{background:rgba(47,191,155,.18);color:var(--accent-light);box-shadow:0 1px 2px rgba(0,0,0,.2)}
 :root.dark-theme .th-now{color:#fff}
 :root.dark-theme .th-zoom{background:rgba(47,191,155,.1);border-color:rgba(47,191,155,.25);color:var(--accent-light)}
 :root.dark-theme .tl-tod-label{opacity:.5}
