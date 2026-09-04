@@ -806,8 +806,8 @@ let PERIOD_MODE = false;
     if (titleEl) titleEl.textContent = m.event ? m.event.label : 'Сейчас';
     if (descEl) descEl.textContent = describeEvent(m.event, h);
 
-    // Vitals: кольцо + сетка
-    renderMomentVitals(h, m);
+    // Vitals: временно отключено, чтобы не ломать timeline
+    // renderMomentVitals(h, m);
 
     // momentNext скрыт — дубль с nextAction (тренер уже говорит «до X мин»)
     // renderMomentNext(h);
