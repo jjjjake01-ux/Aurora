@@ -1554,6 +1554,100 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   font-variant-numeric:tabular-nums;
 }
 
+/* ===== BODY CARD — Ring ===== */
+.vital-card[data-cat="body"] .vc-bar{display:none}
+.vc-ring-wrap{
+  position:relative;
+  width:120px;height:120px;
+  margin:0 auto;
+  flex-shrink:0;
+}
+.vc-ring-svg{
+  width:120px;height:120px;
+  transform:rotate(-90deg);
+  display:block;
+}
+.vc-ring-track{
+  fill:none;
+  stroke:rgba(47,191,155,.12);
+  stroke-width:6;
+}
+.vc-ring-fill{
+  fill:none;
+  stroke-width:6;
+  stroke-linecap:round;
+  stroke-dasharray:301.59;
+  stroke-dashoffset:301.59;
+  transition:stroke-dashoffset .9s cubic-bezier(0.16,1,0.3,1);
+}
+.vc-ring-center{
+  position:absolute;inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.vc-ring-num{
+  font:800 22px/1 var(--f);
+  color:var(--ink);
+  letter-spacing:-2px;
+  font-variant-numeric:tabular-nums;
+}
+.vc-ring-label{
+  font:600 8px/1 var(--f-ui);
+  color:var(--mut);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  margin-top:2px;
+}
+
+/* ===== MIND CARD — Wave ===== */
+.vital-card[data-cat="mind"] .vc-bar{display:none}
+.vc-wave{
+  display:flex;
+  align-items:flex-end;
+  gap:3px;
+  height:48px;
+  padding:0 4px;
+}
+.vc-wave-bar{
+  flex:1;
+  background:linear-gradient(180deg,var(--accent-light),var(--accent));
+  border-radius:3px 3px 0 0;
+  transition:height .6s cubic-bezier(0.16,1,0.3,1);
+  min-height:4px;
+  opacity:.85;
+}
+
+/* ===== BALANCE CARD — Scale ===== */
+.vital-card[data-cat="balance"] .vc-bar{display:none}
+.vc-scale{
+  padding:0 4px;
+}
+.vc-scale-bar{
+  height:8px;
+  background:linear-gradient(90deg,rgba(208,101,82,.2),rgba(47,191,155,.2),rgba(47,191,155,.4));
+  border-radius:4px;
+  overflow:hidden;
+  position:relative;
+}
+.vc-scale-fill{
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent-light),var(--accent));
+  border-radius:4px;
+  transition:width .8s cubic-bezier(0.16,1,0.3,1);
+}
+.vc-scale-labels{
+  display:flex;
+  justify-content:space-between;
+  font:600 8px/1 var(--f-ui);
+  color:var(--mut);
+  margin-top:3px;
+  padding:0 2px;
+}
+
 /* ===== VITAL CONTEXT — Event + Insight ===== */
 .vital-context{
   display:flex;

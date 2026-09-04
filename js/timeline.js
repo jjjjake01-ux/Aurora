@@ -712,9 +712,16 @@ let PERIOD_MODE = false;
     const bodyScore = Math.round((hrvScore + rhrScore + recovery) / 3);
 
     const bodyScoreEl = document.getElementById('bodyScore');
-    const bodyFill = document.getElementById('bodyFill');
+    const bodyRing = document.getElementById('bodyRing');
+    const bodyRingNum = document.getElementById('bodyRingNum');
     if (bodyScoreEl) bodyScoreEl.textContent = bodyScore + '%';
-    if (bodyFill) bodyFill.style.width = bodyScore + '%';
+    if (bodyRingNum) bodyRingNum.textContent = bodyScore;
+
+    if (bodyRing) {
+      const circumference = 301.59;
+      const offset = circumference - (bodyScore / 100) * circumference;
+      bodyRing.style.strokeDashoffset = offset;
+    }
 
     const bodyHrv = document.getElementById('bodyHrv');
     const bodyRhr = document.getElementById('bodyRhr');
@@ -737,9 +744,7 @@ let PERIOD_MODE = false;
     const mindScore = Math.round((m.energy + m.focus + m.mood) / 3);
 
     const mindScoreEl = document.getElementById('mindScore');
-    const mindFill = document.getElementById('mindFill');
     if (mindScoreEl) mindScoreEl.textContent = mindScore + '%';
-    if (mindFill) mindFill.style.width = mindScore + '%';
 
     const mindEnergy = document.getElementById('mindEnergy');
     const mindFocus = document.getElementById('mindFocus');
@@ -751,14 +756,30 @@ let PERIOD_MODE = false;
     if (mindMood) mindMood.textContent = m.mood + '%';
     if (mindClarity) mindClarity.textContent = Math.round((m.energy + m.focus) / 2) + '%';
 
+    // Wave visualization — 7 bars representing last 7 hours
+    const mindWave = document.getElementById('mindWave');
+    if (mindWave) {
+      const bars = mindWave.querySelectorAll('.vc-wave-bar');
+      bars.forEach((bar, i) => {
+        const histH = Math.max(6, h - 6 + i);
+        const e = AtlasMetrics.energyAt(histH);
+        bar.style.height = e + '%';
+        bar.style.background = e >= 80
+          ? 'linear-gradient(180deg,#5CC4A0,#2FBF9B)'
+          : e >= 60
+            ? 'linear-gradient(180deg,#F5C037,#F2A037)'
+            : 'linear-gradient(180deg,#F0764B,#D06552)';
+      });
+    }
+
     // === BALANCE SCORE ===
     const stressScore = Math.min(100, Math.max(0, 100 - (strain - 1) * 50));
     const balanceScore = Math.round((stressScore + recovery + hydration) / 3);
 
     const balanceScoreEl = document.getElementById('balanceScore');
-    const balanceFill = document.getElementById('balanceFill');
+    const balanceScaleFill = document.getElementById('balanceScaleFill');
     if (balanceScoreEl) balanceScoreEl.textContent = balanceScore + '%';
-    if (balanceFill) balanceFill.style.width = balanceScore + '%';
+    if (balanceScaleFill) balanceScaleFill.style.width = balanceScore + '%';
 
     const balanceStress = document.getElementById('balanceStress');
     const balanceSleep = document.getElementById('balanceSleep');

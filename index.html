@@ -291,13 +291,28 @@
   <!-- 3 Cards: Body, Mind, Balance -->
   <div class="vital-cards">
 
-    <!-- BODY Card -->
+    <!-- BODY Card — Ring visualization -->
     <div class="vital-card" data-cat="body">
       <div class="vc-head">
         <span class="vc-title">ТЕЛО</span>
         <span class="vc-score" id="bodyScore">—</span>
       </div>
-      <div class="vc-bar"><div class="vc-bar-fill" id="bodyFill"></div></div>
+      <div class="vc-ring-wrap">
+        <svg viewBox="0 0 120 120" class="vc-ring-svg">
+          <defs>
+            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#5CC4A0"/>
+              <stop offset="100%" stop-color="#2FBF9B"/>
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="60" r="48" class="vc-ring-track"/>
+          <circle cx="60" cy="60" r="48" class="vc-ring-fill" id="bodyRing" stroke="url(#bodyGrad)" stroke-dasharray="301.59" stroke-dashoffset="301.59"/>
+        </svg>
+        <div class="vc-ring-center">
+          <div class="vc-ring-num" id="bodyRingNum">—</div>
+          <div class="vc-ring-label">сила</div>
+        </div>
+      </div>
       <div class="vc-metrics">
         <div class="vm-row">
           <span class="vm-label">HRV</span>
@@ -326,13 +341,21 @@
       </div>
     </div>
 
-    <!-- MIND Card -->
+    <!-- MIND Card — Wave visualization -->
     <div class="vital-card" data-cat="mind">
       <div class="vc-head">
         <span class="vc-title">РАЗУМ</span>
         <span class="vc-score" id="mindScore">—</span>
       </div>
-      <div class="vc-bar"><div class="vc-bar-fill" id="mindFill"></div></div>
+      <div class="vc-wave" id="mindWave">
+        <div class="vc-wave-bar" data-v="82" style="height:82%"></div>
+        <div class="vc-wave-bar" data-v="78" style="height:78%"></div>
+        <div class="vc-wave-bar" data-v="88" style="height:88%"></div>
+        <div class="vc-wave-bar" data-v="75" style="height:75%"></div>
+        <div class="vc-wave-bar" data-v="90" style="height:90%"></div>
+        <div class="vc-wave-bar" data-v="72" style="height:72%"></div>
+        <div class="vc-wave-bar" data-v="85" style="height:85%"></div>
+      </div>
       <div class="vc-metrics">
         <div class="vm-row">
           <span class="vm-label">Энергия</span>
@@ -347,19 +370,28 @@
           <span class="vm-value" id="mindMood">—</span>
         </div>
         <div class="vm-row">
-          <span class="vm-label">Восприятие</span>
+          <span class="vm-label">Ясность</span>
           <span class="vm-value" id="mindClarity">—</span>
         </div>
       </div>
     </div>
 
-    <!-- BALANCE Card -->
+    <!-- BALANCE Card — Scale visualization -->
     <div class="vital-card" data-cat="balance">
       <div class="vc-head">
         <span class="vc-title">БАЛАНС</span>
         <span class="vc-score" id="balanceScore">—</span>
       </div>
-      <div class="vc-bar"><div class="vc-bar-fill" id="balanceFill"></div></div>
+      <div class="vc-scale">
+        <div class="vc-scale-bar">
+          <div class="vc-scale-fill" id="balanceScaleFill" style="width:50%"></div>
+        </div>
+        <div class="vc-scale-labels">
+          <span>0</span>
+          <span>50</span>
+          <span>100</span>
+        </div>
+      </div>
       <div class="vc-metrics">
         <div class="vm-row">
           <span class="vm-label">Стресс</span>
