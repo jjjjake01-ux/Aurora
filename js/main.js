@@ -538,18 +538,35 @@ function updateRecoveryMetrics() {
   const now = new Date();
   const h = now.getHours() + now.getMinutes() / 60;
 
+  const hrv = window.AtlasMetrics.hrvAt(h);
+  const rhr = window.AtlasMetrics.rhrAt(h);
+  const recovery = window.AtlasMetrics.recoveryAt(h);
+  const strain = window.AtlasMetrics.strainAt(h);
+
   const hrvEl = document.getElementById('hrvValue');
   const rhrEl = document.getElementById('rhrValue');
   const recoveryEl = document.getElementById('recoveryValue');
   const strainEl = document.getElementById('strainValue');
 
-  if (hrvEl) hrvEl.textContent = window.AtlasMetrics.hrvAt(h) + ' мс';
-  if (rhrEl) rhrEl.textContent = window.AtlasMetrics.rhrAt(h);
-  if (recoveryEl) recoveryEl.textContent = window.AtlasMetrics.recoveryAt(h) + '%';
+  if (hrvEl) hrvEl.textContent = hrv + ' мс';
+  if (rhrEl) rhrEl.textContent = rhr;
+  if (recoveryEl) recoveryEl.textContent = recovery + '%';
   if (strainEl) {
-    const strain = window.AtlasMetrics.strainAt(h);
     strainEl.textContent = strain.toFixed(1);
     strainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
+  }
+
+  const rrHrvEl = document.getElementById('rrHrv');
+  const rrRhrEl = document.getElementById('rrRhr');
+  const rrRecoveryEl = document.getElementById('rrRecovery');
+  const rrStrainEl = document.getElementById('rrStrain');
+
+  if (rrHrvEl) rrHrvEl.textContent = hrv;
+  if (rrRhrEl) rrRhrEl.textContent = rhr;
+  if (rrRecoveryEl) rrRecoveryEl.textContent = recovery + '%';
+  if (rrStrainEl) {
+    rrStrainEl.textContent = strain.toFixed(1);
+    rrStrainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
   }
 }
 

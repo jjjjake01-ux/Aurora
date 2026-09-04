@@ -923,6 +923,36 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vrl-item[data-key="mood"]   .vrl-dot{background:#7B74D6}
 .vrl-sep{color:var(--mut);opacity:.5}
 
+/* Recovery metrics row — Whoop-style под кольцами */
+.recovery-row{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  margin-top:10px;
+  padding:8px 12px;
+  background:rgba(45,40,35,.025);
+  border-radius:12px;
+}
+.rr-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.rr-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+}
+.rr-label{
+  font:500 9.5px/1 var(--f-ui);
+  color:var(--mut);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.rr-value{
+  font:700 11px/1 var(--f);
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+
 /* ===== GOAL RINGS — маленькие кольца прогресса дня ===== */
 .goal-rings{
   display:grid;
