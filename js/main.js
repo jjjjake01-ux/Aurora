@@ -540,12 +540,12 @@ function updateRecoveryMetrics() {
   const strainEl = document.getElementById('rrStrain');
 
   if (!hrvEl || !rhrEl || !recoveryEl || !strainEl) {
-    setTimeout(updateRecoveryMetrics, 100);
+    setTimeout(updateRecoveryMetrics, 200);
     return;
   }
 
   if (typeof window.AtlasMetrics === 'undefined') {
-    setTimeout(updateRecoveryMetrics, 100);
+    setTimeout(updateRecoveryMetrics, 200);
     return;
   }
 
@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateMascotIllustration('activityMascotIllustration', 78);
   initDayChartTooltips();
   updateRecoveryMetrics();
-  setInterval(updateRecoveryMetrics, 60000);
+  setInterval(updateRecoveryMetrics, 30000);
 });
 
 function initDayChartTooltips() {
