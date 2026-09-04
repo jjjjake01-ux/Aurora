@@ -906,15 +906,17 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 /* Легенда под кольцом: что означают цвета */
 .vring-legend{
   display:flex;align-items:center;justify-content:center;
-  gap:4px;
+  flex-wrap:nowrap;
+  gap:5px;
   margin-top:5px;
-  font:600 8.5px/1 var(--f-ui);
+  font:500 8px/1 var(--f-ui);
   color:var(--ink2);
-  text-transform:uppercase;letter-spacing:.03em;
+  text-transform:uppercase;
   white-space:nowrap;
-  flex-wrap:wrap;
+  overflow:hidden;
+  max-width:110px;
 }
-.vrl-item{display:inline-flex;align-items:center;gap:3px}
+.vrl-item{display:inline-flex;align-items:center;gap:3px;flex-shrink:0}
 .vrl-dot{
   width:5px;height:5px;border-radius:50%;flex-shrink:0;
   display:inline-block;
@@ -922,7 +924,7 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vrl-item[data-key="energy"] .vrl-dot{background:#2FBF9B}
 .vrl-item[data-key="focus"]  .vrl-dot{background:#F0764B}
 .vrl-item[data-key="mood"]   .vrl-dot{background:#7B74D6}
-.vrl-sep{color:var(--mut);opacity:.5;font-size:7px}
+.vrl-sep{color:var(--mut);opacity:.5;flex-shrink:0}
 
 /* Recovery metrics row — Whoop-style под кольцами */
 .recovery-row{
