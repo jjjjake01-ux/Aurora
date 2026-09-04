@@ -685,8 +685,8 @@ let PERIOD_MODE = false;
     // Vitals: кольцо + сетка
     renderMomentVitals(h, m);
 
-    // Контекст: следующее событие
-    renderMomentNext(h);
+    // momentNext скрыт — дубль с nextAction (тренер уже говорит «до X мин»)
+    // renderMomentNext(h);
 
     // Narrative (одна фраза про архетип момента)
     renderMomentNarrative(h);
@@ -756,6 +756,7 @@ let PERIOD_MODE = false;
 
     // Центр кольца — общий статус
     const numEl = document.getElementById('vringNum');
+    const labEl = document.getElementById('vringLabel');
     if (numEl){
       countUpTo(numEl, prev.status != null ? prev.status : 0, metrics.status, 350);
       numEl.classList.remove('is-good','is-warn','is-bad');
@@ -763,6 +764,22 @@ let PERIOD_MODE = false;
       else if (metrics.status >= 50) numEl.classList.add('is-warn');
       else numEl.classList.add('is-bad');
     }
+
+    // Контекстный лейбл в центре кольца: «Сейчас» если scrubber на текущем часе,
+    // иначе — контекст часа (Сон/Утро/День/Вечер) + время.
+    if (labEl){
+      const nowH = hoursNow();
+      const isCurrent = Math.abs(h - nowH) < 0.5;
+      if (isCurrent){
+        labEl.textContent = 'Сейчас';
+      } else {
+        const hh = Math.floor(h);
+        const mm = Math.round((h - hh) * 60);
+        const tod = h < 8 ? 'Сон' : h < 12 ? 'Утро' : h < 17 ? 'День' : h < 22 ? 'Вечер' : 'Сон';
+        labEl.textContent = tod + ' · ' + pad2(hh) + ':' + pad2(mm);
+      }
+    }
+
     // Метрики: count-up (energy/focus/mood теперь на кольцах, в плитках только heart/load/hydration)
     // Плитки (пульс/нагрузка/гидратация) убраны из момент-card —
     // теперь живут в drilldown «Подробнее» (HRV/Сон/Стресс/Восстановление/Нагрузка/Энергия).
@@ -1457,21 +1474,26 @@ let PERIOD_MODE = false;
     else phrase = 'береги ресурс';
     el.textContent = phrase;
 
-    // Синхронизируем hero-trend с реальным значением
+    // Синхронизируем hero-trend с реальным значением + delta
+    const NORM = 72;
     const num = document.getElementById('heroTrendNum');
-    if (num) num.textContent = r;
     const delta = document.getElementById('heroTrendDelta');
+    if (num) num.textContent = r;
     if (delta){
-      const d = +6; // TODO: реальный delta vs прошлая неделя
-      delta.textContent = (d >= 0 ? '↑ +' : '↓ ') + d;
-      delta.classList.toggle('is-down', d < 0);
+      const d = r - NORM;
+      let arrow, cls;
+      if (d > 0)      { arrow = '↑ +'; cls = 'is-up'; }
+      else if (d < 0) { arrow = '↓ ';   cls = 'is-down'; }
+      else            { arrow = '= ';   cls = 'is-flat'; }
+      delta.textContent = arrow + Math.abs(d);
+      delta.classList.remove('is-up','is-down','is-flat');
+      delta.classList.add(cls);
     }
     const foot = document.getElementById('heroTrendFoot');
     if (foot){
-      const avg = 72;
-      if (r > avg) foot.textContent = 'Норма ' + avg + ' · сегодня выше';
-      else if (r === avg) foot.textContent = 'Норма ' + avg + ' · в норме';
-      else foot.textContent = 'Норма ' + avg + ' · сегодня ниже';
+      if (r > NORM) foot.textContent = 'Норма ' + NORM + ' · сегодня выше';
+      else if (r === NORM) foot.textContent = 'Норма ' + NORM + ' · в норме';
+      else foot.textContent = 'Норма ' + NORM + ' · сегодня ниже';
     }
   }
   function setupNowStrip(){
