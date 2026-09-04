@@ -666,6 +666,124 @@ let PERIOD_MODE = false;
     updateMascot(h);
   }
 
+  function updateVitalCards(h) {
+    if (!window.AtlasMetrics) return;
+
+    const m = AtlasMetrics.metricsAt(h);
+    const hh = Math.floor(h);
+    const mm = Math.round((h - hh) * 60);
+    const timeStr = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+    const timeOfDay = h < 9 ? 'Утро' : h < 12 ? 'Утро' : h < 14 ? 'День' : h < 17 ? 'День' : h < 21 ? 'Вечер' : 'Ночь';
+
+    // === VITAL INDEX ===
+    const viScore = document.getElementById('viScore');
+    const viFill = document.getElementById('viFill');
+    const viTrend = document.getElementById('viTrend');
+    const viTime = document.getElementById('viTime');
+
+    if (viScore) viScore.textContent = m.status;
+    if (viTime) viTime.textContent = timeOfDay + ' · ' + timeStr;
+
+    const prevH = Math.max(6, h - 1);
+    const prevM = AtlasMetrics.metricsAt(prevH);
+    if (viTrend) {
+      const diff = m.status - prevM.status;
+      if (diff > 2) viTrend.textContent = '↑ +' + diff + ' · на подъёме';
+      else if (diff < -2) viTrend.textContent = '↓ ' + diff + ' · на спаде';
+      else viTrend.textContent = '· стабильно';
+    }
+
+    if (viFill) {
+      const circumference = 427.26;
+      const offset = circumference - (m.status / 100) * circumference;
+      viFill.style.strokeDashoffset = offset;
+      viFill.style.setProperty('--vi-offset', offset);
+    }
+
+    // === BODY SCORE ===
+    const hrvScore = Math.min(100, Math.max(0, (m.hrv - 30) / 40 * 100));
+    const rhrScore = Math.min(100, Math.max(0, (80 - m.rhr) / 30 * 100));
+    const bodyScore = Math.round((hrvScore + rhrScore + m.recovery) / 3);
+
+    const bodyScoreEl = document.getElementById('bodyScore');
+    const bodyFill = document.getElementById('bodyFill');
+    if (bodyScoreEl) bodyScoreEl.textContent = bodyScore + '%';
+    if (bodyFill) bodyFill.style.width = bodyScore + '%';
+
+    const bodyHrv = document.getElementById('bodyHrv');
+    const bodyRhr = document.getElementById('bodyRhr');
+    const bodySteps = document.getElementById('bodySteps');
+    const bodyActive = document.getElementById('bodyActive');
+    const bodyRecovery = document.getElementById('bodyRecovery');
+    const bodyStrain = document.getElementById('bodyStrain');
+
+    if (bodyHrv) bodyHrv.textContent = m.hrv + ' мс';
+    if (bodyRhr) bodyRhr.textContent = m.rhr + ' уд/м';
+    if (bodySteps) bodySteps.textContent = Math.round(m.steps / 1000 * 10) / 10 + 'k';
+    if (bodyActive) bodyActive.textContent = m.activeMin + ' м';
+    if (bodyRecovery) bodyRecovery.textContent = m.recovery + '%';
+    if (bodyStrain) {
+      bodyStrain.textContent = m.strain.toFixed(1);
+      bodyStrain.style.color = m.strain > 3 ? '#F0764B' : m.strain > 1.5 ? '#F2A037' : '#2FBF9B';
+    }
+
+    // === MIND SCORE ===
+    const mindScore = Math.round((m.energy + m.focus + m.mood) / 3);
+
+    const mindScoreEl = document.getElementById('mindScore');
+    const mindFill = document.getElementById('mindFill');
+    if (mindScoreEl) mindScoreEl.textContent = mindScore + '%';
+    if (mindFill) mindFill.style.width = mindScore + '%';
+
+    const mindEnergy = document.getElementById('mindEnergy');
+    const mindFocus = document.getElementById('mindFocus');
+    const mindMood = document.getElementById('mindMood');
+    const mindClarity = document.getElementById('mindClarity');
+
+    if (mindEnergy) mindEnergy.textContent = m.energy + '%';
+    if (mindFocus) mindFocus.textContent = m.focus + '%';
+    if (mindMood) mindMood.textContent = m.mood + '%';
+    if (mindClarity) mindClarity.textContent = Math.round((m.energy + m.focus) / 2) + '%';
+
+    // === BALANCE SCORE ===
+    const stressScore = Math.min(100, Math.max(0, 100 - (m.strain - 1) * 50));
+    const balanceScore = Math.round((stressScore + m.recovery + m.hydration) / 3);
+
+    const balanceScoreEl = document.getElementById('balanceScore');
+    const balanceFill = document.getElementById('balanceFill');
+    if (balanceScoreEl) balanceScoreEl.textContent = balanceScore + '%';
+    if (balanceFill) balanceFill.style.width = balanceScore + '%';
+
+    const balanceStress = document.getElementById('balanceStress');
+    const balanceSleep = document.getElementById('balanceSleep');
+    const balanceWater = document.getElementById('balanceWater');
+    const balanceRecovery = document.getElementById('balanceRecovery');
+
+    if (balanceStress) {
+      balanceStress.textContent = m.strain.toFixed(1);
+      balanceStress.style.color = m.strain > 3 ? '#F0764B' : m.strain > 1.5 ? '#F2A037' : '#2FBF9B';
+    }
+    if (balanceSleep) balanceSleep.textContent = m.sleepMin ? Math.round(m.sleepMin / 60 * 10) / 10 + ' ч' : '—';
+    if (balanceWater) balanceWater.textContent = m.hydration + '%';
+    if (balanceRecovery) balanceRecovery.textContent = m.recovery + '%';
+
+    // === CONTEXT ===
+    const vcEvent = document.getElementById('vcEvent');
+    const vcInsight = document.getElementById('vcInsight');
+    const { event } = nearestEvent(h);
+
+    if (vcEvent) {
+      if (event) {
+        vcEvent.textContent = event.label + ' · ' + timeStr;
+      } else {
+        vcEvent.textContent = timeOfDay + ' · ' + timeStr;
+      }
+    }
+    if (vcInsight) {
+      vcInsight.textContent = makeInsight(event, h) || '';
+    }
+  }
+
   function setMomentHour(h, snap){
     setScrubber(h, snap);
     renderMoment(h);
@@ -693,6 +811,9 @@ let PERIOD_MODE = false;
 
     // Прогноз до конца дня (обновляет dynamics-card)
     updateDynamics(h);
+
+    // Vital Section — 4 cards (Vital Index + Body + Mind + Balance)
+    updateVitalCards(h);
 
     if (insightEl){
       insightEl.innerHTML =

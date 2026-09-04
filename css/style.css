@@ -1366,6 +1366,214 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   border:none;
 }
 
+/* ============================================================
+   VITAL SECTION — Premium 4-card layout
+   ============================================================ */
+@keyframes viRingIn{
+  from{stroke-dashoffset:427.26}
+  to{stroke-dashoffset:var(--vi-offset, 213.63)}
+}
+@keyframes viFadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes vcFadeUp{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes barFill{
+  from{width:0}
+  to{width:var(--bar-w, 0%)}
+}
+@keyframes scoreCount{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.vital-section{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:12px 0 16px;
+  animation:viFadeUp .6s var(--ease);
+}
+
+/* ===== VITAL INDEX — Main Ring ===== */
+.vital-index{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:16px;
+  background:var(--bg-soft);
+  border:.5px solid var(--line-soft);
+  border-radius:var(--r-xl);
+  box-shadow:var(--shadow-card);
+  position:relative;
+  overflow:hidden;
+}
+.vital-index::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(47,191,155,.06) 0%,transparent 50%);
+  pointer-events:none;
+}
+.vi-ring{
+  position:relative;
+  width:120px;height:120px;
+  flex-shrink:0;
+  animation:viRingIn 1.2s cubic-bezier(0.16,1,0.3,1) .3s both;
+}
+.vi-svg{
+  width:120px;height:120px;
+  transform:rotate(-90deg);
+}
+.vi-track{
+  fill:none;
+  stroke:rgba(47,191,155,.1);
+  stroke-width:8;
+}
+.vi-fill{
+  fill:none;
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:427.26;
+  stroke-dashoffset:427.26;
+  animation:viRingIn 1.2s cubic-bezier(0.16,1,0.3,1) .3s forwards;
+}
+.vi-center{
+  position:absolute;inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.vi-score{
+  font:800 32px/1 var(--f);
+  color:var(--ink);
+  letter-spacing:-3px;
+  font-variant-numeric:tabular-nums;
+  animation:scoreCount .5s var(--ease) .8s both;
+}
+.vi-label{
+  font:700 8px/1 var(--f-ui);
+  color:var(--mut);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-top:4px;
+}
+.vi-info{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.vi-trend{
+  font:700 16px/1.2 var(--f);
+  color:var(--accent);
+  animation:viFadeUp .5s var(--ease) .5s both;
+}
+.vi-time{
+  font:600 12px/1 var(--f-ui);
+  color:var(--ink2);
+  animation:viFadeUp .5s var(--ease) .6s both;
+}
+
+/* ===== VITAL CARDS — 3 cards ===== */
+.vital-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.vital-card{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:12px 10px;
+  background:var(--bg-soft);
+  border:.5px solid var(--line-soft);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);
+  animation:vcFadeUp .5s var(--ease) both;
+}
+.vital-card:nth-child(1){animation-delay:.15s}
+.vital-card:nth-child(2){animation-delay:.2s}
+.vital-card:nth-child(3){animation-delay:.25s}
+.vital-card[data-cat="body"]{border-top:2px solid rgba(47,191,155,.3)}
+.vital-card[data-cat="mind"]{border-top:2px solid rgba(92,199,160,.3)}
+.vital-card[data-cat="balance"]{border-top:2px solid rgba(47,191,155,.25)}
+.vc-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.vc-title{
+  font:700 10px/1 var(--f-ui);
+  color:var(--mut);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.vc-score{
+  font:800 18px/1 var(--f);
+  color:var(--ink);
+  letter-spacing:-1.5px;
+  font-variant-numeric:tabular-nums;
+  animation:scoreCount .4s var(--ease) .6s both;
+}
+.vc-bar{
+  height:4px;
+  background:rgba(47,191,155,.1);
+  border-radius:2px;
+  overflow:hidden;
+}
+.vc-bar-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent-light),var(--accent));
+  border-radius:2px;
+  transition:width .8s cubic-bezier(0.16,1,0.3,1);
+}
+.vc-metrics{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.vm-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11px;
+}
+.vm-label{
+  font:500 10px/1 var(--f-ui);
+  color:var(--ink2);
+}
+.vm-value{
+  font:700 11px/1 var(--f);
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+
+/* ===== VITAL CONTEXT — Event + Insight ===== */
+.vital-context{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:12px 14px;
+  background:var(--bg-soft);
+  border:.5px solid var(--line-soft);
+  border-radius:var(--r-lg);
+  animation:viFadeUp .5s var(--ease) .35s both;
+}
+.vc-event{
+  font:600 12px/1.3 var(--f);
+  color:var(--ink);
+}
+.vc-insight{
+  font:500 11px/1.4 var(--f);
+  color:var(--ink2);
+}
+
 /* BUTTONS */
 .btn{height:38px;border-radius:12px;font:700 13px var(--f);letter-spacing:-.01em;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
 .btn:active{transform:scale(.97)}
