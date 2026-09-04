@@ -534,10 +534,21 @@ function buildWeekChartById(chartId, values, avg, type) {
 }
 
 function updateRecoveryMetrics() {
+  const hrvEl = document.getElementById('rrHrv');
+  const rhrEl = document.getElementById('rrRhr');
+  const recoveryEl = document.getElementById('rrRecovery');
+  const strainEl = document.getElementById('rrStrain');
+
+  if (!hrvEl || !rhrEl || !recoveryEl || !strainEl) {
+    setTimeout(updateRecoveryMetrics, 100);
+    return;
+  }
+
   if (typeof window.AtlasMetrics === 'undefined') {
     setTimeout(updateRecoveryMetrics, 100);
     return;
   }
+
   const now = new Date();
   const h = now.getHours() + now.getMinutes() / 60;
 
@@ -546,31 +557,11 @@ function updateRecoveryMetrics() {
   const recovery = window.AtlasMetrics.recoveryAt(h);
   const strain = window.AtlasMetrics.strainAt(h);
 
-  const hrvEl = document.getElementById('hrvValue');
-  const rhrEl = document.getElementById('rhrValue');
-  const recoveryEl = document.getElementById('recoveryValue');
-  const strainEl = document.getElementById('strainValue');
-
-  if (hrvEl) hrvEl.textContent = hrv + ' мс';
-  if (rhrEl) rhrEl.textContent = rhr;
-  if (recoveryEl) recoveryEl.textContent = recovery + '%';
-  if (strainEl) {
-    strainEl.textContent = strain.toFixed(1);
-    strainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
-  }
-
-  const rrHrvEl = document.getElementById('rrHrv');
-  const rrRhrEl = document.getElementById('rrRhr');
-  const rrRecoveryEl = document.getElementById('rrRecovery');
-  const rrStrainEl = document.getElementById('rrStrain');
-
-  if (rrHrvEl) rrHrvEl.textContent = hrv;
-  if (rrRhrEl) rrRhrEl.textContent = rhr;
-  if (rrRecoveryEl) rrRecoveryEl.textContent = recovery + '%';
-  if (rrStrainEl) {
-    rrStrainEl.textContent = strain.toFixed(1);
-    rrStrainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
-  }
+  hrvEl.textContent = hrv;
+  rhrEl.textContent = rhr;
+  recoveryEl.textContent = recovery + '%';
+  strainEl.textContent = strain.toFixed(1);
+  strainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
