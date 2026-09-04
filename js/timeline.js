@@ -193,18 +193,15 @@ let PERIOD_MODE = false;
   const moodY = v => 30 + ((100 - v) / 100) * 120;
   const clampY = y => Math.max(28, Math.min(155, y));
 
-  // Ширина pill-карточки: иконка + время. Лейблы убраны — события в часовом диапазоне
-  // и так очевидны, иначе пилюли склеиваются в стеки.
-  const PILL_W = 44;
-  const PILL_H = 30;
+  // Ширина pill-карточки: иконка + 2px + время/подпись
+  const PILL_W = 68;
+  const PILL_H = 28;
   const PILL_GAP = 8;
-  const PILL_ROW_H = 28;
+  const PILL_ROW_H = 34;
 
   // Минимальный горизонтальный зазор между карточками на стороне (в SVG-юнитах).
   // Если два события ближе — склеиваем в стек (counter "+N").
-  // PILL_W=44 шире 1 часа (37.5), поэтому плотные часы корректно склеиваются в стек,
-  // а popover разворачивает список.
-  const STACK_THRESHOLD = 50;
+  const STACK_THRESHOLD = 50;  // ~45 мин между событиями → стек
 
   // Сгруппировать события по стороне (top/bottom), упаковать в строки и стеки.
   // visualScale = 1.0 в обычном режиме, > 1.0 при зуме — пороги сжаты.
@@ -514,37 +511,39 @@ let PERIOD_MODE = false;
       });
 
       if (!isStack){
-        // === FULL CARD (compact: icon + time, без лейбла) ===
+        // === FULL CARD ===
         const pillX = xCenter - PILL_W/2;
         const pillY = pillTop;
         grp.appendChild(el('rect', {
           x:pillX, y:pillY, width:PILL_W, height:PILL_H, rx:8, ry:8,
           class:'tl-pill-bg'
         }));
-        // Цветная полоска слева
         grp.appendChild(el('rect', {
           x:pillX, y:pillY, width:3, height:PILL_H, rx:1.5, ry:1.5,
           fill: color, opacity:.95
         }));
-        // Иконка по центру сверху
-        const iconCx = xCenter;
-        const iconCy = pillY + 9;
+        const iconCx = pillX + 13;
+        const iconCy = pillY + PILL_H/2;
         grp.appendChild(el('circle', {
-          cx:iconCx, cy:iconCy, r:6,
+          cx:iconCx, cy:iconCy, r:7.5,
           fill: color, class:'tl-pill-icon-bg'
         }));
         grp.appendChild(el('g', {
-          transform:'translate('+(iconCx-4.5)+' '+(iconCy-4.5)+') scale(.38)',
+          transform:'translate('+(iconCx-5)+' '+(iconCy-5)+') scale(.42)',
           class:'tl-pill-icon', style:'stroke:#fff'
         })).innerHTML = EVENT_ICON[lead.icon] || EVENT_ICON.sun;
-        // Время под иконкой
         grp.appendChild(el('text', {
-          x:xCenter, y:pillY + PILL_H - 6, class:'tl-pill-time', 'text-anchor':'middle'
+          x:pillX + 24, y:pillY + 11, class:'tl-pill-time'
         }, fmtTime(lead.start)));
+        const shortLabel = lead.label.length > 9 ? lead.label.slice(0,9)+'…' : lead.label;
+        grp.appendChild(el('text', {
+          x:pillX + 24, y:pillY + PILL_H - 7, class:'tl-pill-label'
+        }, shortLabel));
         grp.addEventListener('click', () => setMomentHour(lead.start, true));
       } else {
-        // === STACK COUNTER "+N" — крупнее, чтобы было видно и понятно «тапни» ===
-        const r = 14;
+        // === STACK COUNTER "+N" ===
+        // Маленький круглый бейдж с количеством + цветной точкой
+        const r = 10;
         const cy = pillTop + PILL_H/2;
         grp.appendChild(el('circle', {
           cx:xCenter, cy, r,
@@ -763,6 +762,14 @@ let PERIOD_MODE = false;
       else if (metrics.status >= 50) numEl.classList.add('is-warn');
       else numEl.classList.add('is-bad');
     }
+<<<<<<< ours
+    if (labEl) labEl.textContent = metrics.statusLabel;
+
+    // Метрики: count-up + дельты
+    const setVal = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) countUpTo(el, prev[id] != null ? prev[id] : 0, v, 300);
+=======
     // Метрики: count-up (energy/focus/mood теперь на кольцах, в плитках только heart/load/hydration)
     // Плитки (пульс/нагрузка/гидратация) убраны из момент-card —
     // теперь живут в drilldown «Подробнее» (HRV/Сон/Стресс/Восстановление/Нагрузка/Энергия).
@@ -789,198 +796,49 @@ let PERIOD_MODE = false;
       if (!el) return;
       const filled = Math.max(0, Math.min(C, (pct / 100) * C));
       el.style.strokeDasharray = filled + ' ' + C;
+>>>>>>> theirs
     };
+    setVal('vitalEnergy',    metrics.energy);
+    setVal('vitalFocus',     metrics.focus);
+    setVal('vitalHeart',     metrics.heart);
+    setVal('vitalLoad',      metrics.load);
+    setVal('vitalHydration', metrics.hydration);
 
-    // 1) Шаги
-    const stepsGoal = 8000;
-    const stepsPct = Math.min(100, Math.round((metrics.steps / stepsGoal) * 100));
-    setRing('#grStepsFill', stepsPct);
-    const stepsNumEl = document.getElementById('grStepsNum');
-    if (stepsNumEl) stepsNumEl.textContent = Math.round(metrics.steps / 1000) + 'k';
-    const stepsItemEl = document.querySelector('.gr-item[data-key="steps"]');
-    if (stepsItemEl){
-      stepsItemEl.classList.remove('is-done','is-warn','is-bad');
-      if (stepsPct >= 100) stepsItemEl.classList.add('is-done');
+    // Дельта энергии
+    const energyDeltaEl = document.getElementById('vitalEnergyDelta');
+    if (energyDeltaEl){
+      const d = metrics.energyDelta;
+      const arrowSvg = d.dir === 'up'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>'
+        : d.dir === 'down'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14"/></svg>';
+      energyDeltaEl.innerHTML = arrowSvg + '<span>'+(d.val === '0' ? '0' : d.val)+'</span>';
+      energyDeltaEl.className = 'vital-delta ' + (d.dir === 'up' ? 'is-up' : d.dir === 'down' ? 'is-down' : '');
     }
 
-    // 2) Активные минуты
-    const activeGoal = 22;
-    const activePct = Math.min(100, Math.round((metrics.activeMin / activeGoal) * 100));
-    setRing('#grActiveFill', activePct);
-    const activeNumEl = document.getElementById('grActiveNum');
-    if (activeNumEl) activeNumEl.textContent = metrics.activeMin + 'м';
-    const activeItemEl = document.querySelector('.gr-item[data-key="active"]');
-    if (activeItemEl){
-      activeItemEl.classList.remove('is-done','is-warn','is-bad');
-      if (activePct >= 100) activeItemEl.classList.add('is-done');
+    // Пульс-индикатор (только когда метрика «живая» — пульс > 65 bpm)
+    const heartVital = document.querySelector('.vital[data-key="heart"]');
+    if (heartVital){
+      heartVital.dataset.active = metrics.heart > 65 ? 'true' : 'false';
     }
 
-    // 3) Вода
-    const waterPct = Math.min(100, metrics.hydration);
-    setRing('#grWaterFill', waterPct);
-    const waterMl = Math.round((waterPct / 100) * 2500);
-    const waterNumEl = document.getElementById('grWaterNum');
-    if (waterNumEl) waterNumEl.textContent = (waterMl / 1000).toFixed(1);
-    const waterItemEl = document.querySelector('.gr-item[data-key="water"]');
-    if (waterItemEl){
-      waterItemEl.classList.remove('is-done','is-warn','is-bad');
-      if (waterPct >= 100) waterItemEl.classList.add('is-done');
+    // Hydration warn
+    const hydVital = document.querySelector('.vital[data-key="hydration"]');
+    if (hydVital){
+      hydVital.dataset.warn = metrics.hydration < 50 ? 'true' : 'false';
     }
 
-    // 4) Сидячее время (инвертированный)
-    const SIT_LIMIT = 6;
-    const sitH = metrics.sitting;
-    const sitPct = Math.min(100, Math.round((sitH / SIT_LIMIT) * 100));
-    setRing('#grSitFill', sitPct);
-    const hh = Math.floor(sitH);
-    const mm = Math.round((sitH - hh) * 60);
-    const sitNumEl = document.getElementById('grSitNum');
-    if (sitNumEl) sitNumEl.textContent = hh + 'ч';
-    const sitItemEl = document.querySelector('.gr-item[data-key="sitting"]');
-    if (sitItemEl){
-      sitItemEl.classList.remove('is-done','is-warn','is-bad');
-      if (sitH > 5) sitItemEl.classList.add('is-bad');
-      else if (sitH > 4) sitItemEl.classList.add('is-warn');
-    }
-
-    // ===== ЧИПЫ: «что осталось до цели» =====
-    // Шаги
-    const stepsChip = document.querySelector('.gc-chip[data-key="steps"]');
-    const gcSteps = document.getElementById('gcSteps');
-    if (stepsChip && gcSteps){
-      stepsChip.classList.remove('is-done','is-warn','is-bad');
-      if (stepsPct >= 100){
-        stepsChip.classList.add('is-done');
-        gcSteps.textContent = 'Цель закрыта — ' + (metrics.steps - stepsGoal).toLocaleString('ru-RU') + ' сверх';
-      } else {
-        const left = (stepsGoal - metrics.steps);
-        gcSteps.textContent = 'Ещё ' + left.toLocaleString('ru-RU') + ' до цели';
-      }
-    }
-    // Активность
-    const activeChip = document.querySelector('.gc-chip[data-key="active"]');
-    const gcActive = document.getElementById('gcActive');
-    if (activeChip && gcActive){
-      activeChip.classList.remove('is-done','is-warn','is-bad');
-      if (activePct >= 100){
-        activeChip.classList.add('is-done');
-        gcActive.textContent = 'Норма закрыта — отличный день';
-      } else {
-        const left = activeGoal - metrics.activeMin;
-        gcActive.textContent = 'Быстрая ходьба ' + left + ' мин закроет норму';
-        if (left > 18) activeChip.classList.add('is-warn');
-      }
-    }
-    // Вода
-    const waterChip = document.querySelector('.gc-chip[data-key="water"]');
-    const gcWater = document.getElementById('gcWater');
-    if (waterChip && gcWater){
-      waterChip.classList.remove('is-done','is-warn','is-bad');
-      if (waterPct >= 100){
-        waterChip.classList.add('is-done');
-        gcWater.textContent = 'Норма воды выполнена';
-      } else {
-        const leftMl = 2500 - waterMl;
-        const leftL = (leftMl / 1000).toFixed(1);
-        gcWater.textContent = 'Ещё ' + leftL + ' L до дневной нормы';
-        if (metrics.hydration < 30) waterChip.classList.add('is-warn');
-      }
-    }
-
-    // ===== SLEEP: countdown до 23:00 =====
-    const sleepBlock = document.getElementById('goalSleep');
-    if (sleepBlock){
-      if (metrics.sleepMin != null && metrics.sleepMin > 0){
-        sleepBlock.hidden = false;
-        // Сброс анимации
-        sleepBlock.style.animation = 'none';
-        sleepBlock.offsetHeight; // reflow
-        sleepBlock.style.animation = '';
-        const sh = Math.floor(metrics.sleepMin / 60);
-        const sm = metrics.sleepMin % 60;
-        const titleEl = document.getElementById('gsTitle');
-        const subEl = document.getElementById('gsSub');
-        if (titleEl) titleEl.textContent = 'До сна ' + sh + 'ч ' + (sm < 10 ? '0' : '') + sm + 'м';
-        if (subEl) subEl.textContent = sh <= 1 ? 'Пора начинать рутину' : 'Лучше лечь к 23:00';
-      } else {
-        sleepBlock.hidden = true;
-      }
-    }
-  }
-
-  // ===== NEXT ACTION — тренер говорит, что делать =====
-  // Приоритеты (по убыванию):
-  //   1. Сидим > 60 мин — встать и пройтись
-  //   2. Вечер + кофеин > 0 — не пить больше
-  //   3. Утро + вода < 30% — выпить стакан
-  //   4. Шаги < 30% от цели + день — пройтись
-  //   5. Энергия низкая + день — перерыв 10 мин
-  function renderNextAction(h, metrics, nextEvent){
-    const wrap = document.getElementById('nextAction');
-    if (!wrap) return;
-    const titleEl = document.getElementById('nextActionTitle');
-    const subEl   = document.getElementById('nextActionSub');
-    const icEl    = document.getElementById('nextActionIc');
-    const btnEl   = document.getElementById('nextActionBtn');
-
-    // 1) Сидячий alarm
-    if (metrics.sitting > 60){
-      wrap.className = 'next-action is-bad';
-      titleEl.textContent = 'Ты сидишь ' + Math.round(metrics.sitting) + ' мин без перерыва';
-      subEl.textContent = '5 минут ходьбы восстановят кровоток и фокус';
-      btnEl.textContent = 'Встать';
-      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4v8m0 0l-3-3m3 3l3-3M5 21h14M7 17l-2 4m12-4l2 4"/></svg>';
-      return;
-    }
-
-    // 2) Вечер + кофеин
-    if (h >= 16 && metrics.caffeine > 50){
-      wrap.className = 'next-action is-warn';
-      titleEl.textContent = 'Кофеин ещё в крови — сон будет поверхностным';
-      subEl.textContent = 'Лучшее время для последней чашки — до 15:00';
-      btnEl.textContent = 'Понял';
-      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>';
-      return;
-    }
-
-    // 3) Утро + мало воды
-    if (h >= 6 && h < 11 && metrics.hydration < 30){
-      wrap.className = 'next-action is-warn';
-      titleEl.textContent = 'Утро без воды — кровь гуще, фокус медленнее';
-      subEl.textContent = 'Стакан воды сейчас = +8% к концентрации через 20 мин';
-      btnEl.textContent = 'Выпить';
-      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s-6 6.5-6 11a6 6 0 0 0 12 0c0-4.5-6-11-6-11z"/></svg>';
-      return;
-    }
-
-    // 4) Шаги отстают
-    if (h >= 14 && metrics.steps < 2400){
-      wrap.className = 'next-action';
-      titleEl.textContent = 'До вечера ещё 4 часа — шаги пока отстают';
-      subEl.textContent = 'Прогулка 15 минут закроет треть дневной цели';
-      btnEl.textContent = 'Пройтись';
-      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4l3 5-3 5 4 6M9 20l-2-4 4-3-2-4 3-5"/></svg>';
-      return;
-    }
-
-    // 5) Энергия низкая в середине дня
-    if (h >= 13 && h < 16 && metrics.energy < 50){
-      wrap.className = 'next-action is-warn';
-      titleEl.textContent = 'Послеобеденный спад — норма';
-      subEl.textContent = '10 минут тишины и воды вернут фокус лучше кофе';
-      btnEl.textContent = 'Отдохнуть';
-      icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-      return;
-    }
-
-    // По умолчанию — позитивная рекомендация
-    wrap.className = 'next-action';
-    titleEl.textContent = nextEvent
-      ? 'До ' + nextEvent.label + ' ещё ' + nextEvent.minutesUntil + ' мин'
-      : 'Хороший темп — продолжай в том же духе';
-    subEl.textContent = 'Лёгкая прогулка или вода усилят эффект';
-    btnEl.textContent = 'Ок';
-    icEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    // Сохраняем для следующего count-up
+    _vitalsState.h = h;
+    _vitalsState.vals = {
+      status: metrics.status,
+      vitalEnergy: metrics.energy,
+      vitalFocus: metrics.focus,
+      vitalHeart: metrics.heart,
+      vitalLoad: metrics.load,
+      vitalHydration: metrics.hydration
+    };
   }
 
   // Контекст: следующее событие в ближайший час
@@ -1543,7 +1401,6 @@ let PERIOD_MODE = false;
     setupMascotInteraction();
     setupTrendPanel();
     setupModals();
-    setupNextAction();
     renderPatterns();
 
     setInterval(tick, 30*1000);
@@ -1688,22 +1545,6 @@ let PERIOD_MODE = false;
     setTimeout(() => { m.hidden = true; }, 280);
     document.body.style.overflow = '';
   }
-  // Клик по кнопке next-action: подтверждение, что действие выполнено.
-  // В скелетной версии — локальная визуальная обратная связь.
-  function setupNextAction(){
-    const btn = document.getElementById('nextActionBtn');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const wrap = document.getElementById('nextAction');
-      if (!wrap) return;
-      btn.disabled = true;
-      btn.textContent = 'Готово';
-      btn.style.opacity = '.6';
-      wrap.style.transition = 'opacity .3s var(--ease)';
-      wrap.style.opacity = '.55';
-    });
-  }
-
   function setupModals(){
     // Закрытие по клику на бэдроп / крестик
     document.addEventListener('click', (e) => {
