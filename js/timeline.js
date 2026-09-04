@@ -762,14 +762,7 @@ let PERIOD_MODE = false;
       else if (metrics.status >= 50) numEl.classList.add('is-warn');
       else numEl.classList.add('is-bad');
     }
-<<<<<<< ours
-    if (labEl) labEl.textContent = metrics.statusLabel;
 
-    // Метрики: count-up + дельты
-    const setVal = (id, v) => {
-      const el = document.getElementById(id);
-      if (el) countUpTo(el, prev[id] != null ? prev[id] : 0, v, 300);
-=======
     // Метрики: count-up (energy/focus/mood теперь на кольцах, в плитках только heart/load/hydration)
     // Плитки (пульс/нагрузка/гидратация) убраны из момент-card —
     // теперь живут в drilldown «Подробнее» (HRV/Сон/Стресс/Восстановление/Нагрузка/Энергия).
@@ -796,7 +789,6 @@ let PERIOD_MODE = false;
       if (!el) return;
       const filled = Math.max(0, Math.min(C, (pct / 100) * C));
       el.style.strokeDasharray = filled + ' ' + C;
->>>>>>> theirs
     };
     setVal('vitalEnergy',    metrics.energy);
     setVal('vitalFocus',     metrics.focus);
