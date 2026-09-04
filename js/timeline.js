@@ -735,43 +735,34 @@ let PERIOD_MODE = false;
     }
 
     const bodyHrv = document.getElementById('bodyHrv');
-    const bodyRhr = document.getElementById('bodyRhr');
     const bodySteps = document.getElementById('bodySteps');
-    const bodyActive = document.getElementById('bodyActive');
     const bodyRecovery = document.getElementById('bodyRecovery');
     const bodyStrain = document.getElementById('bodyStrain');
 
     if (bodyHrv) bodyHrv.textContent = hrv + ' мс';
-    if (bodyRhr) bodyRhr.textContent = rhr + ' уд/м';
     if (bodySteps) bodySteps.textContent = Math.round(m.steps / 1000 * 10) / 10 + 'k';
-    if (bodyActive) bodyActive.textContent = m.activeMin + ' м';
     if (bodyRecovery) bodyRecovery.textContent = recovery + '%';
     if (bodyStrain) {
       bodyStrain.textContent = strain.toFixed(1);
       bodyStrain.style.color = strain > 3 ? '#F0764B' : strain > 1.5 ? '#F2A037' : '#2FBF9B';
     }
 
-    // Mini bars for body metrics
     const bodyHrvBar = document.getElementById('bodyHrvBar');
-    const bodyRhrBar = document.getElementById('bodyRhrBar');
-    const bodyStepsBar = document.getElementById('bodyStepsBar');
-    const bodyActiveBar = document.getElementById('bodyActiveBar');
     const bodyRecoveryBar = document.getElementById('bodyRecoveryBar');
+    const bodyStepsBar = document.getElementById('bodyStepsBar');
     const bodyStrainBar = document.getElementById('bodyStrainBar');
 
     if (bodyHrvBar) {
       bodyHrvBar.style.width = Math.min(100, Math.max(0, (hrv - 30) / 40 * 100)) + '%';
       bodyHrvBar.style.background = hrv >= 60 ? '#2FBF9B' : hrv >= 45 ? '#F2A037' : '#F0764B';
     }
-    if (bodyRhrBar) {
-      bodyRhrBar.style.width = Math.min(100, Math.max(0, (80 - rhr) / 30 * 100)) + '%';
-      bodyRhrBar.style.background = rhr <= 60 ? '#2FBF9B' : rhr <= 70 ? '#F2A037' : '#F0764B';
-    }
-    if (bodyStepsBar) bodyStepsBar.style.width = Math.min(100, m.steps / 8000 * 100) + '%';
-    if (bodyActiveBar) bodyActiveBar.style.width = Math.min(100, m.activeMin / 60 * 100) + '%';
     if (bodyRecoveryBar) {
       bodyRecoveryBar.style.width = recovery + '%';
       bodyRecoveryBar.style.background = recovery >= 70 ? '#2FBF9B' : recovery >= 50 ? '#F2A037' : '#F0764B';
+    }
+    if (bodyStepsBar) {
+      bodyStepsBar.style.width = Math.min(100, m.steps / 8000 * 100) + '%';
+      bodyStepsBar.style.background = m.steps >= 8000 ? '#2FBF9B' : m.steps >= 4000 ? '#F2A037' : '#F0764B';
     }
     if (bodyStrainBar) {
       bodyStrainBar.style.width = Math.min(100, strain / 5 * 100) + '%';
