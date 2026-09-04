@@ -30,4 +30,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   // После вставки — убедиться, что скролл-навигация и круговая диаграмма живы
   if (typeof updateScrollVisuals === 'function') updateScrollVisuals();
   if (typeof updateActivityAtmosphere === 'function') updateActivityAtmosphere();
+  if (typeof updateRecoveryMetrics === 'function') updateRecoveryMetrics();
 });

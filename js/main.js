@@ -534,7 +534,10 @@ function buildWeekChartById(chartId, values, avg, type) {
 }
 
 function updateRecoveryMetrics() {
-  if (typeof window.AtlasMetrics === 'undefined') return;
+  if (typeof window.AtlasMetrics === 'undefined') {
+    setTimeout(updateRecoveryMetrics, 100);
+    return;
+  }
   const now = new Date();
   const h = now.getHours() + now.getMinutes() / 60;
 
