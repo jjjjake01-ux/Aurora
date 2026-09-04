@@ -927,9 +927,9 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .recovery-row{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:6px;
+  gap:4px;
   margin-top:10px;
-  padding:10px 12px;
+  padding:8px 10px;
   background:linear-gradient(135deg,rgba(45,40,35,.025) 0%,rgba(47,191,155,.03) 100%);
   border:.5px solid rgba(45,40,35,.06);
   border-radius:14px;
@@ -938,28 +938,29 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:4px;
-  padding:6px 4px;
+  gap:2px;
+  padding:5px 3px;
   background:rgba(255,255,255,.4);
-  border-radius:10px;
+  border-radius:8px;
+  min-width:0;
 }
 .rr-dot{
-  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
 }
 .rr-label{
-  font:600 9px/1 var(--f-ui);
+  font:600 8px/1 var(--f-ui);
   color:var(--mut);
   text-transform:uppercase;
-  letter-spacing:.04em;
+  letter-spacing:.03em;
 }
 .rr-value{
-  font:800 13px/1 var(--f);
+  font:800 12px/1 var(--f);
   color:var(--ink);
   font-variant-numeric:tabular-nums;
   letter-spacing:-.01em;
 }
 .rr-unit{
-  font:500 8px/1 var(--f-ui);
+  font:500 7px/1 var(--f-ui);
   color:var(--mut);
 }
 
