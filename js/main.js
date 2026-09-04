@@ -533,12 +533,34 @@ function buildWeekChartById(chartId, values, avg, type) {
   `;
 }
 
+function updateRecoveryMetrics() {
+  if (typeof window.AtlasMetrics === 'undefined') return;
+  const now = new Date();
+  const h = now.getHours() + now.getMinutes() / 60;
+
+  const hrvEl = document.getElementById('hrvValue');
+  const rhrEl = document.getElementById('rhrValue');
+  const recoveryEl = document.getElementById('recoveryValue');
+  const strainEl = document.getElementById('strainValue');
+
+  if (hrvEl) hrvEl.textContent = window.AtlasMetrics.hrvAt(h) + ' мс';
+  if (rhrEl) rhrEl.textContent = window.AtlasMetrics.rhrAt(h);
+  if (recoveryEl) recoveryEl.textContent = window.AtlasMetrics.recoveryAt(h) + '%';
+  if (strainEl) {
+    const strain = window.AtlasMetrics.strainAt(h);
+    strainEl.textContent = strain.toFixed(1);
+    strainEl.style.color = strain > 1 ? '#E86E5E' : strain < 0.5 ? '#E8A13C' : '#2FBF9B';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initAllCarousels();
   buildAllWeekCharts();
   updateMascotIllustration('statusMascotIllustration', 78);
   updateMascotIllustration('activityMascotIllustration', 78);
   initDayChartTooltips();
+  updateRecoveryMetrics();
+  setInterval(updateRecoveryMetrics, 60000);
 });
 
 function initDayChartTooltips() {

@@ -69,6 +69,41 @@
     return Math.round(load);
   }
 
+  // HRV — вариабельность сердечного ритма (мс)
+  function hrvAt(h){
+    const base = {6:58, 7:55, 8:52, 9:54, 10:61, 11:64, 12:66, 13:62, 14:58, 15:60, 16:64, 17:62, 18:58, 19:55, 20:52, 21:50, 22:48, 23:52, 24:55};
+    const h0 = Math.floor(h);
+    return base[h0] || 58;
+  }
+
+  // RHR — пульс покоя (уд/мин)
+  function rhrAt(h){
+    if (h >= 22 || h < 6) return 52;
+    if (h >= 6 && h < 9) return 58;
+    if (h >= 9 && h < 12) return 62;
+    if (h >= 12 && h < 15) return 68;
+    if (h >= 15 && h < 18) return 64;
+    if (h >= 18 && h < 22) return 60;
+    return 55;
+  }
+
+  // Recovery % — восстановление (0-100)
+  function recoveryAt(h){
+    const hrv = hrvAt(h);
+    const rhr = rhrAt(h);
+    const hrvScore = Math.min(100, (hrv - 30) / 50 * 100);
+    const rhrScore = Math.min(100, (80 - rhr) / 30 * 100);
+    return Math.round(hrvScore * 0.6 + rhrScore * 0.4);
+  }
+
+  // Strain — соотношение нагрузки к восстановлению
+  function strainAt(h){
+    const load = loadAt(h);
+    const recovery = recoveryAt(h);
+    if (recovery === 0) return 0;
+    return Math.round(load / recovery * 100) / 100;
+  }
+
   // Гидратация (0-100, цель 100% = 2л). Падает ~5%/час, растёт в часы еды/питья
   function hydrationAt(h){
     let v = 95;  // старт дня — наполнен
@@ -283,6 +318,7 @@
     metricsAt,
     withNarrative,
     energyAt, focusAt, heartAt, loadAt,
+    hrvAt, rhrAt, recoveryAt, strainAt,
     hydrationAt, caffeineAt, stepsAt, sittingAt, activeAt, sleepCountdown,
     defaultMoodAt, overallStatus, statusLabel
   };
