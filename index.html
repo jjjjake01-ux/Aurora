@@ -150,7 +150,112 @@
 </div>
 </header>
 
-  <div class="micro-action-card" id="microActionCard" aria-live="polite"></div>
+ <div class="micro-action-card" id="microActionCard" aria-live="polite"></div>
+
+<section class="timeline" aria-label="Лента дня">
+<div class="timeline-head">
+<div class="th-periods" role="tablist" aria-label="Период дня">
+<button class="th-period is-active" data-period="day"   type="button" role="tab" aria-selected="true">День</button>
+<button class="th-period"             data-period="morning" type="button" role="tab" aria-selected="false">Утро</button>
+<button class="th-period"             data-period="daypart" type="button" role="tab" aria-selected="false">День</button>
+<button class="th-period"             data-period="evening" type="button" role="tab" aria-selected="false">Вечер</button>
+<button class="th-period"             data-period="night"   type="button" role="tab" aria-selected="false">Ночь</button>
+</div>
+<div class="th-now" id="thNow">14:58</div>
+<button class="th-zoom" id="thZoom" type="button" aria-label="Приблизить">
+<svg class="th-zoom-in" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
+<svg class="th-zoom-out" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
+</button>
+</div>
+<div class="timeline-stage">
+<div class="timeline-axis" id="timelineAxis">
+<svg class="timeline-svg" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+<linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
+<stop offset="20%" stop-color="#5CC4A0" stop-opacity=".22"/>
+<stop offset="55%" stop-color="#2FBF9B" stop-opacity=".24"/>
+<stop offset="80%" stop-color="#F0764B" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#7B74D6" stop-opacity=".18"/>
+</linearGradient>
+<linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0%" stop-color="#F2C037"/>
+<stop offset="22%" stop-color="#5CC4A0"/>
+<stop offset="55%" stop-color="#2FBF9B"/>
+<stop offset="78%" stop-color="#F0764B"/>
+<stop offset="100%" stop-color="#7B74D6"/>
+</linearGradient>
+<linearGradient id="eventMarker" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="rgba(255,255,255,.96)"/>
+<stop offset="100%" stop-color="rgba(255,255,255,.82)"/>
+</linearGradient>
+<radialGradient id="scrubberHalo" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/>
+<stop offset="60%" stop-color="var(--accent)" stop-opacity=".08"/>
+<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+</radialGradient>
+<filter id="moodGlow" x="-10%" y="-50%" width="120%" height="200%">
+<feGaussianBlur stdDeviation="2" result="blur"/>
+<feMerge>
+<feMergeNode in="blur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<filter id="pillShadow" x="-20%" y="-50%" width="140%" height="200%">
+<feGaussianBlur stdDeviation="1.4" in="SourceAlpha"/>
+<feOffset dx="0" dy="1.5"/>
+<feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
+<feMerge>
+<feMergeNode/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<clipPath id="stageClip">
+<rect x="0" y="0" width="700" height="200"/>
+</clipPath>
+</defs>
+
+<rect class="tod-bg" x="0" y="0" width="700" height="200" fill="url(#todGrad)"/>
+
+<g class="tl-grid">
+<line x1="0" y1="50" x2="700" y2="50"/>
+<line x1="0" y1="100" x2="700" y2="100"/>
+<line x1="0" y1="150" x2="700" y2="150"/>
+</g>
+
+<g class="tl-tod-labels" id="tlTodLabels"></g>
+
+<g class="tl-events-top" id="tlEventsTop"></g>
+<g class="tl-events-bottom" id="tlEventsBottom"></g>
+
+<path id="tlMoodArea" d="M0 100 L0 100" fill="url(#moodFill)"/>
+<path id="tlMoodPath" d="M0 100" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
+<g class="tl-mood-dots" id="tlMoodDots"></g>
+
+<g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
+<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="200" fill="url(#scrubberHalo)"/>
+<line class="tl-cursor" x1="0" y1="14" x2="0" y2="186"/>
+<circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
+<circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
+<circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>
+</g>
+</svg>
+
+<div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
+<div class="timeline-scrubber-bubble" id="scrubberBubble">
+<span class="tsb-time" id="tsbTime">14:00</span>
+</div>
+</div>
+<div class="timeline-edge timeline-edge-l">06</div>
+<div class="timeline-edge timeline-edge-c">12</div>
+<div class="timeline-edge timeline-edge-r">24</div>
+</div>
+</section>
 
 <section class="moment-card" id="momentCard" aria-live="polite">
 <div class="moment-head"><div class="moment-time" id="momentTime">—</div><div class="moment-title" id="momentTitle">—</div></div>
@@ -363,111 +468,6 @@
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
 </span>
 </button>
-
-<section class="timeline" aria-label="Лента дня">
-<div class="timeline-head">
-<div class="th-periods" role="tablist" aria-label="Период дня">
-<button class="th-period is-active" data-period="day"   type="button" role="tab" aria-selected="true">День</button>
-<button class="th-period"             data-period="morning" type="button" role="tab" aria-selected="false">Утро</button>
-<button class="th-period"             data-period="daypart" type="button" role="tab" aria-selected="false">День</button>
-<button class="th-period"             data-period="evening" type="button" role="tab" aria-selected="false">Вечер</button>
-<button class="th-period"             data-period="night"   type="button" role="tab" aria-selected="false">Ночь</button>
-</div>
-<div class="th-now" id="thNow">14:58</div>
-<button class="th-zoom" id="thZoom" type="button" aria-label="Приблизить">
-<svg class="th-zoom-in" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>
-<svg class="th-zoom-out" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
-</button>
-</div>
-<div class="timeline-stage">
-<div class="timeline-axis" id="timelineAxis">
-<svg class="timeline-svg" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
-<defs>
-<linearGradient id="todGrad" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0%" stop-color="#F2C037" stop-opacity=".18"/>
-<stop offset="20%" stop-color="#5CC4A0" stop-opacity=".22"/>
-<stop offset="55%" stop-color="#2FBF9B" stop-opacity=".24"/>
-<stop offset="80%" stop-color="#F0764B" stop-opacity=".22"/>
-<stop offset="100%" stop-color="#7B74D6" stop-opacity=".18"/>
-</linearGradient>
-<linearGradient id="moodFill" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="var(--accent)" stop-opacity=".5"/>
-<stop offset="60%" stop-color="var(--accent)" stop-opacity=".12"/>
-<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-</linearGradient>
-<linearGradient id="moodStroke" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0%" stop-color="#F2C037"/>
-<stop offset="22%" stop-color="#5CC4A0"/>
-<stop offset="55%" stop-color="#2FBF9B"/>
-<stop offset="78%" stop-color="#F0764B"/>
-<stop offset="100%" stop-color="#7B74D6"/>
-</linearGradient>
-<linearGradient id="eventMarker" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="rgba(255,255,255,.96)"/>
-<stop offset="100%" stop-color="rgba(255,255,255,.82)"/>
-</linearGradient>
-<radialGradient id="scrubberHalo" cx="0.5" cy="0.5" r="0.5">
-<stop offset="0%" stop-color="var(--accent)" stop-opacity=".35"/>
-<stop offset="60%" stop-color="var(--accent)" stop-opacity=".08"/>
-<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-</radialGradient>
-<filter id="moodGlow" x="-10%" y="-50%" width="120%" height="200%">
-<feGaussianBlur stdDeviation="2" result="blur"/>
-<feMerge>
-<feMergeNode in="blur"/>
-<feMergeNode in="SourceGraphic"/>
-</feMerge>
-</filter>
-<filter id="pillShadow" x="-20%" y="-50%" width="140%" height="200%">
-<feGaussianBlur stdDeviation="1.4" in="SourceAlpha"/>
-<feOffset dx="0" dy="1.5"/>
-<feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
-<feMerge>
-<feMergeNode/>
-<feMergeNode in="SourceGraphic"/>
-</feMerge>
-</filter>
-<clipPath id="stageClip">
-<rect x="0" y="0" width="700" height="200"/>
-</clipPath>
-</defs>
-
-<rect class="tod-bg" x="0" y="0" width="700" height="200" fill="url(#todGrad)"/>
-
-<g class="tl-grid">
-<line x1="0" y1="50" x2="700" y2="50"/>
-<line x1="0" y1="100" x2="700" y2="100"/>
-<line x1="0" y1="150" x2="700" y2="150"/>
-</g>
-
-<g class="tl-tod-labels" id="tlTodLabels"></g>
-
-<g class="tl-events-top" id="tlEventsTop"></g>
-<g class="tl-events-bottom" id="tlEventsBottom"></g>
-
-<path id="tlMoodArea" d="M0 100 L0 100" fill="url(#moodFill)"/>
-<path id="tlMoodPath" d="M0 100" fill="none" stroke="url(#moodStroke)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#moodGlow)"/>
-<g class="tl-mood-dots" id="tlMoodDots"></g>
-
-<g class="tl-scrubber" id="tlScrubber" transform="translate(0,0)">
-<rect class="tl-scrubber-halo" x="-22" y="0" width="44" height="200" fill="url(#scrubberHalo)"/>
-<line class="tl-cursor" x1="0" y1="14" x2="0" y2="186"/>
-<circle class="tl-handle-outer" cx="0" cy="100" r="9"/>
-<circle class="tl-handle-inner" cx="0" cy="100" r="4"/>
-<circle class="tl-handle-dot" cx="0" cy="100" r="1.8"/>
-</g>
-</svg>
-
-<div class="timeline-track" id="timelineTrack" aria-hidden="true"></div>
-<div class="timeline-scrubber-bubble" id="scrubberBubble">
-<span class="tsb-time" id="tsbTime">14:00</span>
-</div>
-</div>
-<div class="timeline-edge timeline-edge-l">06</div>
-<div class="timeline-edge timeline-edge-c">12</div>
-<div class="timeline-edge timeline-edge-r">24</div>
-</div>
-</section>
 
 <section class="trend-panel" id="trendPanel" hidden aria-label="Тренд за неделю">
 <div class="period-tabs" role="tablist" aria-label="Период">
