@@ -751,6 +751,33 @@ let PERIOD_MODE = false;
       bodyStrain.style.color = strain > 3 ? '#F0764B' : strain > 1.5 ? '#F2A037' : '#2FBF9B';
     }
 
+    // Mini bars for body metrics
+    const bodyHrvBar = document.getElementById('bodyHrvBar');
+    const bodyRhrBar = document.getElementById('bodyRhrBar');
+    const bodyStepsBar = document.getElementById('bodyStepsBar');
+    const bodyActiveBar = document.getElementById('bodyActiveBar');
+    const bodyRecoveryBar = document.getElementById('bodyRecoveryBar');
+    const bodyStrainBar = document.getElementById('bodyStrainBar');
+
+    if (bodyHrvBar) {
+      bodyHrvBar.style.width = Math.min(100, Math.max(0, (hrv - 30) / 40 * 100)) + '%';
+      bodyHrvBar.style.background = hrv >= 60 ? '#2FBF9B' : hrv >= 45 ? '#F2A037' : '#F0764B';
+    }
+    if (bodyRhrBar) {
+      bodyRhrBar.style.width = Math.min(100, Math.max(0, (80 - rhr) / 30 * 100)) + '%';
+      bodyRhrBar.style.background = rhr <= 60 ? '#2FBF9B' : rhr <= 70 ? '#F2A037' : '#F0764B';
+    }
+    if (bodyStepsBar) bodyStepsBar.style.width = Math.min(100, m.steps / 8000 * 100) + '%';
+    if (bodyActiveBar) bodyActiveBar.style.width = Math.min(100, m.activeMin / 60 * 100) + '%';
+    if (bodyRecoveryBar) {
+      bodyRecoveryBar.style.width = recovery + '%';
+      bodyRecoveryBar.style.background = recovery >= 70 ? '#2FBF9B' : recovery >= 50 ? '#F2A037' : '#F0764B';
+    }
+    if (bodyStrainBar) {
+      bodyStrainBar.style.width = Math.min(100, strain / 5 * 100) + '%';
+      bodyStrainBar.style.background = strain <= 2 ? '#2FBF9B' : strain <= 3 ? '#F2A037' : '#F0764B';
+    }
+
     // === MIND SCORE ===
     const mindScore = Math.round((m.energy + m.focus + m.mood) / 3);
 
@@ -766,6 +793,29 @@ let PERIOD_MODE = false;
     if (mindFocus) mindFocus.textContent = m.focus + '%';
     if (mindMood) mindMood.textContent = m.mood + '%';
     if (mindClarity) mindClarity.textContent = Math.round((m.energy + m.focus) / 2) + '%';
+
+    const mindEnergyBar = document.getElementById('mindEnergyBar');
+    const mindFocusBar = document.getElementById('mindFocusBar');
+    const mindMoodBar = document.getElementById('mindMoodBar');
+    const mindClarityBar = document.getElementById('mindClarityBar');
+
+    if (mindEnergyBar) {
+      mindEnergyBar.style.width = m.energy + '%';
+      mindEnergyBar.style.background = m.energy >= 80 ? '#2FBF9B' : m.energy >= 60 ? '#F2A037' : '#F0764B';
+    }
+    if (mindFocusBar) {
+      mindFocusBar.style.width = m.focus + '%';
+      mindFocusBar.style.background = m.focus >= 80 ? '#2FBF9B' : m.focus >= 60 ? '#F2A037' : '#F0764B';
+    }
+    if (mindMoodBar) {
+      mindMoodBar.style.width = m.mood + '%';
+      mindMoodBar.style.background = m.mood >= 80 ? '#2FBF9B' : m.mood >= 60 ? '#F2A037' : '#F0764B';
+    }
+    if (mindClarityBar) {
+      const clarity = Math.round((m.energy + m.focus) / 2);
+      mindClarityBar.style.width = clarity + '%';
+      mindClarityBar.style.background = clarity >= 80 ? '#2FBF9B' : clarity >= 60 ? '#F2A037' : '#F0764B';
+    }
 
     // Wave visualization — 7 bars representing last 7 hours
     const mindWave = document.getElementById('mindWave');
@@ -812,6 +862,30 @@ let PERIOD_MODE = false;
     if (balanceSleep) balanceSleep.textContent = m.sleepMin ? (m.sleepMin / 60).toFixed(1) + ' ч' : '—';
     if (balanceWater) balanceWater.textContent = hydration + '%';
     if (balanceRecovery) balanceRecovery.textContent = recovery + '%';
+
+    const balanceStressBar = document.getElementById('balanceStressBar');
+    const balanceSleepBar = document.getElementById('balanceSleepBar');
+    const balanceWaterBar = document.getElementById('balanceWaterBar');
+    const balanceRecoveryBar = document.getElementById('balanceRecoveryBar');
+
+    if (balanceStressBar) {
+      const stressPct = Math.min(100, Math.max(0, 100 - (strain - 1) * 50));
+      balanceStressBar.style.width = stressPct + '%';
+      balanceStressBar.style.background = stressPct >= 70 ? '#2FBF9B' : stressPct >= 50 ? '#F2A037' : '#F0764B';
+    }
+    if (balanceSleepBar) {
+      const sleepPct = m.sleepMin ? Math.min(100, (m.sleepMin / (8 * 60)) * 100) : 0;
+      balanceSleepBar.style.width = sleepPct + '%';
+      balanceSleepBar.style.background = sleepPct >= 75 ? '#2FBF9B' : sleepPct >= 50 ? '#F2A037' : '#F0764B';
+    }
+    if (balanceWaterBar) {
+      balanceWaterBar.style.width = hydration + '%';
+      balanceWaterBar.style.background = hydration >= 70 ? '#2FBF9B' : hydration >= 50 ? '#F2A037' : '#F0764B';
+    }
+    if (balanceRecoveryBar) {
+      balanceRecoveryBar.style.width = recovery + '%';
+      balanceRecoveryBar.style.background = recovery >= 70 ? '#2FBF9B' : recovery >= 50 ? '#F2A037' : '#F0764B';
+    }
 
     // === CONTEXT ===
     const vcEvent = document.getElementById('vcEvent');

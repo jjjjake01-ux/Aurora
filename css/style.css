@@ -1538,22 +1538,40 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 .vc-metrics{
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:6px;
 }
 .vm-row{
-  display:flex;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
   align-items:center;
-  justify-content:space-between;
+  gap:8px;
   font-size:11px;
 }
 .vm-label{
-  font:500 10px/1 var(--f-ui);
-  color:var(--ink2);
+  font:600 9px/1 var(--f-ui);
+  color:var(--mut);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.vm-bar{
+  height:3px;
+  background:rgba(47,191,155,.12);
+  border-radius:2px;
+  overflow:hidden;
+}
+.vm-bar-fill{
+  height:100%;
+  width:0%;
+  background:var(--accent);
+  border-radius:2px;
+  transition:width .7s cubic-bezier(0.16,1,0.3,1), background .5s ease;
 }
 .vm-value{
   font:700 11px/1 var(--f);
   color:var(--ink);
   font-variant-numeric:tabular-nums;
+  min-width:36px;
+  text-align:right;
 }
 
 /* ===== BODY CARD — Ring ===== */
