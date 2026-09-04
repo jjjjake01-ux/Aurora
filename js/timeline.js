@@ -670,6 +670,12 @@ let PERIOD_MODE = false;
     if (!window.AtlasMetrics) return;
 
     const m = AtlasMetrics.metricsAt(h);
+    const hrv = AtlasMetrics.hrvAt(h);
+    const rhr = AtlasMetrics.rhrAt(h);
+    const recovery = AtlasMetrics.recoveryAt(h);
+    const strain = AtlasMetrics.strainAt(h);
+    const hydration = AtlasMetrics.hydrationAt(h);
+
     const hh = Math.floor(h);
     const mm = Math.round((h - hh) * 60);
     const timeStr = String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
@@ -701,9 +707,9 @@ let PERIOD_MODE = false;
     }
 
     // === BODY SCORE ===
-    const hrvScore = Math.min(100, Math.max(0, (m.hrv - 30) / 40 * 100));
-    const rhrScore = Math.min(100, Math.max(0, (80 - m.rhr) / 30 * 100));
-    const bodyScore = Math.round((hrvScore + rhrScore + m.recovery) / 3);
+    const hrvScore = Math.min(100, Math.max(0, (hrv - 30) / 40 * 100));
+    const rhrScore = Math.min(100, Math.max(0, (80 - rhr) / 30 * 100));
+    const bodyScore = Math.round((hrvScore + rhrScore + recovery) / 3);
 
     const bodyScoreEl = document.getElementById('bodyScore');
     const bodyFill = document.getElementById('bodyFill');
@@ -717,14 +723,14 @@ let PERIOD_MODE = false;
     const bodyRecovery = document.getElementById('bodyRecovery');
     const bodyStrain = document.getElementById('bodyStrain');
 
-    if (bodyHrv) bodyHrv.textContent = m.hrv + ' мс';
-    if (bodyRhr) bodyRhr.textContent = m.rhr + ' уд/м';
+    if (bodyHrv) bodyHrv.textContent = hrv + ' мс';
+    if (bodyRhr) bodyRhr.textContent = rhr + ' уд/м';
     if (bodySteps) bodySteps.textContent = Math.round(m.steps / 1000 * 10) / 10 + 'k';
     if (bodyActive) bodyActive.textContent = m.activeMin + ' м';
-    if (bodyRecovery) bodyRecovery.textContent = m.recovery + '%';
+    if (bodyRecovery) bodyRecovery.textContent = recovery + '%';
     if (bodyStrain) {
-      bodyStrain.textContent = m.strain.toFixed(1);
-      bodyStrain.style.color = m.strain > 3 ? '#F0764B' : m.strain > 1.5 ? '#F2A037' : '#2FBF9B';
+      bodyStrain.textContent = strain.toFixed(1);
+      bodyStrain.style.color = strain > 3 ? '#F0764B' : strain > 1.5 ? '#F2A037' : '#2FBF9B';
     }
 
     // === MIND SCORE ===
@@ -746,8 +752,8 @@ let PERIOD_MODE = false;
     if (mindClarity) mindClarity.textContent = Math.round((m.energy + m.focus) / 2) + '%';
 
     // === BALANCE SCORE ===
-    const stressScore = Math.min(100, Math.max(0, 100 - (m.strain - 1) * 50));
-    const balanceScore = Math.round((stressScore + m.recovery + m.hydration) / 3);
+    const stressScore = Math.min(100, Math.max(0, 100 - (strain - 1) * 50));
+    const balanceScore = Math.round((stressScore + recovery + hydration) / 3);
 
     const balanceScoreEl = document.getElementById('balanceScore');
     const balanceFill = document.getElementById('balanceFill');
@@ -760,12 +766,12 @@ let PERIOD_MODE = false;
     const balanceRecovery = document.getElementById('balanceRecovery');
 
     if (balanceStress) {
-      balanceStress.textContent = m.strain.toFixed(1);
-      balanceStress.style.color = m.strain > 3 ? '#F0764B' : m.strain > 1.5 ? '#F2A037' : '#2FBF9B';
+      balanceStress.textContent = strain.toFixed(1);
+      balanceStress.style.color = strain > 3 ? '#F0764B' : strain > 1.5 ? '#F2A037' : '#2FBF9B';
     }
-    if (balanceSleep) balanceSleep.textContent = m.sleepMin ? Math.round(m.sleepMin / 60 * 10) / 10 + ' ч' : '—';
-    if (balanceWater) balanceWater.textContent = m.hydration + '%';
-    if (balanceRecovery) balanceRecovery.textContent = m.recovery + '%';
+    if (balanceSleep) balanceSleep.textContent = m.sleepMin ? (m.sleepMin / 60).toFixed(1) + ' ч' : '—';
+    if (balanceWater) balanceWater.textContent = hydration + '%';
+    if (balanceRecovery) balanceRecovery.textContent = recovery + '%';
 
     // === CONTEXT ===
     const vcEvent = document.getElementById('vcEvent');
