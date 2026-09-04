@@ -270,6 +270,14 @@
             <stop offset="0%" stop-color="#5CC4A0"/>
             <stop offset="100%" stop-color="#2FBF9B"/>
           </linearGradient>
+          <linearGradient id="viWarnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5C037"/>
+            <stop offset="100%" stop-color="#F2A037"/>
+          </linearGradient>
+          <linearGradient id="viBadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F0764B"/>
+            <stop offset="100%" stop-color="#D06552"/>
+          </linearGradient>
           <filter id="viGlow">
             <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#2FBF9B" flood-opacity="0.35"/>
           </filter>
@@ -300,10 +308,18 @@
       <div class="vc-ring-wrap">
         <svg viewBox="0 0 120 120" class="vc-ring-svg">
           <defs>
-            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#5CC4A0"/>
-              <stop offset="100%" stop-color="#2FBF9B"/>
-            </linearGradient>
+          <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#5CC4A0"/>
+            <stop offset="100%" stop-color="#2FBF9B"/>
+          </linearGradient>
+          <linearGradient id="bodyWarnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5C037"/>
+            <stop offset="100%" stop-color="#F2A037"/>
+          </linearGradient>
+          <linearGradient id="bodyBadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F0764B"/>
+            <stop offset="100%" stop-color="#D06552"/>
+          </linearGradient>
           </defs>
           <circle cx="60" cy="60" r="48" class="vc-ring-track"/>
           <circle cx="60" cy="60" r="48" class="vc-ring-fill" id="bodyRing" stroke="url(#bodyGrad)" stroke-dasharray="301.59" stroke-dashoffset="301.59"/>

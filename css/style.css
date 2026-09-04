@@ -1440,6 +1440,8 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   stroke-dasharray:427.26;
   stroke-dashoffset:427.26;
   animation:viRingIn 1.2s cubic-bezier(0.16,1,0.3,1) .3s forwards;
+  filter:drop-shadow(0 0 8px rgba(47,191,155,.5));
+  transition:stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1), stroke .5s ease;
 }
 .vi-center{
   position:absolute;inset:0;
@@ -1578,7 +1580,8 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
   stroke-linecap:round;
   stroke-dasharray:301.59;
   stroke-dashoffset:301.59;
-  transition:stroke-dashoffset .9s cubic-bezier(0.16,1,0.3,1);
+  transition:stroke-dashoffset .9s cubic-bezier(0.16,1,0.3,1), stroke .5s ease;
+  filter:drop-shadow(0 0 4px rgba(47,191,155,.4));
 }
 .vc-ring-center{
   position:absolute;inset:0;

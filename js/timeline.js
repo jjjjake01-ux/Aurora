@@ -703,7 +703,12 @@ let PERIOD_MODE = false;
       const circumference = 427.26;
       const offset = circumference - (m.status / 100) * circumference;
       viFill.style.strokeDashoffset = offset;
-      viFill.style.setProperty('--vi-offset', offset);
+      const viColor = m.status >= 65
+        ? 'url(#viGrad)'
+        : m.status >= 50
+          ? 'url(#viWarnGrad)'
+          : 'url(#viBadGrad)';
+      viFill.setAttribute('stroke', viColor);
     }
 
     // === BODY SCORE ===
@@ -721,6 +726,12 @@ let PERIOD_MODE = false;
       const circumference = 301.59;
       const offset = circumference - (bodyScore / 100) * circumference;
       bodyRing.style.strokeDashoffset = offset;
+      const bodyColor = bodyScore >= 70
+        ? 'url(#bodyGrad)'
+        : bodyScore >= 50
+          ? 'url(#bodyWarnGrad)'
+          : 'url(#bodyBadGrad)';
+      bodyRing.setAttribute('stroke', bodyColor);
     }
 
     const bodyHrv = document.getElementById('bodyHrv');
@@ -779,7 +790,15 @@ let PERIOD_MODE = false;
     const balanceScoreEl = document.getElementById('balanceScore');
     const balanceScaleFill = document.getElementById('balanceScaleFill');
     if (balanceScoreEl) balanceScoreEl.textContent = balanceScore + '%';
-    if (balanceScaleFill) balanceScaleFill.style.width = balanceScore + '%';
+    if (balanceScaleFill) {
+      balanceScaleFill.style.width = balanceScore + '%';
+      const balColor = balanceScore >= 70
+        ? 'linear-gradient(90deg,#5CC4A0,#2FBF9B)'
+        : balanceScore >= 50
+          ? 'linear-gradient(90deg,#F5C037,#F2A037)'
+          : 'linear-gradient(90deg,#F0764B,#D06552)';
+      balanceScaleFill.style.background = balColor;
+    }
 
     const balanceStress = document.getElementById('balanceStress');
     const balanceSleep = document.getElementById('balanceSleep');
