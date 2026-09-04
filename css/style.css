@@ -906,22 +906,23 @@ body[data-time-period="night"]  {background:linear-gradient(180deg,#2A2520 0%,#1
 /* Легенда под кольцом: что означают цвета */
 .vring-legend{
   display:flex;align-items:center;justify-content:center;
-  gap:5px;
-  margin-top:6px;
-  font:600 9.5px/1 var(--f-ui);
+  gap:4px;
+  margin-top:5px;
+  font:600 8.5px/1 var(--f-ui);
   color:var(--ink2);
-  text-transform:uppercase;letter-spacing:.04em;
+  text-transform:uppercase;letter-spacing:.03em;
   white-space:nowrap;
+  flex-wrap:wrap;
 }
-.vrl-item{display:inline-flex;align-items:center;gap:4px}
+.vrl-item{display:inline-flex;align-items:center;gap:3px}
 .vrl-dot{
-  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  width:5px;height:5px;border-radius:50%;flex-shrink:0;
   display:inline-block;
 }
 .vrl-item[data-key="energy"] .vrl-dot{background:#2FBF9B}
 .vrl-item[data-key="focus"]  .vrl-dot{background:#F0764B}
 .vrl-item[data-key="mood"]   .vrl-dot{background:#7B74D6}
-.vrl-sep{color:var(--mut);opacity:.5}
+.vrl-sep{color:var(--mut);opacity:.5;font-size:7px}
 
 /* Recovery metrics row — Whoop-style под кольцами */
 .recovery-row{
